@@ -8,58 +8,47 @@
   Build: ./docs/social/build-hero-dark.sh  ->  transiva-hero-dark.jpg (2400x1260)
 -->
 <style>
-  :root { --blue:#0071e3; --signal:#2997ff; --cyan:#64d2ff; --green:#30d158; --amber:#ff9f0a;
+  :root { --blue:#0071e3; --signal:#2997ff; --cyan:#64d2ff; --green:#30d158; --amber:#ff9f0a; --red:#ff453a; --violet:#bf5af2;
     --sans:'SF Pro Display','Helvetica Neue',Helvetica,Arial,sans-serif; --mono:'SF Mono',Menlo,Consolas,monospace; }
   * { box-sizing:border-box; }
   html,body { margin:0; padding:0; }
   body { width:1200px; height:630px; overflow:hidden; color:#f5f5f7; font-family:var(--sans); position:relative; background:#000; }
   .aurora { position:absolute; inset:0;
-    background:radial-gradient(720px 460px at 80% 16%, rgba(41,151,255,.40), transparent 62%),
-               radial-gradient(600px 420px at 104% 98%, rgba(100,210,255,.20), transparent 60%),
+    background:radial-gradient(720px 460px at 80% 16%, rgba(41,151,255,.34), transparent 62%),
+               radial-gradient(600px 420px at 104% 98%, rgba(100,210,255,.16), transparent 60%),
                radial-gradient(520px 380px at 6% 110%, rgba(0,113,227,.28), transparent 60%); }
-  .grid { position:absolute; inset:0; opacity:.09;
-    background-image:linear-gradient(rgba(120,180,255,.9) 1px,transparent 1px),linear-gradient(90deg,rgba(120,180,255,.9) 1px,transparent 1px);
-    background-size:44px 44px; -webkit-mask-image:radial-gradient(900px 520px at 72% 42%, #000 18%, transparent 75%); }
-  .left { position:absolute; left:60px; top:52px; width:560px; z-index:3; }
+  .copy { position:absolute; left:60px; top:52px; width:560px; z-index:3; }
   .brand { display:flex; align-items:center; gap:12px; font-family:var(--mono); font-size:14px; letter-spacing:.18em; text-transform:uppercase; color:#a1a1a6; }
   .brand b { color:#fff; }
   .word { margin:20px 0 0; font-size:96px; line-height:.95; font-weight:800; letter-spacing:-.05em; white-space:nowrap;
     background:linear-gradient(92deg,#fff 0%,#e3f0ff 38%,var(--signal) 74%,var(--cyan) 100%); -webkit-background-clip:text; background-clip:text; color:transparent; padding-bottom:6px; }
   .tag { margin:14px 0 0; font-size:31px; line-height:1.15; font-weight:700; letter-spacing:-.02em; }
   .tag em { font-style:normal; color:var(--signal); }
-  .lede { margin:12px 0 0; font-size:18px; line-height:1.45; color:#b8b8bf; width:520px; }
+  .lede { margin:12px 0 0; font-size:18px; line-height:1.45; color:#b8b8bf; width:520px; text-shadow:0 1px 12px #000; }
   .stats { margin-top:24px; display:flex; gap:32px; }
   .stat b { display:block; font-size:34px; font-weight:800; letter-spacing:-.03em; color:#fff; }
   .stat span { font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#8e8e93; }
   .pill { position:absolute; left:60px; bottom:40px; display:flex; gap:10px; z-index:3; }
-  .pill span { font-family:var(--mono); font-size:13.5px; font-weight:700; padding:7px 13px; border-radius:18px; border:1.5px solid rgba(255,255,255,.2); color:#e5e5ea; background:rgba(255,255,255,.04); }
+  .pill span { font-family:var(--mono); font-size:13.5px; font-weight:700; padding:7px 13px; border-radius:18px; border:1.5px solid rgba(255,255,255,.2); color:#e5e5ea; background:rgba(0,0,0,.6); }
   .pill span.b { background:var(--blue); border-color:var(--blue); color:#fff; box-shadow:0 0 24px rgba(0,113,227,.55); }
-
-  .right { position:absolute; left:652px; top:96px; width:560px; z-index:2; }
-  .win { position:relative; width:560px; border-radius:16px; overflow:hidden; z-index:2;
-    background:linear-gradient(180deg, rgba(22,24,30,.94), rgba(10,11,14,.96));
-    box-shadow:0 50px 100px rgba(0,0,0,.75), 0 0 0 1px rgba(255,255,255,.14), 0 0 90px rgba(41,151,255,.22);
-    transform:perspective(1600px) rotateY(-14deg) rotateX(4deg); transform-origin:left center; }
-  .bar { height:34px; display:flex; align-items:center; gap:8px; padding:0 14px; background:rgba(255,255,255,.05); border-bottom:1px solid rgba(255,255,255,.07); }
-  .bar i { width:11px; height:11px; border-radius:50%; background:#ff5f57; } .bar i:nth-child(2){background:#febc2e} .bar i:nth-child(3){background:#28c840}
-  .bar em { margin-left:auto; margin-right:auto; font-style:normal; font-family:var(--mono); font-size:12px; color:#8e8e93; transform:translateX(-24px); }
-  .term { min-height:214px; padding:20px 22px 24px; font-family:var(--mono); font-size:15.5px; line-height:1.75; }
-  .l { white-space:pre; overflow:hidden; text-overflow:ellipsis; color:#f5f5f7; }
-  .l .p { color:var(--signal); font-weight:700; }
-  .l.out { color:#a1a1a6; }
-  .l.cm { color:#6e6e73; }
-  .l.ok { color:#d1f7dc; } .l.ok span { color:var(--green); font-weight:700; }
-  .l.warn { color:#ffe1b0; } .l.warn span { color:var(--amber); font-weight:700; }
-  .cur { display:inline-block; width:9px; height:18px; background:var(--signal); vertical-align:-3px; box-shadow:0 0 12px var(--signal); }
-  .chips { margin:34px 0 0 38px; width:480px; display:flex; flex-wrap:wrap; gap:10px; position:relative; z-index:3; }
-  .chips span { font-family:var(--mono); font-size:13px; font-weight:700; letter-spacing:.04em; padding:7px 12px; border-radius:14px;
-    color:#cfe6ff; background:rgba(10,20,35,.82); border:1px solid rgba(41,151,255,.45); box-shadow:0 0 18px rgba(41,151,255,.18); }
+  .art { position:absolute; left:520px; top:0; width:680px; height:630px; z-index:2; }
+  .art svg { display:block; }
+  #labels { position:absolute; inset:0; z-index:4; pointer-events:none; }
+  .lbl { position:absolute; font-family:var(--mono); font-size:12.5px; color:#a1a1a6; text-align:center; transform:translate(-50%,-50%); white-space:nowrap; }
+  .lbl b { display:block; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#e5e5ea; }
+  .lbl span { display:block; margin-top:3px; }
+  .lbl.box { padding:7px 12px; border-radius:12px; background:rgba(8,10,14,.85); border:1px solid rgba(255,255,255,.14); }
+  .lbl.chip { padding:6px 11px; border-radius:13px; font-size:12.5px; font-weight:700; color:#cfe6ff; background:rgba(10,20,35,.85); border:1px solid rgba(41,151,255,.5); box-shadow:0 0 16px rgba(41,151,255,.2); }
+  .lbl.left { transform:translate(0,-50%); text-align:left; }
+  .lbl.right { transform:translate(-100%,-50%); text-align:right; }
+  .ok { color:var(--green) !important; } .warn { color:var(--amber) !important; } .bad { color:var(--red) !important; } .sig { color:var(--signal) !important; } .cy { color:var(--cyan) !important; } .vi { color:var(--violet) !important; }
 </style>
 </head>
 <body>
 <div class="aurora"></div>
-<div class="grid"></div>
-<div class="left">
+<div class="art"><svg id="art" width="680" height="630" viewBox="0 0 680 630" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<div id="labels"></div>
+<div class="copy">
   <div class="brand"><svg viewBox="0 0 64 64" width="30" height="30" aria-hidden="true"><defs><linearGradient id="zb" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ff5a15"/><stop offset="1" stop-color="#cc420a"/></linearGradient></defs><rect width="64" height="64" rx="15" fill="url(#zb)"/><path d="M18.5,20.5 45.5,20.5 18.5,43.5 45.5,43.5" fill="none" stroke="#fff" stroke-width="8.3" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Zyvor</b><span>&middot;</span><span>Workload export control plane</span></div>
   <div class="word">Transiva</div>
   <div class="tag">Escape the renewal trap.<br><em>Export becomes a job.</em></div>
@@ -67,8 +56,120 @@
   <div class="stats"><div class="stat"><b>Go</b><span>control plane</span></div><div class="stat"><b>CLI</b><span>+ REST daemon</span></div><div class="stat"><b>AHV</b><span>+ vSphere export</span></div></div>
 </div>
 <div class="pill"><span class="b">github.com/zyvorai/zyvor-transiva</span><span>Apache-2.0</span></div>
-<div class="right"><div class="win"><div class="bar"><i></i><i></i><i></i><em>transiva</em></div>
-<div class="term"><div class="l"><span class="p">$</span> ./bin/hypervisord --config config.yaml</div><div class="l out">INFO  Loaded configuration from: config.yaml</div><div class="l out">INFO  Starting hypervisord daemon v0.0.1</div><div class="l out">INFO  API server will listen on: 0.0.0.0:8080</div><div class="l ok"><span>&#10003;</span> Daemon started successfully</div><div class="l"><span class="p">$</span> <i class="cur"></i></div></div></div>
-<div class="chips"><span>Go</span><span>VMware vSphere</span><span>Nutanix AHV</span><span>REST API</span><span>OpenAPI</span><span>h2kvm</span></div></div>
+<script>
+var Z = (function () {
+  var NS = 'http://www.w3.org/2000/svg', svg = document.getElementById('art'), labels = document.getElementById('labels');
+  var seed = 20261004;
+  function rnd() { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; }
+  function el(tag, a, parent) { var n = document.createElementNS(NS, tag); for (var k in a) n.setAttribute(k, a[k]); (parent || svg).appendChild(n); return n; }
+  function g(attrs) { return el('g', attrs || {}); }
+  function label(x, y, inner, cls, style) { var d = document.createElement('div'); d.className = 'lbl ' + (cls || ''); d.style.left = (520 + x) + 'px'; d.style.top = y + 'px'; if (style) d.setAttribute('style', d.getAttribute('style') + ';' + style); d.innerHTML = inner; labels.appendChild(d); return d; }
+  return { NS: NS, svg: svg, W: 680, H: 630, rnd: rnd, el: el, g: g, label: label,
+    reseed: function (s) { seed = s; },
+    c: { blue: '#0071e3', signal: '#2997ff', cyan: '#64d2ff', green: '#30d158', amber: '#ff9f0a', red: '#ff453a', violet: '#bf5af2', teal: '#40c8e0', indigo: '#5e5ce6', pink: '#ff375f', white: '#f5f5f7', grey: '#8e8e93' } };
+})();
+(function () {
+// Transiva: rail yard. Export freight trains from vSphere and Nutanix AHV run on curving lines that merge
+// at a junction into one track, arriving at the h2kvm station where artifact crates are handed over.
+var C = Z.c;
+var defs = Z.el('defs', {});
+defs.innerHTML = '<filter id="tv-gl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
+  '<filter id="tv-sf" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>' +
+  '<linearGradient id="tv-plat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a3b66"/><stop offset="1" stop-color="#0b1a30"/></linearGradient>' +
+  '<radialGradient id="tv-lamp"><stop offset="0" stop-color="#64d2ff" stop-opacity=".55"/><stop offset="1" stop-color="#64d2ff" stop-opacity="0"/></radialGradient>';
+
+var J = { x: 318, y: 352 }, ST = { x: 556, y: 352 };
+var lines = {
+  vs: 'M116,92 C214,92 214,352 ' + (J.x - 60) + ',' + J.y + ' L' + J.x + ',' + J.y,
+  ahv: 'M122,572 C220,572 220,352 ' + (J.x - 60) + ',' + J.y + ' L' + J.x + ',' + J.y,
+  main: 'M' + J.x + ',' + J.y + ' L660,' + J.y
+};
+
+// soft glow under the shared line
+Z.el('line', { x1: J.x, y1: J.y, x2: 660, y2: J.y, stroke: C.signal, 'stroke-width': 26, opacity: .12, filter: 'url(#tv-sf)' });
+
+function track(d, sleeperCol, railCol) {
+  var p = Z.el('path', { d: d, fill: 'none', stroke: 'none' }), L = p.getTotalLength();
+  var g = Z.g({});
+  for (var s = 6; s < L; s += 13) {
+    var a = p.getPointAtLength(s), b = p.getPointAtLength(Math.min(L, s + 1)), ang = Math.atan2(b.y - a.y, b.x - a.x), nx = -Math.sin(ang), ny = Math.cos(ang);
+    Z.el('line', { x1: a.x + nx * 12, y1: a.y + ny * 12, x2: a.x - nx * 12, y2: a.y - ny * 12, stroke: sleeperCol, 'stroke-width': 3, 'stroke-linecap': 'round' }, g);
+  }
+  [-6.5, 6.5].forEach(function (o) {
+    var d2 = '';
+    for (var s = 0; s <= L; s += 3) {
+      var a = p.getPointAtLength(s), b = p.getPointAtLength(Math.min(L, s + 1)), c0 = s + 1 > L ? p.getPointAtLength(s - 1) : a;
+      var ang = s + 1 > L ? Math.atan2(a.y - c0.y, a.x - c0.x) : Math.atan2(b.y - a.y, b.x - a.x);
+      d2 += (s ? 'L' : 'M') + (a.x - Math.sin(ang) * o).toFixed(1) + ',' + (a.y + Math.cos(ang) * o).toFixed(1);
+    }
+    Z.el('path', { d: d2, fill: 'none', stroke: railCol, 'stroke-width': 1.6 }, g);
+  });
+  return p;
+}
+var pVs = track(lines.vs, 'rgba(120,160,210,.22)', 'rgba(170,215,255,.7)');
+var pAhv = track(lines.ahv, 'rgba(120,160,210,.22)', 'rgba(170,215,255,.7)');
+var pMain = track(lines.main, 'rgba(120,160,210,.3)', 'rgba(200,230,255,.85)');
+
+// station platform and canopy
+Z.el('ellipse', { cx: ST.x, cy: ST.y - 50, rx: 150, ry: 80, fill: 'url(#tv-lamp)' });
+Z.el('rect', { x: ST.x - 92, y: ST.y - 74, width: 184, height: 46, rx: 5, fill: 'url(#tv-plat)', stroke: 'rgba(100,210,255,.6)', 'stroke-width': 1.2 });
+Z.el('line', { x1: ST.x - 88, y1: ST.y - 31, x2: ST.x + 88, y2: ST.y - 31, stroke: C.amber, 'stroke-width': 1, 'stroke-dasharray': '6 4', opacity: .6 });
+Z.el('path', { d: 'M' + (ST.x - 104) + ',' + (ST.y - 82) + ' L' + (ST.x + 104) + ',' + (ST.y - 82) + ' L' + (ST.x + 88) + ',' + (ST.y - 108) + ' L' + (ST.x - 88) + ',' + (ST.y - 108) + 'Z', fill: 'rgba(41,151,255,.22)', stroke: C.signal, 'stroke-width': 1.5, filter: 'url(#tv-gl)' });
+for (var c = -2; c <= 2; c++) Z.el('line', { x1: ST.x + c * 44, y1: ST.y - 82, x2: ST.x + c * 44, y2: ST.y - 74, stroke: C.signal, 'stroke-width': 1.4 });
+// buffer stop at end of the line
+Z.el('rect', { x: 654, y: J.y - 13, width: 5, height: 26, rx: 2, fill: C.signal, filter: 'url(#tv-gl)' });
+
+// junction signal
+Z.el('circle', { cx: J.x, cy: J.y, r: 18, fill: C.green, opacity: .18, filter: 'url(#tv-sf)' });
+Z.el('line', { x1: J.x + 4, y1: J.y - 16, x2: J.x + 4, y2: J.y - 38, stroke: 'rgba(200,220,255,.6)', 'stroke-width': 1.4 });
+Z.el('circle', { cx: J.x + 4, cy: J.y - 42, r: 4, fill: C.green, filter: 'url(#tv-gl)' });
+
+// freight cars: top-down wagons carrying artifact crates
+function car(p, t, col, crates) {
+  var L = p.getTotalLength(), a = p.getPointAtLength(L * t), b = p.getPointAtLength(Math.min(L, L * t + 1));
+  var ang = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+  var g = Z.g({ transform: 'translate(' + a.x.toFixed(1) + ',' + a.y.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')' });
+  Z.el('rect', { x: -24, y: -11, width: 48, height: 22, rx: 4, fill: col, opacity: .18, filter: 'url(#tv-sf)' }, g);
+  Z.el('rect', { x: -22, y: -10, width: 44, height: 20, rx: 3.5, fill: 'rgba(8,14,26,.96)', stroke: col, 'stroke-width': 1.6 }, g);
+  for (var i = 0; i < crates; i++) {
+    var cx = -14 + i * 14;
+    Z.el('rect', { x: cx - 5, y: -6, width: 10, height: 12, rx: 1.5, fill: col, opacity: .75 }, g);
+    Z.el('line', { x1: cx - 5, y1: 0, x2: cx + 5, y2: 0, stroke: 'rgba(6,10,18,.8)', 'stroke-width': 1 }, g);
+  }
+  return a;
+}
+function loco(p, t, col) {
+  var L = p.getTotalLength(), a = p.getPointAtLength(L * t), b = p.getPointAtLength(Math.min(L, L * t + 1));
+  var ang = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+  var g = Z.g({ transform: 'translate(' + a.x.toFixed(1) + ',' + a.y.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')', filter: 'url(#tv-gl)' });
+  Z.el('path', { d: 'M-20,-10 L12,-10 Q22,-10 22,0 Q22,10 12,10 L-20,10 Z', fill: 'rgba(8,14,26,.96)', stroke: col, 'stroke-width': 2 }, g);
+  Z.el('rect', { x: -14, y: -5, width: 16, height: 10, rx: 2, fill: col, opacity: .9 }, g);
+  Z.el('circle', { cx: 17, cy: 0, r: 2.6, fill: '#fff' }, g);
+  return a;
+}
+// vSphere train on the upper line, Nutanix AHV train on the lower line, both heading for the junction
+var cvs = C.signal, cahv = C.teal;
+loco(pVs, 0.62, cvs); car(pVs, 0.44, cvs, 3); car(pVs, 0.26, cvs, 3);
+loco(pAhv, 0.55, cahv); car(pAhv, 0.37, cahv, 3); car(pAhv, 0.19, cahv, 2);
+// arrived train at the station: crates lifted from each wagon onto the platform
+var w1 = car(pMain, 0.5, cvs, 2), w2 = car(pMain, 0.66, cahv, 2); loco(pMain, 0.82, C.cyan);
+[w1, w2].forEach(function (w, i) {
+  Z.el('line', { x1: w.x, y1: w.y - 14, x2: w.x, y2: ST.y - 48, stroke: C.cyan, 'stroke-width': 1.2, 'stroke-dasharray': '2 3', opacity: .85 });
+  var g = Z.g({ transform: 'translate(' + w.x.toFixed(1) + ',' + (ST.y - 52) + ')', filter: 'url(#tv-gl)' });
+  Z.el('rect', { x: -7, y: -7, width: 14, height: 14, rx: 2, fill: 'rgba(8,14,26,.96)', stroke: i ? C.teal : C.signal, 'stroke-width': 1.5 }, g);
+  Z.el('line', { x1: -7, y1: 0, x2: 7, y2: 0, stroke: i ? C.teal : C.signal, 'stroke-width': 1 }, g);
+});
+for (var k = 0; k < 3; k++) {
+  var g = Z.g({ transform: 'translate(' + (ST.x + 52 + k * 15) + ',' + (ST.y - 52) + ')' });
+  Z.el('rect', { x: -6, y: -6, width: 12, height: 12, rx: 2, fill: C.cyan, opacity: .55 - k * .12 }, g);
+}
+
+Z.label(ST.x, ST.y - 95, '<b style="letter-spacing:.12em">h2kvm</b>');
+Z.label(176, 62, '<span style="margin:0;color:#7fbfff">VMware vSphere</span>');
+Z.label(180, 602, '<span style="margin:0;color:#7fe0ee">Nutanix AHV</span>');
+Z.label(500, 430, '<b>one export job</b><span>source VM untouched</span>');
+Z.label(590, 54, 'REST &middot; CLI', 'chip');
+})();
+</script>
 </body>
 </html>
