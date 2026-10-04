@@ -1,19 +1,16 @@
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/social/transiva-share-card-dark.png">
-  <img src="docs/social/transiva-share-card.png" alt="Transiva — workload export control plane" width="820">
-</picture>
+<img src="docs/social/transiva-hero-dark.jpg" alt="Transiva - Escape the renewal trap. Export becomes a job." width="100%">
 
 # Transiva — Community Edition
 
 ### Enterprise workload mobility starts with honest offline export.
 
-Transiva Community Edition is a Go control plane that discovers, inventories, and orchestrates workload exports from VMware vSphere and Nutanix AHV, handing artifacts to [h2kvm](https://github.com/zyvorai/h2kvm) for conversion.<br>
+Transiva Community Edition is a Go control plane that discovers, inventories, and orchestrates workload exports from VMware vSphere and Nutanix AHV, handing artifacts to [h2kvm](https://github.com/zyvorai/zyvor-h2kvm) for conversion.<br>
 Fleet jobs run over REST and CLI — **Apache-2.0**, no guest agent, source VM untouched until cutover.
 
-[![CI](https://github.com/zyvorai/transiva/actions/workflows/ci.yml/badge.svg)](https://github.com/zyvorai/transiva/actions/workflows/ci.yml)
-[![Latest release](https://img.shields.io/github/v/tag/zyvorai/transiva?label=release&sort=semver&style=flat-square&color=0071e3&labelColor=1d1d1f)](https://github.com/zyvorai/transiva/tags)
+[![CI](https://github.com/zyvorai/zyvor-transiva/actions/workflows/ci.yml/badge.svg)](https://github.com/zyvorai/zyvor-transiva/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/tag/zyvorai/zyvor-transiva?label=release&sort=semver&style=flat-square&color=0071e3&labelColor=1d1d1f)](https://github.com/zyvorai/zyvor-transiva/tags)
 [![Go 1.27+](https://img.shields.io/badge/go-1.27+-0071e3?style=flat-square&labelColor=1d1d1f)](https://go.dev/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache_2.0-0071e3?style=flat-square&labelColor=1d1d1f)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -38,7 +35,7 @@ Every hypervisor renewal buries your VMs deeper in someone else’s proprietary 
   <img src="docs/social/migration-1200x630.png" alt="VMware to KubeVirt, four tools one path: Transiva exports, h2kvm converts and deploys, GuestKit assures, Zorvia operates, each with Community and Enterprise tiers." width="820">
 </picture>
 
-**Export with Transiva → convert with [h2kvm](https://github.com/zyvorai/h2kvm) → assure with [GuestKit](https://github.com/zyvorai/guestkit) → operate on [Zeus OS](https://zyvor.dev/zeus-os?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite) or the open-source [Zorvia](https://github.com/zyvorai/zorvia/blob/main/docs/leave-openshift.md).** Each is a separate tool; Zorvia's own importer is Experimental.
+**Export with Transiva → convert with [h2kvm](https://github.com/zyvorai/zyvor-h2kvm) → assure with [GuestKit](https://github.com/zyvorai/zyvor-guestkit) → operate on [Zeus OS](https://zyvor.dev/zeus-os?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite) or the open-source [Zorvia](https://github.com/zyvorai/zyvor-zorvia/blob/main/docs/leave-openshift.md).** Each is a separate tool; Zorvia's own importer is Experimental.
 
 </div>
 
@@ -88,7 +85,7 @@ Artifacts flow into h2kvm and GuestKit, then KVM, KubeVirt and Zeus OS.<br>
 ## 60-second quick start
 
 ```bash
-git clone https://github.com/zyvorai/transiva.git
+git clone https://github.com/zyvorai/zyvor-transiva.git
 cd transiva
 ./scripts/build.sh
 
@@ -105,7 +102,7 @@ Nutanix AHV, the daemon and REST API, and the binaries table are in **[docs/quic
 
 ## Where this fits: the Zyvor suite
 
-**transiva** (discover · export) → **[h2kvm](https://github.com/zyvorai/h2kvm)** (convert to QCOW2) → **[GuestKit](https://github.com/zyvorai/guestkit)** (inspect · repair) → KVM · libvirt · KubeVirt → **[Zeus OS](https://zyvor.dev/zeus-os?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite)** (day-2).
+**transiva** (discover · export) → **[h2kvm](https://github.com/zyvorai/zyvor-h2kvm)** (convert to QCOW2) → **[GuestKit](https://github.com/zyvorai/zyvor-guestkit)** (inspect · repair) → KVM · libvirt · KubeVirt → **[Zeus OS](https://zyvor.dev/zeus-os?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite)** (day-2).
 
 Methodology: **Discover → Assess → Convert → Deploy → Operate → Optimize.** This repo covers discover + export in CE. [Full hypervisor-exit route →](https://zyvor.dev/hypervisor-exit?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite) · The diagram and stage table: [docs/suite-fit.md](docs/suite-fit.md).
 
@@ -123,7 +120,7 @@ CE is free forever for labs — two sources, CLI, GitHub Issues. If you are movi
 | **Sources** | vSphere, Nutanix AHV | **10–11 providers** — Hyper-V, AWS, Azure, GCP, OCI, OpenStack, Proxmox, KubeVirt, … |
 | **Incremental** | Full exports only | **CBT** + smart fallback — windows that fit change freeze |
 | **Security** | Config-file credentials | Vault · **SSO/OIDC/SAML** · RBAC · audit · air-gap packs |
-| **Support** | [GitHub Issues](https://github.com/zyvorai/transiva/issues) | **SLA** · workshops · hypervisor-exit PS |
+| **Support** | [GitHub Issues](https://github.com/zyvorai/zyvor-transiva/issues) | **SLA** · workshops · hypervisor-exit PS |
 
 <a id="why-teams-upgrade"></a>**[Full feature matrix →](docs/ce-vs-enterprise.md)**
 
@@ -147,7 +144,7 @@ Transiva Community Edition is free and open source, maintained by **Susant Sahan
 | | |
 |---|---|
 | **Production / Platform** | [Book a demo](https://zyvor.dev/schedule?utm_source=github&utm_medium=transiva&utm_campaign=readme_footer) · [30-day PoC](https://zyvor.dev/poc?utm_source=github&utm_medium=transiva&utm_campaign=readme_footer) · [sales@zyvor.dev](mailto:sales@zyvor.dev) |
-| **Community** | [GitHub Issues](https://github.com/zyvorai/transiva/issues) |
+| **Community** | [GitHub Issues](https://github.com/zyvorai/zyvor-transiva/issues) |
 | **General** | [info@zyvor.dev](mailto:info@zyvor.dev) |
 
 <a id="related-open-source-repos"></a>Related repositories (h2kvm, guestkit, chimera, netevd), social assets and more: [docs/support-and-related.md](docs/support-and-related.md).
