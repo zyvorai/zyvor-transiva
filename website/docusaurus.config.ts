@@ -12,10 +12,10 @@ const config: Config = {
   },
 
   url: 'https://zyvorai.github.io',
-  baseUrl: '/transiva/',
+  baseUrl: '/zyvor-transiva/',
 
   organizationName: 'zyvorai',
-  projectName: 'transiva',
+  projectName: 'zyvor-transiva',
 
   onBrokenLinks: 'warn',
 
@@ -39,7 +39,7 @@ const config: Config = {
           path: '../docs',
           routeBasePath: 'docs',
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/zyvorai/transiva/tree/main/docs/',
+          editUrl: 'https://github.com/zyvorai/zyvor-transiva/tree/main/docs/',
         },
         blog: false,
         theme: {
@@ -51,7 +51,8 @@ const config: Config = {
 
   themeConfig: {
     colorMode: {
-      respectPrefersColorScheme: true,
+      defaultMode: 'dark',
+      respectPrefersColorScheme: false,
     },
     navbar: {
       hideOnScroll: false,
@@ -68,7 +69,7 @@ const config: Config = {
           label: 'Docs',
         },
         {
-          href: 'https://github.com/zyvorai/transiva',
+          href: 'https://github.com/zyvorai/zyvor-transiva',
           label: 'GitHub',
           position: 'right',
         },
@@ -88,10 +89,10 @@ const config: Config = {
         {
           title: 'Project',
           items: [
-            {label: 'GitHub', href: 'https://github.com/zyvorai/transiva'},
+            {label: 'GitHub', href: 'https://github.com/zyvorai/zyvor-transiva'},
             {
               label: 'License (Apache-2.0)',
-              href: 'https://github.com/zyvorai/transiva/blob/main/LICENSE',
+              href: 'https://github.com/zyvorai/zyvor-transiva/blob/main/LICENSE',
             },
           ],
         },

@@ -1,6 +1,6 @@
 # Transiva docs site
 
-Built with [Docusaurus](https://docusaurus.io/). Serves the live docs at https://zyvorai.github.io/transiva/.
+Built with [Docusaurus](https://docusaurus.io/). Serves the live docs at https://zyvorai.github.io/zyvor-transiva/.
 
 Points directly at the repo's existing `docs/` folder (`docusaurus.config.ts`'s `docs.path: '../docs'`) rather than a hand-curated copy.
 
