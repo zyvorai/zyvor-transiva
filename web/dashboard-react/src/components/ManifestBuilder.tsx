@@ -1,6 +1,8 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
 // SPDX-License-Identifier: Apache-2.0
 
+import { authenticatedFetch } from '../utils/session';
+
 import React, { useState } from 'react';
 import type { Manifest, ManifestPipeline } from '../types/metrics';
 
@@ -81,7 +83,7 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
 
   const validateManifest = async () => {
     try {
-      const response = await fetch(`${apiUrl}/api/workflow/manifest/validate`, {
+      const response = await authenticatedFetch(`${apiUrl}/api/workflow/manifest/validate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(manifest),
@@ -114,7 +116,7 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
     }
 
     try {
-      const response = await fetch(`${apiUrl}/api/workflow/manifest/submit`, {
+      const response = await authenticatedFetch(`${apiUrl}/api/workflow/manifest/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(manifest),
@@ -150,9 +152,9 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
   };
 
   const cardStyle: React.CSSProperties = {
-    backgroundColor: '#fff',
-    borderRadius: '4px',
-    border: '2px solid #e0e0e0',
+    backgroundColor: 'var(--surface)',
+    borderRadius: '12px',
+    border: '2px solid var(--line)',
     padding: '12px',
     marginBottom: '12px',
   };
@@ -167,37 +169,37 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
   const accentBarStyle: React.CSSProperties = {
     width: '2px',
     height: '14px',
-    backgroundColor: '#f0583a',
+    backgroundColor: '#0071e3',
   };
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '6px 8px',
-    fontSize: '10px',
-    border: '1px solid #e0e0e0',
-    borderRadius: '3px',
+    fontSize: '12px',
+    border: '1px solid var(--line)',
+    borderRadius: '12px',
     fontFamily: 'inherit',
   };
 
   const labelStyle: React.CSSProperties = {
     display: 'block',
-    fontSize: '9px',
+    fontSize: '12px',
     fontWeight: '600',
     marginBottom: '4px',
-    color: '#333',
+    color: 'var(--ink)',
   };
 
   const sectionStyle: React.CSSProperties = {
     marginBottom: '16px',
     paddingBottom: '16px',
-    borderBottom: '1px solid #e0e0e0',
+    borderBottom: '1px solid var(--line)',
   };
 
   const checkboxLabelStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
     gap: '6px',
-    fontSize: '10px',
+    fontSize: '12px',
     cursor: 'pointer',
   };
 
@@ -212,12 +214,12 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
             onClick={() => setActiveTab('form')}
             style={{
               padding: '4px 12px',
-              fontSize: '10px',
+              fontSize: '12px',
               fontWeight: '600',
-              borderRadius: '3px',
-              border: '1px solid #222324',
-              backgroundColor: activeTab === 'form' ? '#222324' : '#fff',
-              color: activeTab === 'form' ? '#fff' : '#222324',
+              borderRadius: '12px',
+              border: '1px solid var(--ink)',
+              backgroundColor: activeTab === 'form' ? 'var(--ink)' : 'var(--surface)',
+              color: activeTab === 'form' ? 'var(--surface)' : 'var(--ink)',
               cursor: 'pointer',
             }}
           >
@@ -227,12 +229,12 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
             onClick={() => setActiveTab('json')}
             style={{
               padding: '4px 12px',
-              fontSize: '10px',
+              fontSize: '12px',
               fontWeight: '600',
-              borderRadius: '3px',
-              border: '1px solid #222324',
-              backgroundColor: activeTab === 'json' ? '#222324' : '#fff',
-              color: activeTab === 'json' ? '#fff' : '#222324',
+              borderRadius: '12px',
+              border: '1px solid var(--ink)',
+              backgroundColor: activeTab === 'json' ? 'var(--ink)' : 'var(--surface)',
+              color: activeTab === 'json' ? 'var(--surface)' : 'var(--ink)',
               cursor: 'pointer',
             }}
           >
@@ -246,11 +248,11 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
         <div style={{ ...cardStyle, borderColor: '#dc3545', marginBottom: '12px' }}>
           <div style={{ ...headerStyle, marginBottom: '8px' }}>
             <div style={{ ...accentBarStyle, backgroundColor: '#dc3545' }} />
-            <h3 style={{ margin: 0, fontSize: '11px', fontWeight: '600', color: '#dc3545' }}>
+            <h3 style={{ margin: 0, fontSize: '12px', fontWeight: '600', color: '#dc3545' }}>
               Validation Errors
             </h3>
           </div>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '10px', color: '#dc3545' }}>
+          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px', color: '#dc3545' }}>
             {validationErrors.map((error, idx) => (
               <li key={idx}>{error}</li>
             ))}
@@ -261,14 +263,14 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
       {/* Submit Success */}
       {submitSuccess && (
         <div style={{ ...cardStyle, borderColor: '#28a745', marginBottom: '12px' }}>
-          <div style={{ fontSize: '10px', color: '#28a745' }}>{submitSuccess}</div>
+          <div style={{ fontSize: '12px', color: '#28a745' }}>{submitSuccess}</div>
         </div>
       )}
 
       {/* Submit Error */}
       {submitError && (
         <div style={{ ...cardStyle, borderColor: '#dc3545', marginBottom: '12px' }}>
-          <div style={{ fontSize: '10px', color: '#dc3545' }}>{submitError}</div>
+          <div style={{ fontSize: '12px', color: '#dc3545' }}>{submitError}</div>
         </div>
       )}
 
@@ -278,7 +280,7 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
           <div style={sectionStyle}>
             <div style={headerStyle}>
               <div style={accentBarStyle} />
-              <h3 style={{ margin: 0, fontSize: '11px', fontWeight: '600' }}>1. Source Configuration</h3>
+              <h3 style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>1. Source Configuration</h3>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -304,7 +306,7 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
                   type="text"
                   value={manifest.pipeline?.load.source_path || ''}
                   onChange={(e) => updatePipeline('load', 'source_path', e.target.value)}
-                  placeholder="/path/to/disk.vmdk"
+                  aria-label="/path/to/disk.vmdk" placeholder="/path/to/disk.vmdk"
                   style={inputStyle}
                 />
               </div>
@@ -315,7 +317,7 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
           <div style={sectionStyle}>
             <div style={headerStyle}>
               <div style={accentBarStyle} />
-              <h3 style={{ margin: 0, fontSize: '11px', fontWeight: '600' }}>2. Pipeline Stages</h3>
+              <h3 style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>2. Pipeline Stages</h3>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -352,7 +354,7 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
           <div style={sectionStyle}>
             <div style={headerStyle}>
               <div style={accentBarStyle} />
-              <h3 style={{ margin: 0, fontSize: '11px', fontWeight: '600' }}>3. Output Configuration</h3>
+              <h3 style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>3. Output Configuration</h3>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
@@ -376,7 +378,7 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
                   type="text"
                   value={manifest.pipeline?.convert.output_path || ''}
                   onChange={(e) => updatePipeline('convert', 'output_path', e.target.value)}
-                  placeholder="/path/to/output/"
+                  aria-label="/path/to/output/" placeholder="/path/to/output/"
                   style={inputStyle}
                 />
               </div>
@@ -398,11 +400,11 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
               onClick={validateManifest}
               style={{
                 padding: '8px 16px',
-                fontSize: '10px',
+                fontSize: '12px',
                 fontWeight: '600',
-                borderRadius: '3px',
-                border: '1px solid #222324',
-                backgroundColor: '#fff',
+                borderRadius: '12px',
+                border: '1px solid var(--ink)',
+                backgroundColor: 'var(--surface)',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
@@ -415,11 +417,11 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
               disabled={submitting}
               style={{
                 padding: '8px 16px',
-                fontSize: '10px',
+                fontSize: '12px',
                 fontWeight: '600',
-                borderRadius: '3px',
-                border: '1px solid #222324',
-                backgroundColor: '#f0583a',
+                borderRadius: '12px',
+                border: '1px solid var(--ink)',
+                backgroundColor: '#0071e3',
                 color: '#fff',
                 cursor: submitting ? 'not-allowed' : 'pointer',
                 opacity: submitting ? 0.6 : 1,
@@ -433,11 +435,11 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
               onClick={downloadManifest}
               style={{
                 padding: '8px 16px',
-                fontSize: '10px',
+                fontSize: '12px',
                 fontWeight: '600',
-                borderRadius: '3px',
-                border: '1px solid #222324',
-                backgroundColor: '#fff',
+                borderRadius: '12px',
+                border: '1px solid var(--ink)',
+                backgroundColor: 'var(--surface)',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
@@ -450,7 +452,7 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
         <div style={cardStyle}>
           <div style={headerStyle}>
             <div style={accentBarStyle} />
-            <h3 style={{ margin: 0, fontSize: '11px', fontWeight: '600' }}>Manifest JSON</h3>
+            <h3 style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>Manifest JSON</h3>
           </div>
 
           <textarea
@@ -467,10 +469,10 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
               width: '100%',
               minHeight: '400px',
               padding: '8px',
-              fontSize: '10px',
+              fontSize: '12px',
               fontFamily: 'monospace',
-              border: '1px solid #e0e0e0',
-              borderRadius: '3px',
+              border: '1px solid var(--line)',
+              borderRadius: '12px',
               resize: 'vertical',
             }}
           />
@@ -480,11 +482,11 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
               onClick={validateManifest}
               style={{
                 padding: '8px 16px',
-                fontSize: '10px',
+                fontSize: '12px',
                 fontWeight: '600',
-                borderRadius: '3px',
-                border: '1px solid #222324',
-                backgroundColor: '#fff',
+                borderRadius: '12px',
+                border: '1px solid var(--ink)',
+                backgroundColor: 'var(--surface)',
                 cursor: 'pointer',
               }}
             >
@@ -496,11 +498,11 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
               disabled={submitting}
               style={{
                 padding: '8px 16px',
-                fontSize: '10px',
+                fontSize: '12px',
                 fontWeight: '600',
-                borderRadius: '3px',
-                border: '1px solid #222324',
-                backgroundColor: '#f0583a',
+                borderRadius: '12px',
+                border: '1px solid var(--ink)',
+                backgroundColor: '#0071e3',
                 color: '#fff',
                 cursor: submitting ? 'not-allowed' : 'pointer',
                 opacity: submitting ? 0.6 : 1,
@@ -513,11 +515,11 @@ export const ManifestBuilder: React.FC<ManifestBuilderProps> = ({ apiUrl = '', o
               onClick={downloadManifest}
               style={{
                 padding: '8px 16px',
-                fontSize: '10px',
+                fontSize: '12px',
                 fontWeight: '600',
-                borderRadius: '3px',
-                border: '1px solid #222324',
-                backgroundColor: '#fff',
+                borderRadius: '12px',
+                border: '1px solid var(--ink)',
+                backgroundColor: 'var(--surface)',
                 cursor: 'pointer',
               }}
             >

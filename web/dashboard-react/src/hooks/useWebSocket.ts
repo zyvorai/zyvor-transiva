@@ -1,6 +1,8 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
 // SPDX-License-Identifier: Apache-2.0
 
+import { webSocketProtocols } from '../utils/session';
+
 import { useEffect, useState, useCallback, useRef } from 'react';
 import type { Metrics } from '../types/metrics';
 
@@ -34,7 +36,7 @@ export function useWebSocket({
 
   const connect = useCallback(() => {
     try {
-      const ws = new WebSocket(url);
+      const ws = new WebSocket(url, webSocketProtocols());
       wsRef.current = ws;
 
       ws.onopen = () => {

@@ -15,7 +15,7 @@ export const AlertsList: React.FC<AlertsListProps> = ({ alerts, onDismiss }) => 
     return (
       <div
         style={{
-          backgroundColor: '#fff',
+          backgroundColor: 'var(--surface)',
           borderRadius: '8px',
           padding: '20px',
           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
@@ -34,7 +34,7 @@ export const AlertsList: React.FC<AlertsListProps> = ({ alerts, onDismiss }) => 
         <div
           key={alert.id}
           style={{
-            backgroundColor: '#fff',
+            backgroundColor: 'var(--surface)',
             borderRadius: '8px',
             padding: '16px',
             boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
@@ -50,8 +50,8 @@ export const AlertsList: React.FC<AlertsListProps> = ({ alerts, onDismiss }) => 
                 style={{
                   display: 'inline-block',
                   padding: '2px 8px',
-                  borderRadius: '4px',
-                  fontSize: '11px',
+                  borderRadius: '12px',
+                  fontSize: '12px',
                   fontWeight: '600',
                   backgroundColor: getSeverityColor(alert.severity) + '20',
                   color: getSeverityColor(alert.severity),
@@ -59,14 +59,14 @@ export const AlertsList: React.FC<AlertsListProps> = ({ alerts, onDismiss }) => 
               >
                 {alert.severity}
               </span>
-              <span style={{ fontSize: '12px', color: '#6b7280' }}>
+              <span style={{ fontSize: '12px', color: 'var(--muted)' }}>
                 {formatRelativeTime(alert.timestamp)}
               </span>
             </div>
             <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>
               {alert.title}
             </div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>
+            <div style={{ fontSize: '14px', color: 'var(--muted)' }}>
               {alert.message}
             </div>
           </div>
@@ -76,10 +76,10 @@ export const AlertsList: React.FC<AlertsListProps> = ({ alerts, onDismiss }) => 
               style={{
                 padding: '4px 12px',
                 fontSize: '12px',
-                borderRadius: '4px',
-                border: '1px solid #d1d5db',
-                backgroundColor: '#fff',
-                color: '#6b7280',
+                borderRadius: '12px',
+                border: '1px solid var(--line)',
+                backgroundColor: 'var(--surface)',
+                color: 'var(--muted)',
                 cursor: 'pointer',
                 marginLeft: '16px',
               }}

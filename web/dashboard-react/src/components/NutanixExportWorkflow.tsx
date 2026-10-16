@@ -187,10 +187,10 @@ const NutanixExportWorkflow: React.FC = () => {
         <p style={styles.subtitle}>Discover VMs and export disks from NFS-mounted storage containers.</p>
         {error && <div style={styles.error}>{error}</div>}
         <form onSubmit={handleLogin} style={styles.form}>
-          <input style={styles.input} placeholder="Prism Central host *" value={config.server} onChange={(e) => setConfig({ ...config, server: e.target.value })} required />
-          <input style={styles.input} placeholder="Cluster filter (optional)" value={config.cluster} onChange={(e) => setConfig({ ...config, cluster: e.target.value })} />
-          <input style={styles.input} placeholder="Username *" value={config.username} onChange={(e) => setConfig({ ...config, username: e.target.value })} required />
-          <input style={styles.input} type="password" placeholder="Password *" value={config.password} onChange={(e) => setConfig({ ...config, password: e.target.value })} required />
+          <input style={styles.input} aria-label="Prism Central host" placeholder="Prism Central host *" value={config.server} onChange={(e) => setConfig({ ...config, server: e.target.value })} required />
+          <input style={styles.input} aria-label="Cluster filter (optional)" placeholder="Cluster filter (optional)" value={config.cluster} onChange={(e) => setConfig({ ...config, cluster: e.target.value })} />
+          <input style={styles.input} aria-label="Username" placeholder="Username *" value={config.username} onChange={(e) => setConfig({ ...config, username: e.target.value })} required />
+          <input style={styles.input} type="password" aria-label="Password" placeholder="Password *" value={config.password} onChange={(e) => setConfig({ ...config, password: e.target.value })} required />
           <label style={styles.checkbox}><input type="checkbox" checked={config.insecure} onChange={(e) => setConfig({ ...config, insecure: e.target.checked })} /> Allow insecure TLS</label>
           <label style={styles.checkbox}><input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} /> Remember credentials</label>
           <button style={styles.button} disabled={loading}>{loading ? 'Connecting...' : 'Discover VMs'}</button>
@@ -206,7 +206,7 @@ const NutanixExportWorkflow: React.FC = () => {
           <h2 style={styles.title}>Select VM ({filtered.length})</h2>
           <button style={styles.secondaryButton} onClick={() => setCurrentStep('login')}>Back</button>
         </div>
-        <input style={styles.input} placeholder="Search by name or UUID" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <input style={styles.input} aria-label="Search by name or UUID" placeholder="Search by name or UUID" value={search} onChange={(e) => setSearch(e.target.value)} />
         {error && <div style={styles.error}>{error}</div>}
         <div style={styles.tableWrap}>
           <table style={styles.table}>
@@ -255,15 +255,15 @@ const NutanixExportWorkflow: React.FC = () => {
       </div>
       {error && <div style={styles.error}>{error}</div>}
       <form onSubmit={handleExportSubmit} style={styles.form}>
-        <input style={styles.input} placeholder="Job name" value={exportOptions.jobName} onChange={(e) => setExportOptions({ ...exportOptions, jobName: e.target.value })} />
-        <input style={styles.input} placeholder="Output directory" value={exportOptions.outputDir} onChange={(e) => setExportOptions({ ...exportOptions, outputDir: e.target.value })} required />
+        <input style={styles.input} aria-label="Job name" placeholder="Job name" value={exportOptions.jobName} onChange={(e) => setExportOptions({ ...exportOptions, jobName: e.target.value })} />
+        <input style={styles.input} aria-label="Output directory" placeholder="Output directory" value={exportOptions.outputDir} onChange={(e) => setExportOptions({ ...exportOptions, outputDir: e.target.value })} required />
         <select style={styles.input} value={exportOptions.format} onChange={(e) => setExportOptions({ ...exportOptions, format: e.target.value })}>
           <option value="qcow2">qcow2</option>
           <option value="raw">raw</option>
         </select>
         <textarea
           style={{ ...styles.input, minHeight: '72px' }}
-          placeholder="Container mounts (container:/path,container2:/path2)"
+          aria-label="Container mounts (container:/path,container2:/path2)" placeholder="Container mounts (container:/path,container2:/path2)"
           value={exportOptions.mounts}
           onChange={(e) => setExportOptions({ ...exportOptions, mounts: e.target.value })}
           required
@@ -277,23 +277,23 @@ const NutanixExportWorkflow: React.FC = () => {
 };
 
 const styles: { [key: string]: React.CSSProperties } = {
-  card: { backgroundColor: '#fff', borderRadius: '8px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' },
+  card: { backgroundColor: 'var(--surface)', borderRadius: '8px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' },
   title: { margin: '0 0 8px', fontSize: '20px', fontWeight: 700 },
-  subtitle: { margin: '0 0 16px', color: '#6b7280' },
+  subtitle: { margin: '0 0 16px', color: 'var(--muted)' },
   form: { display: 'grid', gap: '12px' },
-  input: { padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '14px' },
-  button: { padding: '12px', backgroundColor: '#f0583a', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 700, cursor: 'pointer' },
-  secondaryButton: { padding: '8px 14px', backgroundColor: '#fff', border: '1px solid #d1d5db', borderRadius: '6px', cursor: 'pointer' },
-  smallButton: { padding: '6px 10px', backgroundColor: '#f0583a', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' },
+  input: { padding: '10px 12px', border: '1px solid var(--line)', borderRadius: '12px', fontSize: '14px' },
+  button: { padding: '12px', backgroundColor: '#0071e3', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' },
+  secondaryButton: { padding: '8px 14px', backgroundColor: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '12px', cursor: 'pointer' },
+  smallButton: { padding: '6px 10px', backgroundColor: '#0071e3', color: '#fff', border: 'none', borderRadius: '12px', cursor: 'pointer' },
   checkbox: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' },
-  error: { backgroundColor: '#fee2e2', color: '#991b1b', padding: '10px 12px', borderRadius: '6px', marginBottom: '12px' },
+  error: { backgroundColor: '#fee2e2', color: '#991b1b', padding: '10px 12px', borderRadius: '12px', marginBottom: '12px' },
   headerRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' },
   tableWrap: { overflowX: 'auto', marginTop: '12px' },
   table: { width: '100%', borderCollapse: 'collapse', fontSize: '13px' },
-  th: { textAlign: 'left', padding: '10px', borderBottom: '2px solid #e5e7eb', backgroundColor: '#f9fafb' },
+  th: { textAlign: 'left', padding: '10px', borderBottom: '2px solid var(--line)', backgroundColor: 'var(--bg)' },
   td: { padding: '10px', borderBottom: '1px solid #f3f4f6' },
   tdMono: { padding: '10px', borderBottom: '1px solid #f3f4f6', fontFamily: 'monospace', fontSize: '12px' },
-  selectedBox: { padding: '12px', backgroundColor: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '6px', marginBottom: '12px' },
+  selectedBox: { padding: '12px', backgroundColor: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '12px', marginBottom: '12px' },
 };
 
 export default NutanixExportWorkflow;

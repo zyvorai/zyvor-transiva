@@ -6,6 +6,7 @@ package api
 import (
 	"context"
 	"crypto/subtle"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -375,25 +376,25 @@ func (es *EnhancedServer) createUpgrader() websocket.Upgrader {
 
 // handleWebSocket handles WebSocket connections
 func (es *EnhancedServer) handleWebSocket(w http.ResponseWriter, r *http.Request) {
-	// Authentication check
+	// Browser clients use a login session in a WebSocket protocol header.
+	// Existing non-browser API-key clients remain supported.
 	if es.config.Security.EnableAuth {
-		// Validate server configuration
-		if es.config.Security.APIKey == "" {
-			es.logger.Error("authentication enabled but API key not configured")
-			http.Error(w, "server configuration error", http.StatusInternalServerError)
-			return
+		sessionValid := false
+		if token := webSocketSessionToken(r); token != "" {
+			_, err := es.authMgr.ValidateSession(token)
+			sessionValid = err == nil
 		}
-
-		apiKey := r.Header.Get("X-API-Key")
-		if apiKey == "" {
-			apiKey = r.URL.Query().Get("api_key")
-		}
-
-		// Use constant-time comparison to prevent timing attacks
-		if apiKey == "" || subtle.ConstantTimeCompare([]byte(apiKey), []byte(es.config.Security.APIKey)) != 1 {
-			es.logger.Warn("WebSocket connection rejected - invalid API key", "remote", r.RemoteAddr)
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
-			return
+		if !sessionValid {
+			apiKey := r.Header.Get("X-API-Key")
+			if apiKey == "" {
+				apiKey = r.URL.Query().Get("api_key")
+			}
+			configuredKey := es.config.Security.APIKey
+			if configuredKey == "" || apiKey == "" || subtle.ConstantTimeCompare([]byte(apiKey), []byte(configuredKey)) != 1 {
+				es.logger.Warn("WebSocket connection rejected", "remote", r.RemoteAddr)
+				http.Error(w, "unauthorized", http.StatusUnauthorized)
+				return
+			}
 		}
 	}
 
@@ -604,4 +605,19 @@ func (es *EnhancedServer) BroadcastScheduleEvent(event string, scheduleID string
 	data["event"] = event
 
 	es.wsHub.Broadcast("schedule_event", data)
+}
+
+// webSocketSessionToken decodes a session offered by the React dashboard.
+// It is a credential carrier only; callers must validate it before upgrading.
+func webSocketSessionToken(r *http.Request) string {
+	const prefix = "transiva-session."
+	for _, protocol := range websocket.Subprotocols(r) {
+		if strings.HasPrefix(protocol, prefix) {
+			decoded, err := base64.RawURLEncoding.DecodeString(strings.TrimPrefix(protocol, prefix))
+			if err == nil {
+				return string(decoded)
+			}
+		}
+	}
+	return ""
 }

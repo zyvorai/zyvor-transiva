@@ -1,516 +1,334 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { Header } from './Header';
-import { Hero } from './Hero';
-import { QuickLinks } from './QuickLinks';
-import { Footer } from './Footer';
-import { StatCard } from './StatCard';
-import { JobsTable } from './JobsTable';
-import { AlertsList } from './AlertsList';
-import { ChartContainer } from './ChartContainer';
-import ExportWorkflowRouter from './ExportWorkflowRouter';
-import { WorkflowDashboard } from './WorkflowDashboard';
-import { ManifestBuilder } from './ManifestBuilder';
-import { useWebSocket } from '../hooks/useWebSocket';
-import { useMetricsHistory } from '../hooks/useMetricsHistory';
-import { formatBytes, formatDuration, getStatusColor } from '../utils/formatters';
-import { cancelJob } from '../utils/api';
-
-interface DashboardProps {
-  onLogout?: () => void;
-}
-
-export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
-  const wsUrl = `ws://${window.location.host}/ws`;
-  const { data: metrics, connected, reconnecting, error } = useWebSocket({ url: wsUrl });
-  const { history, addMetrics } = useMetricsHistory(60); // Keep last 60 data points
-  const [showJobForm, setShowJobForm] = useState(false);
-
+import { useEffect, useState } from "react";
+import {
+  ArrowUpRight,
+  Activity,
+  CheckCircle2,
+  Clock3,
+  CircleAlert,
+} from "lucide-react";
+import { JobsTable } from "./JobsTable";
+import { AlertsList } from "./AlertsList";
+import { ChartContainer } from "./ChartContainer";
+import { MigrationGraphic } from "./MigrationGraphic";
+import { TerminalPanel } from "./TerminalPanel";
+import { useWebSocket } from "../hooks/useWebSocket";
+import { useMetricsHistory } from "../hooks/useMetricsHistory";
+import { cancelJob } from "../utils/api";
+import { formatBytes } from "../utils/formatters";
+export function Dashboard({
+  jobsOnly = false,
+  onNavigate,
+}: {
+  jobsOnly?: boolean;
+  onNavigate: (view: "export" | "jobs" | "providers" | "manifest") => void;
+}) {
+  const { data: metrics, connected } = useWebSocket({
+    url: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`,
+  });
+  const { history, addMetrics } = useMetricsHistory(60);
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("all");
+  const [error, setError] = useState("");
   useEffect(() => {
-    if (metrics) {
-      addMetrics(metrics);
-    }
+    if (metrics) addMetrics(metrics);
   }, [metrics, addMetrics]);
-
-  const handleCancelJob = async (jobId: string) => {
-    try {
-      await cancelJob(jobId);
-    } catch (err) {
-      console.error('Failed to cancel job:', err);
-      alert('Failed to cancel job');
-    }
-  };
-
-  // Job submission is now handled by VSphereExportWorkflow component
-
-  const jobsChartData = useMemo(() => {
-    return history.map((m) => ({
-      timestamp: m.timestamp,
-      Active: m.jobs_active,
-      Completed: m.jobs_completed,
-      Failed: m.jobs_failed,
-      Pending: m.jobs_pending,
-    }));
-  }, [history]);
-
-  const resourceChartData = useMemo(() => {
-    return history.map((m) => ({
-      timestamp: m.timestamp,
-      'Memory (MB)': Math.round(m.memory_usage / 1024 / 1024),
-      'CPU (%)': m.cpu_usage,
-      Goroutines: m.goroutines,
-    }));
-  }, [history]);
-
-  const providerChartData = useMemo(() => {
-    if (!metrics?.provider_stats) return [];
-
-    return Object.entries(metrics.provider_stats).map(([name, stats]) => ({
-      name,
-      value: stats.jobs_total,
-      completed: stats.jobs_completed,
-      failed: stats.jobs_failed,
-    }));
-  }, [metrics?.provider_stats]);
-
-  // Show dashboard even if WebSocket fails - just display a warning banner
-  const hasConnectionIssue = error || (!metrics && !connected && !reconnecting);
-
-  const quickLinks = [
+  const jobs = (metrics?.recent_jobs || []).filter(
+    (j) =>
+      (status === "all" || j.status === status) &&
+      `${j.name} ${j.vm_name} ${j.id}`
+        .toLowerCase()
+        .includes(query.toLowerCase()),
+  );
+  const stats = [
     {
-      title: 'My Jobs',
-      description: 'View and manage all your export jobs',
-      icon: '●',
-      href: '#jobs',
-      onClick: () => {},
+      name: "Active exports",
+      value: metrics?.jobs_active,
+      icon: Activity,
+      tone: "blue",
     },
     {
-      title: 'New Export',
-      description: 'Start a new VM export job',
-      icon: '◈',
-      href: '#new-export',
-      onClick: () => setShowJobForm(true),
+      name: "Completed",
+      value: metrics?.jobs_completed,
+      icon: CheckCircle2,
+      tone: "green",
     },
     {
-      title: 'Job Status',
-      description: 'Check the status of running jobs',
-      icon: '◷',
-      href: '#status',
-      onClick: () => {},
+      name: "In the queue",
+      value: metrics?.jobs_pending,
+      icon: Clock3,
+      tone: "purple",
     },
     {
-      title: 'Providers',
-      description: 'Manage cloud provider connections',
-      icon: '▣',
-      href: '#providers',
-      onClick: () => {},
+      name: "Needs attention",
+      value: metrics?.jobs_failed,
+      icon: CircleAlert,
+      tone: "orange",
     },
   ];
-
   return (
-    <div style={{ backgroundColor: '#f0f2f7', minHeight: '100vh' }}>
-      <Header onLogout={onLogout} />
-
-      <Hero
-        title="Multi-cloud VM migration"
-        subtitle="Seamlessly migrate and export virtual machines across vSphere, AWS, Azure, GCP, Hyper-V, and more"
-        onNewJob={() => setShowJobForm(true)}
-      />
-
-      {/* Connection Status Bar */}
-      {hasConnectionIssue && (
-        <div style={{
-          backgroundColor: '#fee2e2',
-          borderBottom: '2px solid #ef4444',
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-            padding: '16px 24px',
-            textAlign: 'center',
-          }}>
-            <div style={{
-              fontSize: '14px',
-              fontWeight: '600',
-              color: '#991b1b',
-            }}>
-              ⚠️ WebSocket Connection Failed - Real-time updates unavailable. The dashboard is running in demo mode.
-            </div>
-            {error && (
-              <div style={{
-                fontSize: '12px',
-                color: '#991b1b',
-                marginTop: '4px',
-                opacity: 0.8,
-              }}>
-                Error: {error.message}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {connected && (
-        <div style={{
-          backgroundColor: '#10b98120',
-          borderBottom: '2px solid #10b981',
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-            padding: '12px 24px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span
-                style={{
-                  width: '10px',
-                  height: '10px',
-                  borderRadius: '50%',
-                  backgroundColor: '#10b981',
-                }}
-              />
-              <span style={{
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#10b981',
-              }}>
-                Connected
-              </span>
-            </div>
-            {metrics && (
-              <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>
-                Uptime: {formatDuration(metrics.uptime_seconds)}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      <QuickLinks links={quickLinks} />
-
-      {/* Job Submission Form */}
-      {showJobForm && (
-        <div style={{
-          backgroundColor: '#f0f2f7',
-          padding: '24px 16px',
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-          }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '24px',
-            }}>
-              <h2 style={{
-                margin: 0,
-                fontSize: '18px',
-                fontWeight: '600',
-                color: '#000',
-              }}>
-                New export job
+    <div className="overview">
+      <div
+        className={`connection-pill ${connected ? "online" : ""}`}
+        role="status"
+      >
+        <i />
+        {connected ? "Live connection" : "Waiting for the metrics connection"}
+        {metrics && (
+          <span>
+            Last update: {new Date(metrics.timestamp).toLocaleTimeString()}
+          </span>
+        )}
+      </div>
+      {!jobsOnly && (
+        <>
+          <section className="migration-banner">
+            <div>
+              <p className="eyebrow">INFRASTRUCTURE, IN MOTION</p>
+              <h2>
+                New possibilities.
+                <br />
+                <span>Same virtual machines.</span>
               </h2>
+              <p>
+                Discover, export, and prepare your workloads
+                <br />
+                for the infrastructure you choose.
+              </p>
               <button
-                onClick={() => setShowJobForm(false)}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: 'transparent',
-                  color: '#222324',
-                  border: '2px solid #222324',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.25s cubic-bezier(0.215, 0.61, 0.355, 1)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#f0583a';
-                  e.currentTarget.style.color = '#f0583a';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#222324';
-                  e.currentTarget.style.color = '#222324';
-                }}
+                className="text-link"
+                onClick={() => onNavigate("export")}
               >
-                Close
+                Start your next move <ArrowUpRight size={16} />
               </button>
             </div>
-            <ExportWorkflowRouter />
+            <MigrationGraphic />
+          </section>
+          <div className="metric-grid">
+            {stats.map((s) => (
+              <section className={`metric-card ${s.tone}`} key={s.name}>
+                <s.icon size={21} />
+                <span>{s.name}</span>
+                <b>{s.value ?? "—"}</b>
+                <small>
+                  {metrics ? "Reported by daemon" : "Awaiting live data"}
+                </small>
+              </section>
+            ))}
           </div>
-        </div>
-      )}
-
-      {/* Alerts */}
-      {metrics?.alerts && metrics.alerts.length > 0 && (
-        <div style={{
-          backgroundColor: '#f0f2f7',
-          padding: '24px',
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-          }}>
-            <AlertsList alerts={metrics.alerts} />
-          </div>
-        </div>
-      )}
-
-      {/* Stats Grid - Show demo data if no metrics */}
-      {(metrics || hasConnectionIssue) && (
-        <div style={{
-          backgroundColor: '#f0f2f7',
-          padding: '24px 16px',
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-          }}>
-            <h2 style={{
-              margin: '0 0 10px 0',
-              fontSize: '18px',
-              fontWeight: '600',
-              color: '#000',
-            }}>
-              System overview
-            </h2>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                gap: '8px',
-                marginBottom: '24px',
-              }}
-            >
-          <StatCard
-            title="Active Jobs"
-            value={metrics?.jobs_active ?? 0}
-            icon="●"
-            color="#f0583a"
-          />
-          <StatCard
-            title="Completed Jobs"
-            value={metrics?.jobs_completed ?? 0}
-            icon="✓"
-            color="#10b981"
-          />
-          <StatCard
-            title="Failed Jobs"
-            value={metrics?.jobs_failed ?? 0}
-            icon="✕"
-            color="#ef4444"
-          />
-          <StatCard
-            title="Queue Length"
-            value={metrics?.queue_length ?? 0}
-            subtitle={`${metrics?.jobs_pending ?? 0} pending`}
-            icon="◷"
-            color="#222324"
-          />
-          <StatCard
-            title="Memory Usage"
-            value={metrics ? formatBytes(metrics.memory_usage) : '0 B'}
-            icon="▣"
-            color="#222324"
-          />
-          <StatCard
-            title="WebSocket Clients"
-            value={metrics?.websocket_clients ?? 0}
-            icon="◈"
-            color="#f0583a"
-          />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Charts Row 1 */}
-      <div style={{
-        backgroundColor: '#f0f2f7',
-        padding: '48px 24px',
-      }}>
-        <div style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-        }}>
-          <h2 style={{
-            margin: '0 0 20px 0',
-            fontSize: '18px',
-            fontWeight: '600',
-            color: '#000',
-          }}>
-            Performance metrics
-          </h2>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-              gap: '16px',
-              marginBottom: '24px',
-            }}
-          >
-        <ChartContainer
-          title="Job Activity Over Time"
-          type="line"
-          data={jobsChartData}
-          dataKeys={['Active', 'Completed', 'Failed', 'Pending']}
-          colors={['#3b82f6', '#10b981', '#ef4444', '#f59e0b']}
-        />
-        <ChartContainer
-          title="System Resources"
-          type="line"
-          data={resourceChartData}
-          dataKeys={['Memory (MB)', 'CPU (%)', 'Goroutines']}
-          colors={['#8b5cf6', '#ec4899', '#14b8a6']}
-        />
-          </div>
-        </div>
-      </div>
-
-      {/* Charts Row 2 */}
-      {providerChartData.length > 0 && (
-        <div style={{
-          backgroundColor: '#f0f2f7',
-          padding: '24px 16px',
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-          }}>
-            <ChartContainer
-              title="Jobs by Provider"
-              type="pie"
-              data={providerChartData}
+          <div className="insight-grid">
+            <section className="panel chart-panel">
+              <div className="panel-heading">
+                <div>
+                  <p className="eyebrow">MIGRATION ACTIVITY</p>
+                  <h2>A little perspective.</h2>
+                </div>
+                <span>Last 60 samples</span>
+              </div>
+              {history.length > 1 ? (
+                <ChartContainer
+                  title="Jobs over time"
+                  type="line"
+                  dataKeys={["Active", "Completed", "Failed"]}
+                  colors={["#3887ed", "#32a87b", "#d96774"]}
+                  data={history.map((m) => ({
+                    timestamp: m.timestamp,
+                    Active: m.jobs_active,
+                    Completed: m.jobs_completed,
+                    Failed: m.jobs_failed,
+                  }))}
+                />
+              ) : (
+                <div className="chart-empty">
+                  <Activity size={34} />
+                  <b>Your activity will take shape here.</b>
+                  <p>Live charts begin after two metrics samples arrive.</p>
+                </div>
+              )}
+            </section>
+            <TerminalPanel
+              title="transiva — connection status"
+              lines={[
+                {
+                  label: "stream",
+                  value: connected ? "Connected to /ws" : "Waiting for /ws",
+                  tone: connected ? "good" : "warn",
+                },
+                {
+                  label: "health",
+                  value: metrics?.system_health || "Not reported",
+                  tone: metrics?.system_health === "healthy" ? "good" : "info",
+                },
+                {
+                  label: "active",
+                  value: metrics ? String(metrics.jobs_active) : "Not reported",
+                },
+                {
+                  label: "updated",
+                  value: metrics
+                    ? new Date(metrics.timestamp).toLocaleTimeString()
+                    : "No metrics received",
+                },
+              ]}
             />
           </div>
-        </div>
-      )}
-
-      {/* Jobs Table */}
-      {metrics?.recent_jobs && (
-        <div style={{
-          backgroundColor: '#f0f2f7',
-          padding: '24px 16px',
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-          }}>
-            <h2 style={{
-              margin: '0 0 10px 0',
-              fontSize: '20px',
-              fontWeight: '600',
-              color: '#000',
-            }}>
-              Recent jobs
-            </h2>
-            <JobsTable jobs={metrics.recent_jobs} onCancelJob={handleCancelJob} />
+          <section className="system-summary" aria-label="Daemon resources">
+            {[
+              {
+                label: "CPU usage",
+                value:
+                  metrics?.cpu_usage == null
+                    ? "—"
+                    : `${metrics.cpu_usage.toFixed(1)}%`,
+              },
+              {
+                label: "Memory",
+                value:
+                  metrics?.memory_usage == null
+                    ? "—"
+                    : formatBytes(metrics.memory_usage),
+              },
+              {
+                label: "HTTP requests",
+                value:
+                  metrics?.http_requests == null
+                    ? "—"
+                    : metrics.http_requests.toLocaleString(),
+              },
+              {
+                label: "Average response",
+                value:
+                  metrics?.avg_response_time == null
+                    ? "—"
+                    : `${metrics.avg_response_time.toFixed(1)} ms`,
+              },
+            ].map((item) => (
+              <div key={item.label}>
+                <span>{item.label}</span>
+                <b>{item.value}</b>
+              </div>
+            ))}
+          </section>
+          <div className="action-grid">
+            {[
+              {
+                title: "Connect a provider",
+                text: "Bring your source infrastructure into view.",
+                view: "providers" as const,
+              },
+              {
+                title: "Create a manifest",
+                text: "Give your artifacts a portable identity.",
+                view: "manifest" as const,
+              },
+            ].map((a) => (
+              <button
+                className="action-card"
+                key={a.title}
+                onClick={() => onNavigate(a.view)}
+              >
+                <span>
+                  <b>{a.title}</b>
+                  <small>{a.text}</small>
+                </span>
+                <ArrowUpRight size={22} />
+              </button>
+            ))}
           </div>
-        </div>
+          {metrics?.alerts?.length ? (
+            <AlertsList alerts={metrics.alerts} />
+          ) : null}
+        </>
       )}
-
-      {/* Workflow Daemon Integration */}
-      <div style={{
-        backgroundColor: '#f0f2f7',
-        padding: '24px 16px',
-      }}>
-        <div style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-        }}>
-          <WorkflowDashboard />
+      <section className="panel jobs-panel">
+        <div className="panel-heading">
+          <div>
+            <p className="eyebrow">YOUR OPERATIONS</p>
+            <h2>{jobsOnly ? "Export jobs" : "Recent moves"}</h2>
+          </div>
+          {!jobsOnly && (
+            <button className="text-link" onClick={() => onNavigate("jobs")}>
+              All jobs <ArrowUpRight size={15} />
+            </button>
+          )}
         </div>
-      </div>
-
-      {/* Manifest Builder */}
-      <div style={{
-        backgroundColor: '#f0f2f7',
-        padding: '24px 16px',
-      }}>
-        <div style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-        }}>
-          <ManifestBuilder onSubmitSuccess={(jobId) => {
-            console.log('Manifest submitted:', jobId);
-            // Could trigger a refresh of workflow status here
-          }} />
+        <div className="jobs-toolbar">
+          <input
+            aria-label="Search jobs"
+            placeholder="Search by name or job ID"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <select
+            aria-label="Filter jobs by status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            {[
+              "all",
+              "pending",
+              "running",
+              "completed",
+              "failed",
+              "cancelled",
+            ].map((s) => (
+              <option key={s} value={s}>
+                {s === "all" ? "All statuses" : s}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
-
-      {/* System Info */}
-      {metrics && (
-        <div style={{
-          backgroundColor: '#f0f2f7',
-          padding: '24px 16px',
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-          }}>
-            <h2 style={{
-              margin: '0 0 10px 0',
-              fontSize: '18px',
-              fontWeight: '600',
-              color: '#000',
-            }}>
-              System health
-            </h2>
-            <div
-              style={{
-                backgroundColor: '#fff',
-                borderRadius: '3px',
-                padding: '12px',
-                border: '1px solid #e0e0e0',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                gap: '12px',
+        {error && (
+          <p role="alert" className="notice error">
+            {error}
+          </p>
+        )}
+        <div className="table-scroll">
+          {jobs.length ? (
+            <JobsTable
+              showFilter={false}
+              jobs={jobs}
+              onCancelJob={async (id) => {
+                setError("");
+                try {
+                  await cancelJob(id);
+                } catch {
+                  setError("Could not cancel this job. Please try again.");
+                }
               }}
-            >
-          <div>
-            <div style={{ fontSize: '9px', color: '#6b7280', marginBottom: '3px' }}>
-              system health
+            />
+          ) : (
+            <div className="empty-state">
+              <BoxIcon />
+              <h3>
+                {query || status !== "all"
+                  ? "No matching jobs."
+                  : metrics
+                    ? "Your next move starts here."
+                    : "Waiting for your operations."}
+              </h3>
+              <p>
+                {query || status !== "all"
+                  ? "Try another name or status."
+                  : metrics
+                    ? "Start an export to see its progress here."
+                    : "Jobs appear when the daemon sends metrics."}
+              </p>
+              <button
+                className="text-link"
+                onClick={() => onNavigate("export")}
+              >
+                Create an export <ArrowUpRight size={16} />
+              </button>
             </div>
-            <div style={{ fontSize: '12px', fontWeight: '600', color: getStatusColor(metrics.system_health) }}>
-              {metrics.system_health}
-            </div>
-          </div>
-          <div>
-            <div style={{ fontSize: '9px', color: '#6b7280', marginBottom: '3px' }}>
-              HTTP Requests
-            </div>
-            <div style={{ fontSize: '12px', fontWeight: '600' }}>
-              {metrics.http_requests.toLocaleString()}
-            </div>
-          </div>
-          <div>
-            <div style={{ fontSize: '9px', color: '#6b7280', marginBottom: '3px' }}>
-              HTTP Errors
-            </div>
-            <div style={{ fontSize: '12px', fontWeight: '600', color: metrics.http_errors > 0 ? '#ef4444' : '#10b981' }}>
-              {metrics.http_errors.toLocaleString()}
-            </div>
-          </div>
-          <div>
-            <div style={{ fontSize: '9px', color: '#6b7280', marginBottom: '3px' }}>
-              Avg Response Time
-            </div>
-            <div style={{ fontSize: '12px', fontWeight: '600' }}>
-              {metrics.avg_response_time.toFixed(2)}ms
-            </div>
-          </div>
-            </div>
-          </div>
+          )}
         </div>
-      )}
-
-      <Footer />
+      </section>
     </div>
   );
-};
+}
+function BoxIcon() {
+  return <ArrowUpRight size={30} className="empty-icon" />;
+}

@@ -1,12 +1,14 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
 // SPDX-License-Identifier: Apache-2.0
 
+import { authenticatedFetch } from './session';
+
 // API utility functions for HyperSDK
 
 const API_BASE = ''; // No /api prefix - endpoints already include it
 
 export async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
+  const response = await authenticatedFetch(`${API_BASE}${endpoint}`, {
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
@@ -73,7 +75,7 @@ export async function listNutanixVMs(conn: NutanixConnection) {
   });
   if (conn.cluster) params.set('cluster', conn.cluster);
 
-  const response = await fetch(`/vms/list?${params.toString()}`, { method: 'GET' });
+  const response = await authenticatedFetch(`/vms/list?${params.toString()}`, { method: 'GET' });
   if (!response.ok) {
     const text = await response.text();
     throw new Error(text || `Failed to list Nutanix VMs (${response.status})`);
@@ -92,7 +94,7 @@ export async function getNutanixVMInfo(conn: NutanixConnection, vm: string) {
   });
   if (conn.cluster) params.set('cluster', conn.cluster);
 
-  const response = await fetch(`/vms/info?${params.toString()}`, { method: 'GET' });
+  const response = await authenticatedFetch(`/vms/info?${params.toString()}`, { method: 'GET' });
   if (!response.ok) {
     const text = await response.text();
     throw new Error(text || `Failed to get VM info (${response.status})`);
@@ -108,7 +110,7 @@ export async function submitNutanixExportJob(jobDefinition: unknown) {
 }
 
 export async function exportNutanixVMSync(body: unknown) {
-  const response = await fetch('/vms/export?provider=nutanix', {
+  const response = await authenticatedFetch('/vms/export?provider=nutanix', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
