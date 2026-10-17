@@ -5,7 +5,7 @@
 #   -> hyperexport -> h2kvmctl -> boot on libvirt -> (optional) boot on KubeVirt
 #
 # Usage:  ./scripts/e2e-nutanix-exit.sh [user@host]     # no host = run locally
-# Env:    DISK_URL (default: newest Alpine tiny cloud image), CHIMERA_PORT (8990), WORK (~/migration-e2e)
+# Env:    H2KVMCTL (path to h2kvmctl), DISK_URL (default: Ubuntu 24.04 cloud image), MEM_MB (2048), CHIMERA_PORT (8990), WORK (~/migration-e2e)
 # Needs:  chimera-nutanix.service (see chimera repo), hyperexport, h2kvmctl, virsh, qemu-img, sudo.
 set -euo pipefail
 
@@ -17,7 +17,9 @@ WORK=${WORK:-$HOME/migration-e2e}
 PORT=${CHIMERA_PORT:-8990}
 VM=${VM_NAME:-chimera-vm-01}
 DOM=nutanix-e2e-$VM
-BASE=https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/cloud
+DEFAULT_DISK_URL=https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+MEM_MB=${MEM_MB:-2048}
+H2KVMCTL=${H2KVMCTL:-h2kvmctl}
 ENVF=/etc/chimera/chimera-nutanix.env
 mkdir -p "$WORK"
 
@@ -37,19 +39,16 @@ summary() {
 need()  { command -v "$1" >/dev/null || bad "missing tool: $1"; }
 
 stage "preflight"
-for t in curl qemu-img virsh hyperexport h2kvmctl sudo; do need $t; done
+for t in curl qemu-img virsh hyperexport "$H2KVMCTL" sudo; do need "$t"; done
+echo "h2kvmctl: $("$H2KVMCTL" --version 2>&1 | head -1)"
 [[ -r $ENVF ]] || sudo test -r $ENVF || bad "$ENVF not found (install chimera-nutanix.service)"
 ok
 
 stage "download Nutanix-style Linux disk"
-if [[ -z ${DISK_URL:-} ]]; then
-  NAME=$(curl -fsS -m 30 "$BASE/" | grep -o 'alpine-[0-9.]*-x86_64-tiny-r[0-9]*\.qcow2' | sort -uV | tail -1)
-  [[ -n $NAME ]] || bad "could not resolve an Alpine image name"
-  DISK_URL=$BASE/$NAME
-fi
-IMG=$WORK/ahv-disk.qcow2
+DISK_URL=${DISK_URL:-$DEFAULT_DISK_URL}
+IMG=$WORK/disk-${DISK_URL##*/}
 if [[ ! -s $IMG ]]; then
-  curl -fsSL -m 600 -o "$IMG.part" "$DISK_URL" || bad "download failed: $DISK_URL"
+  curl -fsSL -m 1800 -o "$IMG.part" "$DISK_URL" || bad "download failed: $DISK_URL"
   mv -f "$IMG.part" "$IMG"
 fi
 qemu-img check "$IMG" >/dev/null || bad "downloaded image is not a valid disk"
@@ -85,7 +84,7 @@ ok
 
 stage "convert with h2kvm"
 CONV=$WORK/converted; sudo rm -rf "$CONV"; mkdir -p "$CONV"
-sudo h2kvmctl --cmd local --vmdk "$QCOW" --output-dir "$CONV" --out-format qcow2 --flatten \
+sudo "$H2KVMCTL" --cmd local --vmdk "$QCOW" --output-dir "$CONV" --out-format qcow2 --flatten \
   --fstab-mode stabilize-all --regen-initramfs --emit-domain-xml --checksum \
   --report "$CONV/report.json" >"$WORK/h2kvm.log" 2>&1 || { tail -20 "$WORK/h2kvm.log"; bad "h2kvmctl failed"; }
 CQ=$(find "$CONV" -name '*.qcow2' | head -1); [[ -n $CQ ]] || bad "h2kvm produced no qcow2"
@@ -94,12 +93,24 @@ ok
 
 stage "boot on libvirt/KVM"
 sudo virsh destroy "$DOM" >/dev/null 2>&1 || true; sudo virsh undefine "$DOM" --nvram >/dev/null 2>&1 || true
-sudo cp "$CQ" /var/lib/libvirt/images/$DOM.qcow2
-sudo virt-install --name "$DOM" --memory 512 --vcpus 1 --import --noautoconsole --osinfo detect=on,require=off \
-  --disk /var/lib/libvirt/images/$DOM.qcow2 --network network=default --graphics vnc >/dev/null 2>&1 \
-  || bad "virt-install failed"
+DEST=/var/lib/libvirt/images/$DOM.qcow2
+sudo cp "$CQ" "$DEST"
+XML=$(find "$CONV" -name '*.xml' | head -1)
+if [[ -n $XML ]]; then
+  # Boot with the domain definition h2kvm emitted (firmware, NIC model, graphics), retargeted to our copy.
+  sed -e "s|<name>[^<]*</name>|<name>$DOM</name>|" \
+      -e "/<uuid>/d" \
+      -e "s|<source file='[^']*'|<source file='$DEST'|" \
+      -e "s|/var/lib/libvirt/qemu/nvram/[^<]*|/var/lib/libvirt/qemu/nvram/${DOM}_VARS.fd|" "$XML" >"$WORK/domain.xml"
+  sudo virsh define "$WORK/domain.xml" >/dev/null && sudo virsh start "$DOM" >/dev/null \
+    || bad "libvirt rejected the domain XML h2kvm emitted"
+else
+  echo "WARN h2kvm emitted no domain XML; falling back to virt-install"
+  sudo virt-install --name "$DOM" --memory $MEM_MB --vcpus 1 --import --noautoconsole --osinfo detect=on,require=off \
+    --disk "$DEST" --network network=default --graphics vnc >/dev/null 2>&1 || bad "virt-install failed"
+fi
 IP=
-for _ in $(seq 60); do
+for _ in $(seq 120); do
   IP=$(sudo virsh domifaddr "$DOM" --source lease 2>/dev/null | awk '/ipv4/ {sub("/.*","",$4); print $4}')
   [[ -n $IP ]] && ping -c1 -W1 "$IP" >/dev/null 2>&1 && break; IP=; sleep 2
 done
@@ -131,7 +142,7 @@ spec:
     spec:
       domain:
         cpu: {cores: 1}
-        resources: {requests: {memory: 512Mi}}
+        resources: {requests: {memory: ${MEM_MB}Mi}}
         devices:
           disks: [{name: root, disk: {bus: virtio}}]
           interfaces: [{name: default, masquerade: {}}]
@@ -142,7 +153,7 @@ spec:
 YAML
   $KC wait --for=condition=Ready vmi/$KV --timeout=180s >/dev/null || bad "VMI never became Ready"
   KIP=
-  for _ in $(seq 30); do
+  for _ in $(seq 90); do
     KIP=$($KC get vmi $KV -o jsonpath='{.status.interfaces[0].ipAddress}' 2>/dev/null)
     [[ -n $KIP ]] && ping -c1 -W1 "$KIP" >/dev/null 2>&1 && break; KIP=; sleep 2
   done
