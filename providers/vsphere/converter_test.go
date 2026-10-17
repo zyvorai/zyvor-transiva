@@ -38,14 +38,14 @@ func TestDetectH2KVMBinary(t *testing.T) {
 func TestValidateBinary(t *testing.T) {
 	tests := []struct {
 		name    string
-		setup   func() string
+		setup   func(t *testing.T) string
 		wantErr bool
 	}{
 		{
 			name: "valid executable",
-			setup: func() string {
+			setup: func(t *testing.T) string {
 				// Create temporary executable
-				tmpDir, _ := os.MkdirTemp("", "converter-test-*")
+				tmpDir := t.TempDir()
 				exePath := filepath.Join(tmpDir, "test-exec")
 				_ = os.WriteFile(exePath, []byte("#!/bin/sh\necho test"), 0755)
 				return exePath
@@ -54,8 +54,8 @@ func TestValidateBinary(t *testing.T) {
 		},
 		{
 			name: "non-executable file",
-			setup: func() string {
-				tmpDir, _ := os.MkdirTemp("", "converter-test-*")
+			setup: func(t *testing.T) string {
+				tmpDir := t.TempDir()
 				filePath := filepath.Join(tmpDir, "test-file")
 				_ = os.WriteFile(filePath, []byte("test"), 0644)
 				return filePath
@@ -64,15 +64,14 @@ func TestValidateBinary(t *testing.T) {
 		},
 		{
 			name: "directory instead of file",
-			setup: func() string {
-				tmpDir, _ := os.MkdirTemp("", "converter-test-*")
-				return tmpDir
+			setup: func(t *testing.T) string {
+				return t.TempDir()
 			},
 			wantErr: true,
 		},
 		{
 			name: "non-existent file",
-			setup: func() string {
+			setup: func(t *testing.T) string {
 				return "/non/existent/path"
 			},
 			wantErr: true,
@@ -81,16 +80,11 @@ func TestValidateBinary(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			path := tt.setup()
+			path := tt.setup(t)
 			err := validateBinary(path)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("validateBinary() error = %v, wantErr %v", err, tt.wantErr)
-			}
-
-			// Cleanup
-			if _, err := os.Stat(path); err == nil {
-				_ = os.RemoveAll(filepath.Dir(path))
 			}
 		})
 	}

@@ -1,5 +1,6 @@
 Name:           transiva
 Version:        0.2.0
+%global debug_package %{nil}
 Release:        1%{?dist}
 Summary:        Zyvor Transiva - Enterprise workload mobility & migration control plane
 
