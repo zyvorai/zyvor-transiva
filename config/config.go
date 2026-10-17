@@ -230,6 +230,7 @@ func FromEnvironment() *Config {
 		DaemonAddr:      getEnv("DAEMON_ADDR", "localhost:8080"),
 		Nutanix: &NutanixConfig{
 			Host:      os.Getenv("NUTANIX_HOST"),
+			Port:      nutanixPortFromEnv(),
 			Username:  os.Getenv("NUTANIX_USERNAME"),
 			Password:  os.Getenv("NUTANIX_PASSWORD"),
 			Cluster:   os.Getenv("NUTANIX_CLUSTER"),
@@ -523,4 +524,14 @@ func getEnv(key, defaultValue string) string {
 		return value
 	}
 	return defaultValue
+}
+
+// nutanixPortFromEnv returns NUTANIX_PORT, or 0 (meaning the Prism default 9440)
+// when it is unset or not a valid TCP port.
+func nutanixPortFromEnv() int {
+	p, err := strconv.Atoi(os.Getenv("NUTANIX_PORT"))
+	if err != nil || p < 1 || p > 65535 {
+		return 0
+	}
+	return p
 }

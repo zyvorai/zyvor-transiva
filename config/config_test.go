@@ -529,3 +529,15 @@ func TestMergeWithEnv_AllFields(t *testing.T) {
 		t.Errorf("Expected env DaemonAddr, got '%s'", merged.DaemonAddr)
 	}
 }
+
+func TestNutanixPortFromEnvironment(t *testing.T) {
+	for _, tc := range []struct {
+		val  string
+		want int
+	}{{"", 0}, {"8990", 8990}, {"notaport", 0}, {"70000", 0}} {
+		t.Setenv("NUTANIX_PORT", tc.val)
+		if got := FromEnvironment().Nutanix.Port; got != tc.want {
+			t.Errorf("NUTANIX_PORT=%q: got %d, want %d", tc.val, got, tc.want)
+		}
+	}
+}

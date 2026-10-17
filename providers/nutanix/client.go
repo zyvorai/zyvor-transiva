@@ -124,7 +124,15 @@ func (c *Client) ListVMs(ctx context.Context, detailed bool) ([]VMInventory, err
 }
 
 // GetVM returns detailed inventory for a single VM by extId.
-func (c *Client) GetVM(ctx context.Context, extID string) (*VMInventory, error) {
+func (c *Client) GetVM(ctx context.Context, extID string) (inv *VMInventory, err error) {
+	// The Prism SDK type-asserts the response body and panics on some error
+	// responses (e.g. a 404 for a VM name passed as an id); surface that as an
+	// error so callers can fall back to searching by name.
+	defer func() {
+		if r := recover(); r != nil {
+			inv, err = nil, fmt.Errorf("get VM %s: prism SDK error: %v", extID, r)
+		}
+	}()
 	select {
 	case <-ctx.Done():
 		return nil, ctx.Err()
@@ -144,8 +152,8 @@ func (c *Client) GetVM(ctx context.Context, extID string) (*VMInventory, error) 
 		return nil, fmt.Errorf("unexpected get VM response type %T", resp.GetData())
 	}
 
-	inv := vmToInventory(&vm, true)
-	return &inv, nil
+	out := vmToInventory(&vm, true)
+	return &out, nil
 }
 
 func (c *Client) enrichDetails(ctx context.Context, summaries []VMInventory) ([]VMInventory, error) {

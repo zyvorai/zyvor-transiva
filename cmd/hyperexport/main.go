@@ -520,8 +520,9 @@ func main() {
 		cfg.DownloadWorkers = *parallel
 	}
 
-	// Validate required environment variables
-	if cfg.VCenterURL == "" || cfg.Username == "" || cfg.Password == "" {
+	// Validate required environment variables (vCenter only applies to the vSphere path;
+	// Nutanix carries its own NUTANIX_* credentials, checked in runNutanixExport)
+	if needsVCenterEnv(*providerType) && (cfg.VCenterURL == "" || cfg.Username == "" || cfg.Password == "") {
 		log.Error("missing required environment variables",
 			"required", "GOVC_URL, GOVC_USERNAME, GOVC_PASSWORD")
 
@@ -585,6 +586,11 @@ func showIntro() {
 	pterm.Println(subtitle)
 	pterm.Println(version)
 	pterm.Println()
+}
+
+// needsVCenterEnv reports whether the GOVC_* vCenter variables are required.
+func needsVCenterEnv(provider string) bool {
+	return !strings.EqualFold(provider, "nutanix")
 }
 
 func run(ctx context.Context, cfg *config.Config, log logger.Logger) error {
