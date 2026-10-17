@@ -54,7 +54,7 @@ def system_map():
     # h2kvm
     o.append(text(750, 36, "REPAIR AND CONVERT", "mut th"))
     o.append(box(750, 215, 210, 240, "hl")); o.append(text(855, 250, "h2kvm", "fg tb", "middle")); o.append(text(855, 272, "first-boot science", "mut ts", "middle"))
-    o += [chip(770, 292, 170, "GuestKit repair"), chip(770, 332, 170, "convert + checksum"), chip(770, 372, 170, "domain XML"), chip(770, 412, 170, "Windows, UEFI: not run")]
+    o += [chip(770, 292, 170, "GuestKit repair"), chip(770, 332, 170, "convert + checksum"), chip(770, 372, 170, "domain XML"), chip(770, 412, 170, "Windows: not run")]
     o.append(arrow("M700 335 L750 335", "lnb", "ab"))
     # destinations
     o.append(text(1030, 36, "LAND", "mut th"))
@@ -97,10 +97,10 @@ def sequence():
     note(300, "hyperexport", "qemu-img convert, write manifest", 270)
     msg(360, "Script", "h2kvm", "run, --cmd local --vmdk <disk> --emit-domain-xml", "lnb", "ab", True)
     note(410, "h2kvm", "inspect, repair, convert, checksum", 260)
-    note(450, "h2kvm", "repair skipped on the test image", 270, True)
+    note(450, "h2kvm", "no network config: install DHCP fallback", 300, True)
     msg(510, "h2kvm", "KVM / KubeVirt", "boot the converted disk", "lnb", "ab")
-    o.append(arrow(f"M{X['KVM / KubeVirt']-6} 560 L{X['Script']+6} 560", "ln", "a")); o.append('<rect x="480" y="534" width="240" height="22" rx="7" class="pill"/>'); o.append(text(600, 549, "guest answers ping: 0% loss", "fg ts", "middle"))
-    o.append(text(20, 624, "Real run: 7 of 7 stages, 145 s. The Prism endpoint was a simulator.", "mut ts"))
+    o.append(arrow(f"M{X['KVM / KubeVirt']-6} 560 L{X['Script']+6} 560", "ln", "a")); o.append('<rect x="480" y="534" width="240" height="22" rx="7" class="pill"/>'); o.append(text(600, 549, "guest gets a lease, answers ping", "fg ts", "middle"))
+    o.append(text(20, 624, "Real run (Ubuntu 24.04): 7 of 7 stages, 747 s. The Prism endpoint was a simulator.", "mut ts"))
     o.append("</svg>")
     return "\n".join(o)
 
