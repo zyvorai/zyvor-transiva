@@ -97,7 +97,7 @@ func TestHandleIndex(t *testing.T) {
 	}
 
 	body := rr.Body.String()
-	if !strings.Contains(body, "HyperSDK Dashboard") {
+	if !strings.Contains(body, "Transiva Dashboard") {
 		t.Error("expected dashboard title in response")
 	}
 }
