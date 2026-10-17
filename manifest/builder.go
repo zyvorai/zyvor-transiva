@@ -239,6 +239,27 @@ func (b *Builder) WithFixEnableRDP(enable bool) *Builder {
 	return b
 }
 
+// WithLibvirtIntegration makes h2kvm define the converted VM on the local libvirt host, and start it when
+// autoStart is true. An existing domain with the same name is replaced so a repeated export does not fail.
+func (b *Builder) WithLibvirtIntegration(autoStart bool) *Builder {
+	b.manifest.LibvirtIntegration = &LibvirtIntegrationConfig{
+		Enabled:         true,
+		DefineDomain:    true,
+		OverwriteDomain: true,
+		AutoStart:       autoStart,
+	}
+	return b
+}
+
+// WithConvertCompression sets qcow2 compression for the convert stage (WithPipeline enables it, which makes
+// conversion several times slower).
+func (b *Builder) WithConvertCompression(compress bool) *Builder {
+	if b.manifest.Pipeline != nil && b.manifest.Pipeline.Convert != nil {
+		b.manifest.Pipeline.Convert.Compress = compress
+	}
+	return b
+}
+
 // WithOutput sets output configuration
 func (b *Builder) WithOutput(directory, format, filename string) *Builder {
 	b.manifest.Output = &OutputConfig{

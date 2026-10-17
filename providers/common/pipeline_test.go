@@ -13,6 +13,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/zyvorai/transiva/manifest"
 )
 
 // mockLogger implements Logger interface for testing
@@ -35,14 +37,14 @@ func (m *mockLogger) Error(msg string, keysAndValues ...interface{}) {
 }
 
 func (m *mockLogger) Debug(msg string, keysAndValues ...interface{}) {}
-func (m *mockLogger) With(keysAndValues ...interface{}) Logger         { return m }
+func (m *mockLogger) With(keysAndValues ...interface{}) Logger       { return m }
 
 func TestNewPipelineExecutor(t *testing.T) {
 	logger := &mockLogger{}
 	config := &H2KVMConfig{
-		Enabled:       true,
-		H2KVMPath: "/path/to/h2kvm",
-		ManifestPath:  "/path/to/manifest.json",
+		Enabled:      true,
+		H2KVMPath:    "/path/to/h2kvm",
+		ManifestPath: "/path/to/manifest.json",
 	}
 
 	executor := NewPipelineExecutor(config, logger)
@@ -53,17 +55,17 @@ func TestNewPipelineExecutor(t *testing.T) {
 
 func TestH2KVMConfigValidation(t *testing.T) {
 	tests := []struct {
-		name    string
-		config  H2KVMConfig
-		valid   bool
-		errMsg  string
+		name   string
+		config H2KVMConfig
+		valid  bool
+		errMsg string
 	}{
 		{
 			name: "valid config",
 			config: H2KVMConfig{
-				Enabled:       true,
-				H2KVMPath: "/usr/bin/h2kvm",
-				ManifestPath:  "/tmp/manifest.json",
+				Enabled:      true,
+				H2KVMPath:    "/usr/bin/h2kvm",
+				ManifestPath: "/tmp/manifest.json",
 			},
 			valid: true,
 		},
@@ -86,7 +88,7 @@ func TestH2KVMConfigValidation(t *testing.T) {
 		{
 			name: "missing manifest path",
 			config: H2KVMConfig{
-				Enabled:       true,
+				Enabled:   true,
 				H2KVMPath: "/usr/bin/h2kvm",
 			},
 			valid:  false,
@@ -96,7 +98,7 @@ func TestH2KVMConfigValidation(t *testing.T) {
 			name: "libvirt integration enabled",
 			config: H2KVMConfig{
 				Enabled:            true,
-				H2KVMPath:      "/usr/bin/h2kvm",
+				H2KVMPath:          "/usr/bin/h2kvm",
 				ManifestPath:       "/tmp/manifest.json",
 				LibvirtIntegration: true,
 				LibvirtURI:         "qemu:///system",
@@ -179,9 +181,9 @@ func TestPipelineStagesValidation(t *testing.T) {
 func TestExecuteContextCancellation(t *testing.T) {
 	logger := &mockLogger{}
 	config := &H2KVMConfig{
-		Enabled:       true,
-		H2KVMPath: "/nonexistent/h2kvm",
-		ManifestPath:  "/tmp/manifest.json",
+		Enabled:      true,
+		H2KVMPath:    "/nonexistent/h2kvm",
+		ManifestPath: "/tmp/manifest.json",
 	}
 
 	executor := NewPipelineExecutor(config, logger)
@@ -199,9 +201,9 @@ func TestExecuteWithTimeout(t *testing.T) {
 
 	logger := &mockLogger{}
 	config := &H2KVMConfig{
-		Enabled:       true,
-		H2KVMPath: "/usr/bin/sleep",
-		ManifestPath:  "100", // sleep for 100 seconds
+		Enabled:      true,
+		H2KVMPath:    "/usr/bin/sleep",
+		ManifestPath: "100", // sleep for 100 seconds
 	}
 
 	executor := NewPipelineExecutor(config, logger)
@@ -218,10 +220,10 @@ func TestExecuteWithTimeout(t *testing.T) {
 func TestPipelineDryRun(t *testing.T) {
 	logger := &mockLogger{}
 	config := &H2KVMConfig{
-		Enabled:       true,
-		H2KVMPath: "/usr/bin/h2kvm",
-		ManifestPath:  "/tmp/manifest.json",
-		DryRun:        true,
+		Enabled:      true,
+		H2KVMPath:    "/usr/bin/h2kvm",
+		ManifestPath: "/tmp/manifest.json",
+		DryRun:       true,
 	}
 
 	executor := NewPipelineExecutor(config, logger)
@@ -380,4 +382,54 @@ func TestPipelineErrorHandling(t *testing.T) {
 			}
 		})
 	}
+}
+
+// h2kvmctl rejects a bare manifest path ("unrecognized arguments"), so the executor must use --manifest.
+func TestExecuteDirectPassesTheManifestWithTheManifestFlag(t *testing.T) {
+	dir := t.TempDir()
+	argsFile := filepath.Join(dir, "args.txt")
+	fake := filepath.Join(dir, "fake-h2kvmctl")
+	script := "#!/bin/sh\nprintf '%s\\n' \"$@\" > " + argsFile + "\necho 'Output: " + dir + "/converted.qcow2'\n"
+	require.NoError(t, os.WriteFile(fake, []byte(script), 0o755))
+	manifestPath := filepath.Join(dir, "artifact-manifest.json")
+	require.NoError(t, os.WriteFile(manifestPath, []byte(`{"manifest_version":"1.0"}`), 0o644))
+
+	executor := NewPipelineExecutor(&H2KVMConfig{Enabled: true, H2KVMPath: fake, ManifestPath: manifestPath, Verbose: true}, &mockLogger{})
+	result, err := executor.ExecuteDirect(context.Background())
+	require.NoError(t, err)
+	assert.True(t, result.Success)
+
+	got, err := os.ReadFile(argsFile)
+	require.NoError(t, err)
+	assert.Equal(t, "--manifest\n"+manifestPath+"\n-v\n", string(got))
+	assert.Equal(t, dir+"/converted.qcow2", result.OutputPath)
+}
+
+func TestFindOutputPathLooksForTheConvertedBootDiskInTheOutputDirectory(t *testing.T) {
+	dir := t.TempDir()
+	conv := filepath.Join(dir, "converted")
+	require.NoError(t, os.MkdirAll(conv, 0o755))
+	require.NoError(t, os.WriteFile(filepath.Join(conv, "disk-0.qcow2"), []byte("x"), 0o644))
+	src := filepath.Join(dir, "disk.qcow2")
+	require.NoError(t, os.WriteFile(src, []byte("x"), 0o644))
+
+	built, err := manifest.NewBuilder().
+		WithSource("nutanix", "uuid", "vm", "cluster", "nutanix-nfs-pickup").
+		WithVM(2, 4, "bios", "unknown", "", false).
+		AddDisk("disk-0", "qcow2", src, 1, 0, "boot").
+		WithOutput(conv, "qcow2", "").
+		Build()
+	require.NoError(t, err)
+	manifestPath := filepath.Join(dir, "artifact-manifest.json")
+	require.NoError(t, manifest.WriteToFile(built, manifestPath))
+
+	executor := NewPipelineExecutor(&H2KVMConfig{ManifestPath: manifestPath}, &mockLogger{})
+	// h2kvm's manifest mode prints log lines with timestamps, never an "Output:" line.
+	got := executor.findOutputPath([]string{"16:09:14 INFO 📤 Output: " + conv})
+	assert.Equal(t, filepath.Join(conv, "disk-0.qcow2"), got)
+}
+
+func TestFindH2KVMHonoursTheEnvironmentOverride(t *testing.T) {
+	t.Setenv("TRANSIVA_H2KVMCTL", "/opt/h2kvm/venv/bin/h2kvmctl")
+	assert.Equal(t, "/opt/h2kvm/venv/bin/h2kvmctl", findH2KVM())
 }

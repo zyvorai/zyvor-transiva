@@ -205,7 +205,8 @@ func (e *PipelineExecutor) ExecuteDirect(ctx context.Context) (*PipelineResult, 
 	}
 
 	// Build h2kvm command
-	args := []string{e.config.ManifestPath}
+	// h2kvmctl takes the manifest through --manifest; a bare path is rejected as an unrecognized argument.
+	args := []string{"--manifest", e.config.ManifestPath}
 	if e.config.Verbose {
 		args = append(args, "-v")
 	}
@@ -467,6 +468,32 @@ func (e *PipelineExecutor) findOutputPath(output []string) string {
 		return filepath.Join(m.Output.Directory, m.Output.Filename)
 	}
 
+	// h2kvm names each converted disk "<disk id>.<format>" in the output directory (manifest mode prints no
+	// "Output:" line), so look for the boot disk's file there.
+	if m.Output != nil && m.Output.Directory != "" {
+		return convertedBootDisk(m)
+	}
+
+	return ""
+}
+
+// convertedBootDisk finds the converted boot disk in the manifest's output directory.
+func convertedBootDisk(m *manifest.ArtifactManifest) string {
+	format := m.Output.Format
+	if format == "" {
+		format = "qcow2"
+	}
+	for _, d := range m.Disks {
+		if d.DiskType == "boot" {
+			candidate := filepath.Join(m.Output.Directory, d.ID+"."+format)
+			if _, err := os.Stat(candidate); err == nil {
+				return candidate
+			}
+		}
+	}
+	if matches, _ := filepath.Glob(filepath.Join(m.Output.Directory, "*."+format)); len(matches) > 0 {
+		return matches[0]
+	}
 	return ""
 }
 
@@ -507,6 +534,11 @@ func streamOutput(reader io.Reader, output chan<- string) {
 // findH2KVM searches for the h2kvm executable, falling back to the legacy
 // "hyper2kvm" name for hosts that have not upgraded the CLI yet.
 func findH2KVM() string {
+	// An explicit path wins: hosts often carry an older system install next to the current one.
+	if p := os.Getenv("TRANSIVA_H2KVMCTL"); p != "" {
+		return p
+	}
+
 	// Common locations to check, new name first
 	locations := []string{
 		"/home/tt/h2kvm/h2kvmctl",

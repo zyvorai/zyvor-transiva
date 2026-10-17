@@ -50,6 +50,10 @@ type ArtifactManifest struct {
 
 	// Options contains global runtime options (OPTIONAL)
 	Options *RuntimeOptions `json:"options,omitempty" yaml:"options,omitempty"`
+
+	// LibvirtIntegration asks h2kvm to define (and optionally start) the converted VM on the local
+	// libvirt host as its last stage (OPTIONAL)
+	LibvirtIntegration *LibvirtIntegrationConfig `json:"libvirt_integration,omitempty" yaml:"libvirt_integration,omitempty"`
 }
 
 // SourceMetadata contains information about the source system
@@ -297,4 +301,19 @@ type ReportConfig struct {
 	// Path is the report filename (relative to output directory)
 	// Default: "report.json"
 	Path string `json:"path,omitempty" yaml:"path,omitempty"`
+}
+
+// LibvirtIntegrationConfig is h2kvm's libvirt_integration stage: it defines the converted VM from the domain
+// XML h2kvm emits (firmware, NIC model and graphics included) and can start it.
+type LibvirtIntegrationConfig struct {
+	Enabled bool `json:"enabled" yaml:"enabled"`
+
+	// DefineDomain defines the domain in libvirt (h2kvm default: true)
+	DefineDomain bool `json:"define_domain" yaml:"define_domain"`
+
+	// OverwriteDomain replaces an existing domain of the same name
+	OverwriteDomain bool `json:"overwrite_domain" yaml:"overwrite_domain"`
+
+	// AutoStart starts the VM once it is defined
+	AutoStart bool `json:"auto_start" yaml:"auto_start"`
 }

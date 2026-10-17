@@ -96,21 +96,34 @@ hypersdk_preflight_remote_tools "$([ -n "$PASS" ] && echo true || echo false)"
 SUDO=""
 [ "$USER" != "root" ] && SUDO="sudo"
 
-DEPLOY_SSH_OPTS=(-o StrictHostKeyChecking=accept-new -o ConnectTimeout=15
-                 -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
+# A busy host can stall SSH for a while ("Timeout, server not responding", exit 255), so tolerate long
+# stalls and retry the connection a few times. Every remote step here is safe to repeat.
+DEPLOY_SSH_OPTS=(-o StrictHostKeyChecking=accept-new -o ConnectTimeout=30
+                 -o ServerAliveInterval=15 -o ServerAliveCountMax=20)
 
+_retry_ssh() {
+    local attempt=1 rc
+    while true; do
+        "$@" && return 0
+        rc=$?
+        [ "$rc" -ne 255 ] || [ "$attempt" -ge 4 ] && return "$rc"
+        warn "ssh connection to ${HOST} lost (attempt ${attempt}/4); retrying in $((attempt * 15))s"
+        sleep $((attempt * 15))
+        attempt=$((attempt + 1))
+    done
+}
 _ssh() {
     if [ -n "$PASS" ]; then
-        SSHPASS="$PASS" sshpass -e ssh "${DEPLOY_SSH_OPTS[@]}" "${USER}@${HOST}" "$@"
+        _retry_ssh env SSHPASS="$PASS" sshpass -e ssh "${DEPLOY_SSH_OPTS[@]}" "${USER}@${HOST}" "$@"
     else
-        ssh -o BatchMode=yes "${DEPLOY_SSH_OPTS[@]}" "${USER}@${HOST}" "$@"
+        _retry_ssh ssh -o BatchMode=yes "${DEPLOY_SSH_OPTS[@]}" "${USER}@${HOST}" "$@"
     fi
 }
 _scp() {
     if [ -n "$PASS" ]; then
-        SSHPASS="$PASS" sshpass -e scp "${DEPLOY_SSH_OPTS[@]}" "$@"
+        _retry_ssh env SSHPASS="$PASS" sshpass -e scp "${DEPLOY_SSH_OPTS[@]}" "$@"
     else
-        scp -o BatchMode=yes "${DEPLOY_SSH_OPTS[@]}" "$@"
+        _retry_ssh scp -o BatchMode=yes "${DEPLOY_SSH_OPTS[@]}" "$@"
     fi
 }
 

@@ -45,6 +45,8 @@ func (p *Provider) ExportVM(ctx context.Context, identifier string, opts provide
 		Format:    nxOpts.Format,
 		Mounts:    nxOpts.Mounts,
 		DryRun:    nxOpts.DryRun,
+		Pipeline:  nxOpts.EnablePipeline,
+		Land:      nxOpts.EnablePipeline && nxOpts.LandOnLibvirt,
 	}
 	if opts.Metadata != nil {
 		if v, ok := metaString(opts.Metadata, "qemu_img_path"); ok {

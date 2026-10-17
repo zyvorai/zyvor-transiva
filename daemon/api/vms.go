@@ -5,8 +5,11 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/zyvorai/transiva/config"
@@ -33,7 +36,16 @@ type UnifiedVMListResponse struct {
 
 // Handle VM listing
 func (s *Server) handleListVMs(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
+	switch r.Method {
+	case http.MethodGet:
+	case http.MethodPost:
+		// POST carries the connection details (including the password) in the body, so they are not
+		// part of the URL that browsers, proxies and access logs record.
+		if err := mergeJSONBodyIntoQuery(r); err != nil {
+			s.errorResponse(w, http.StatusBadRequest, "invalid request: %v", err)
+			return
+		}
+	default:
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -255,4 +267,30 @@ func (s *Server) listVMsFromVSphere() ([]vsphere.VMInfo, error) {
 	}
 
 	return vms, nil
+}
+
+// mergeJSONBodyIntoQuery copies the fields of a JSON object body into the request's query parameters,
+// so a handler written for query strings can also take its parameters from a POST body. Values already
+// in the URL win. Only scalar fields are used.
+func mergeJSONBodyIntoQuery(r *http.Request) error {
+	var body map[string]interface{}
+	if err := json.NewDecoder(io.LimitReader(r.Body, 1<<20)).Decode(&body); err != nil {
+		return err
+	}
+	q := r.URL.Query()
+	for k, v := range body {
+		if q.Has(k) {
+			continue
+		}
+		switch val := v.(type) {
+		case string:
+			q.Set(k, val)
+		case bool:
+			q.Set(k, strconv.FormatBool(val))
+		case float64:
+			q.Set(k, strconv.FormatFloat(val, 'f', -1, 64))
+		}
+	}
+	r.URL.RawQuery = q.Encode()
+	return nil
 }

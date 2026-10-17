@@ -52,7 +52,8 @@ const NutanixExportWorkflow: React.FC = () => {
     format: 'qcow2',
     mounts: 'default-container:/mnt/nutanix/default',
     resolveContainers: true,
-    enablePipeline: false,
+    enablePipeline: true,
+    landOnKVM: true,
   });
 
   useEffect(() => {
@@ -152,6 +153,7 @@ const NutanixExportWorkflow: React.FC = () => {
         metadata: {
           mounts,
           resolve_containers: exportOptions.resolveContainers,
+          land_on_libvirt: exportOptions.enablePipeline && exportOptions.landOnKVM,
           server: config.server,
           username: config.username,
           password: config.password,
@@ -270,7 +272,8 @@ const NutanixExportWorkflow: React.FC = () => {
           required
         />
         <label style={styles.checkbox}><input type="checkbox" checked={exportOptions.resolveContainers} onChange={(e) => setExportOptions({ ...exportOptions, resolveContainers: e.target.checked })} /> Resolve container names</label>
-        <label style={styles.checkbox}><input type="checkbox" checked={exportOptions.enablePipeline} onChange={(e) => setExportOptions({ ...exportOptions, enablePipeline: e.target.checked })} /> Run h2kvm pipeline after export</label>
+        <label style={styles.checkbox}><input type="checkbox" checked={exportOptions.enablePipeline} onChange={(e) => setExportOptions({ ...exportOptions, enablePipeline: e.target.checked })} /> Convert with h2kvm after export (repair, boot fixes, qcow2)</label>
+        <label style={styles.checkbox}><input type="checkbox" disabled={!exportOptions.enablePipeline} checked={exportOptions.enablePipeline && exportOptions.landOnKVM} onChange={(e) => setExportOptions({ ...exportOptions, landOnKVM: e.target.checked })} /> Define and start the VM on this host (KVM / libvirt)</label>
         <button style={styles.button} disabled={loading}>{loading ? 'Submitting...' : 'Submit Export Job'}</button>
       </form>
     </div>
