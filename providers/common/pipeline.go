@@ -68,6 +68,10 @@ type H2KVMConfig struct {
 	// DaemonTimeout is the timeout in minutes
 	// Default: 60
 	DaemonTimeout int
+
+	// OnOutput, when set, is called with every line h2kvm prints while it runs (direct execution), so a
+	// caller can report progress during a conversion that takes minutes.
+	OnOutput func(line string)
 }
 
 // PipelineResult contains the result of pipeline execution
@@ -246,6 +250,9 @@ func (e *PipelineExecutor) ExecuteDirect(ctx context.Context) (*PipelineResult, 
 		for line := range outputChan {
 			result.Output = append(result.Output, line)
 			e.logger.Info("h2kvm", "output", line)
+			if e.config.OnOutput != nil {
+				e.config.OnOutput(line)
+			}
 		}
 	}()
 

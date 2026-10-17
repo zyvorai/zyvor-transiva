@@ -55,7 +55,7 @@ func (p *Provider) ExportVM(ctx context.Context, identifier string, opts provide
 	}
 	if opts.Progress != nil {
 		pickupOpts.Progress = func(p PickupProgress) {
-			opts.Progress.Update(p.Phase, p.PercentComplete, p.Message)
+			opts.Progress.Update(p.Phase, scaleExport(p.PercentComplete, nxOpts.EnablePipeline), p.Message)
 		}
 	}
 
@@ -76,7 +76,7 @@ func (p *Provider) ExportVM(ctx context.Context, identifier string, opts provide
 	result := pickupResultToExportResult(pickupResult, nxOpts.Format)
 
 	if nxOpts.EnablePipeline && pickupResult.ManifestPath != "" && !nxOpts.DryRun {
-		p.runExportPipeline(ctx, nxOpts, result)
+		p.runExportPipeline(ctx, nxOpts, result, opts.Progress)
 	}
 
 	return result, nil
@@ -181,7 +181,7 @@ func pickupOptsOutputDir(pickup *PickupResult) string {
 	return filepath.Dir(filepath.Dir(pickup.Disks[0].OutputPath))
 }
 
-func (p *Provider) runExportPipeline(ctx context.Context, nxOpts nutanixExportOptions, result *providers.ExportResult) {
+func (p *Provider) runExportPipeline(ctx context.Context, nxOpts nutanixExportOptions, result *providers.ExportResult, progress providers.ProgressReporter) {
 	manifestPath, _ := result.Metadata["manifest_path"].(string)
 	if manifestPath == "" {
 		return
@@ -194,6 +194,10 @@ func (p *Provider) runExportPipeline(ctx context.Context, nxOpts nutanixExportOp
 	pipelineConfig := nxOpts.Pipeline
 	pipelineConfig.Enabled = true
 	pipelineConfig.ManifestPath = manifestPath
+	if progress != nil {
+		pp := &pipelineProgress{report: progress.Update}
+		pipelineConfig.OnOutput = pp.Line
+	}
 
 	executor := common.NewPipelineExecutor(&pipelineConfig, p.logger)
 
@@ -217,6 +221,9 @@ func (p *Provider) runExportPipeline(ctx context.Context, nxOpts nutanixExportOp
 		return
 	}
 
+	if progress != nil && pipelineResult.Success {
+		progress.Update("completed", 100, "Migration complete")
+	}
 	result.Metadata["pipeline_success"] = pipelineResult.Success
 	result.Metadata["pipeline_duration"] = pipelineResult.Duration.String()
 	if pipelineResult.OutputPath != "" {
