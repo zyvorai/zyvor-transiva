@@ -82,12 +82,12 @@ describe('formatPercentage', () => {
 
 describe('formatNumber', () => {
   it('formats numbers with default decimals', () => {
-    expect(formatNumber(1000)).toBe('1,000')
-    expect(formatNumber(1000000)).toBe('1,000,000')
+    expect(formatNumber(1000, 0, 'en-US')).toBe('1,000')
+    expect(formatNumber(1000000, 0, 'en-US')).toBe('1,000,000')
   })
 
   it('formats numbers with decimals', () => {
-    expect(formatNumber(1234.567, 2)).toBe('1,234.57')
+    expect(formatNumber(1234.567, 2, 'en-US')).toBe('1,234.57')
   })
 })
 
