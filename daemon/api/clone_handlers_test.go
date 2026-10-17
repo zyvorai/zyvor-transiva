@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os/exec"
 	"testing"
 )
 
@@ -439,6 +440,10 @@ func TestHandleExportTemplateInvalidJSON(t *testing.T) {
 }
 
 func TestHandleExportTemplate(t *testing.T) {
+	if err := exec.Command("virsh", "-c", "test:///default", "dumpxml", "test").Run(); err != nil {
+		t.Skipf("libvirt test:// driver not usable here: %v", err)
+	}
+	t.Setenv("LIBVIRT_DEFAULT_URI", "test:///default")
 	server := setupTestBasicServer(t)
 
 	// handleExportTemplate's request struct uses `template`/`export_path`/
