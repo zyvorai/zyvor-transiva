@@ -45,8 +45,8 @@ if $DO_BUILD; then
     make build-ctl || echo "WARN: hyperctl build skipped"
 fi
 
-# shellcheck source=lib/package-transiva-client-bundle.sh
-source "${SCRIPT_DIR}/lib/package-transiva-client-bundle.sh"
+# shellcheck source=lib/package-hypersdk-client-bundle.sh
+source "${SCRIPT_DIR}/lib/package-hypersdk-client-bundle.sh"
 
 STAGE="${OUT_DIR}/${ARTIFACT}"
 echo "Assemble user bundle → ${OUT_DIR}/${ARTIFACT}.tar.gz"

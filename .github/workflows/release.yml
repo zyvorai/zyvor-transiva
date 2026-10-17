@@ -114,7 +114,7 @@ jobs:
     steps:
     - name: Install dependencies
       run: |
-        dnf install -y rpm-build rpmdevtools golang git tar gzip
+        dnf install -y rpm-build rpmdevtools systemd-rpm-macros golang git tar gzip
 
     - name: Checkout code
       uses: actions/checkout@v7
@@ -184,9 +184,9 @@ jobs:
     - name: Install dependencies
       run: |
         if [ -f /etc/fedora-release ]; then
-          dnf install -y rpm-build rpmdevtools git
+          dnf install -y rpm-build rpmdevtools systemd-rpm-macros git
         else
-          yum install -y rpm-build rpmdevtools git
+          yum install -y rpm-build rpmdevtools systemd-rpm-macros git
         fi
 
     - name: Checkout code
