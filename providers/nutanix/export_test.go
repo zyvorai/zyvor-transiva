@@ -113,3 +113,20 @@ func TestInventoryToPickupVM(t *testing.T) {
 		t.Fatalf("container name = %q", pvm.Disks[0].ContainerName)
 	}
 }
+
+func TestMergeExportOptionsKeepsLandOnLibvirt(t *testing.T) {
+	opts, err := mergeExportOptions(nil, providers.ExportOptions{
+		OutputPath: "/out",
+		Metadata: map[string]interface{}{
+			"mounts":          map[string]string{"ctr": "/mnt/ctr"},
+			"enable_pipeline": true,
+			"land_on_libvirt": true,
+		},
+	})
+	if err != nil {
+		t.Fatalf("mergeExportOptions: %v", err)
+	}
+	if !opts.EnablePipeline || !opts.LandOnLibvirt {
+		t.Fatalf("EnablePipeline=%v LandOnLibvirt=%v, want both true", opts.EnablePipeline, opts.LandOnLibvirt)
+	}
+}

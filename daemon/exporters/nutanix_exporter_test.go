@@ -104,3 +104,14 @@ func TestJobServerWithoutAPortKeepsTheConfiguredPort(t *testing.T) {
 		t.Errorf("host/port = %q/%d, want prism.example.com/9441", cfg.Host, cfg.Port)
 	}
 }
+
+func TestLandOnLibvirtReachesTheExportOptions(t *testing.T) {
+	job := &models.JobDefinition{EnablePipeline: true, Metadata: map[string]interface{}{"land_on_libvirt": true}}
+	opts := buildNutanixExportOptions(job, nil)
+	if opts.Metadata["land_on_libvirt"] != true {
+		t.Errorf("land_on_libvirt = %v, want true: the dashboard's checkbox must reach the exporter", opts.Metadata["land_on_libvirt"])
+	}
+	if off := buildNutanixExportOptions(&models.JobDefinition{}, nil); off.Metadata["land_on_libvirt"] != nil {
+		t.Errorf("a job that did not ask for landing must not carry the key, got %v", off.Metadata["land_on_libvirt"])
+	}
+}
