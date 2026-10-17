@@ -534,6 +534,11 @@ func streamOutput(reader io.Reader, output chan<- string) {
 // findH2KVM searches for the h2kvm executable, falling back to the legacy
 // "hyper2kvm" name for hosts that have not upgraded the CLI yet.
 func findH2KVM() string {
+	// An explicit path wins: hosts often carry an older system install next to the current one.
+	if p := os.Getenv("TRANSIVA_H2KVMCTL"); p != "" {
+		return p
+	}
+
 	// Common locations to check, new name first
 	locations := []string{
 		"/home/tt/h2kvm/h2kvmctl",

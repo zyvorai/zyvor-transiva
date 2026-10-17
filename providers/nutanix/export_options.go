@@ -72,7 +72,7 @@ func applyProviderMetadata(out *nutanixExportOptions, meta map[string]interface{
 	if v, ok := metaBool(meta, "enable_pipeline"); ok {
 		out.EnablePipeline = v
 	}
-	if v, ok := metaBool(meta, "land_on_libvirt", "libvirt_integration"); ok {
+	if v, ok := metaBool(meta, "land_on_libvirt"); ok {
 		out.LandOnLibvirt = v
 	}
 	if d, ok := metaDuration(meta, "pipeline_timeout"); ok {

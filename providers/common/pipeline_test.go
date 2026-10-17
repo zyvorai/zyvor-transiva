@@ -428,3 +428,8 @@ func TestFindOutputPathLooksForTheConvertedBootDiskInTheOutputDirectory(t *testi
 	got := executor.findOutputPath([]string{"16:09:14 INFO 📤 Output: " + conv})
 	assert.Equal(t, filepath.Join(conv, "disk-0.qcow2"), got)
 }
+
+func TestFindH2KVMHonoursTheEnvironmentOverride(t *testing.T) {
+	t.Setenv("TRANSIVA_H2KVMCTL", "/opt/h2kvm/venv/bin/h2kvmctl")
+	assert.Equal(t, "/opt/h2kvm/venv/bin/h2kvmctl", findH2KVM())
+}
