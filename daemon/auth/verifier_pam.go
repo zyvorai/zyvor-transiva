@@ -49,7 +49,7 @@ func (v pamVerifier) Verify(username, password string) error {
 	defer func() { _ = tx.End() }()
 
 	if err := tx.Authenticate(0); err != nil {
-		if errors.Is(err, pam.ErrAuthinfoUnavail) || errors.Is(err, pam.ErrServiceErr) {
+		if errors.Is(err, pam.ErrAuthinfoUnavail) || errors.Is(err, pam.ErrService) {
 			log.Printf("auth: PAM service %q is not usable: %v", v.service, err)
 			return ErrVerifierUnavailable
 		}
