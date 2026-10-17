@@ -58,7 +58,7 @@ func TestSessionExpiry(t *testing.T) {
 		ExpiresAt: time.Now().Add(1 * time.Second),
 	}
 
-	manager.sessions[session.Token] = session
+	manager.sessions[tokenKey(session.Token)] = session
 
 	// Session should be valid initially
 	_, err := manager.ValidateSession(session.Token)
@@ -86,7 +86,7 @@ func TestValidateSession(t *testing.T) {
 		ExpiresAt: time.Now().Add(1 * time.Hour),
 	}
 
-	manager.sessions[session.Token] = session
+	manager.sessions[tokenKey(session.Token)] = session
 
 	// Validate the session
 	validatedSession, err := manager.ValidateSession("valid-token")
@@ -115,7 +115,7 @@ func TestLogout(t *testing.T) {
 		ExpiresAt: time.Now().Add(1 * time.Hour),
 	}
 
-	manager.sessions[session.Token] = session
+	manager.sessions[tokenKey(session.Token)] = session
 
 	// Logout
 	manager.Logout("logout-token")
@@ -150,8 +150,8 @@ func TestCleanupExpiredSessions(t *testing.T) {
 		ExpiresAt: time.Now().Add(1 * time.Hour),
 	}
 
-	manager.sessions[expiredSession.Token] = expiredSession
-	manager.sessions[validSession.Token] = validSession
+	manager.sessions[tokenKey(expiredSession.Token)] = expiredSession
+	manager.sessions[tokenKey(validSession.Token)] = validSession
 
 	// Initial count
 	if len(manager.sessions) != 2 {
@@ -196,7 +196,7 @@ func TestConcurrentAccess(t *testing.T) {
 		ExpiresAt: time.Now().Add(1 * time.Hour),
 	}
 
-	manager.sessions[session.Token] = session
+	manager.sessions[tokenKey(session.Token)] = session
 
 	// Concurrent reads
 	done := make(chan bool, 10)
@@ -226,7 +226,7 @@ func TestSessionUsername(t *testing.T) {
 		ExpiresAt: time.Now().Add(1 * time.Hour),
 	}
 
-	manager.sessions[session.Token] = session
+	manager.sessions[tokenKey(session.Token)] = session
 
 	// Validate and check username
 	validatedSession, err := manager.ValidateSession("user-token")
@@ -262,7 +262,7 @@ func TestMultipleSessions(t *testing.T) {
 	}
 
 	for _, session := range sessions {
-		manager.sessions[session.Token] = session
+		manager.sessions[tokenKey(session.Token)] = session
 	}
 
 	// Validate each session
@@ -449,7 +449,7 @@ func TestSessionExpiryEdgeCase(t *testing.T) {
 		ExpiresAt: time.Now(),
 	}
 
-	manager.sessions[session.Token] = session
+	manager.sessions[tokenKey(session.Token)] = session
 
 	// Wait a tiny bit to ensure we're past expiry
 	time.Sleep(10 * time.Millisecond)
@@ -471,7 +471,7 @@ func TestConcurrentLogout(t *testing.T) {
 			Username:  "testuser",
 			ExpiresAt: time.Now().Add(1 * time.Hour),
 		}
-		manager.sessions[session.Token] = session
+		manager.sessions[tokenKey(session.Token)] = session
 	}
 
 	// Concurrent logouts
@@ -510,7 +510,7 @@ func TestSessionCreatedAtTimestamp(t *testing.T) {
 		ExpiresAt: time.Now().Add(1 * time.Hour),
 	}
 
-	manager.sessions[session.Token] = session
+	manager.sessions[tokenKey(session.Token)] = session
 
 	after := time.Now()
 
@@ -534,7 +534,7 @@ func TestMultipleLogoutsForSameSession(t *testing.T) {
 		ExpiresAt: time.Now().Add(1 * time.Hour),
 	}
 
-	manager.sessions[session.Token] = session
+	manager.sessions[tokenKey(session.Token)] = session
 
 	// First logout
 	manager.Logout("multiple-logout-token")
@@ -594,7 +594,7 @@ func TestSessionsMapInitialization(t *testing.T) {
 		ExpiresAt: time.Now().Add(1 * time.Hour),
 	}
 
-	manager.sessions[session.Token] = session
+	manager.sessions[tokenKey(session.Token)] = session
 
 	manager.mu.RLock()
 	sessionCount = len(manager.sessions)
