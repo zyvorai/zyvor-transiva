@@ -4,6 +4,7 @@
 package api
 
 import (
+	"net/url"
 	"context"
 	"crypto/subtle"
 	"encoding/base64"
@@ -342,6 +343,12 @@ func (es *EnhancedServer) createUpgrader() websocket.Upgrader {
 				return true
 			}
 
+			// The dashboard is served by this daemon, so its own origin (same host and port as the request) is
+			// always allowed; the list below is for pages hosted elsewhere.
+			if isSameOrigin(origin, r.Host) {
+				return true
+			}
+
 			// Check against allowed origins
 			for _, allowed := range es.config.Security.AllowedOrigins {
 				if origin == allowed {
@@ -642,4 +649,13 @@ func jobVMName(job *models.Job) string {
 		return job.Definition.Name
 	}
 	return job.Definition.VMPath
+}
+
+// isSameOrigin reports whether a browser's Origin header names the host the request was sent to.
+func isSameOrigin(origin, requestHost string) bool {
+	u, err := url.Parse(origin)
+	if err != nil || u.Host == "" {
+		return false
+	}
+	return strings.EqualFold(u.Host, requestHost)
 }

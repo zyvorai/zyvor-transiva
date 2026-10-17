@@ -210,7 +210,7 @@ func applyJobOverridesToProviderConfig(cfg *providers.ProviderConfig, job *model
 	if job.Metadata == nil {
 		return
 	}
-	for _, key := range []string{"cluster", "resolve_containers", "enable_pipeline", "pipeline_timeout"} {
+	for _, key := range []string{"cluster", "resolve_containers", "enable_pipeline", "pipeline_timeout", "land_on_libvirt"} {
 		if v, ok := job.Metadata[key]; ok {
 			cfg.Metadata[key] = v
 		}
@@ -275,6 +275,11 @@ func buildNutanixExportOptions(job *models.JobDefinition, appConfig *config.Conf
 		}
 		if v, ok := job.Metadata["pipeline_timeout"]; ok {
 			meta["pipeline_timeout"] = v
+		}
+		// Whether h2kvm should define and start the converted VM on this host's libvirt. Without forwarding it
+		// here the dashboard's checkbox had no effect and the libvirt stage stayed disabled.
+		if v, ok := boolFromMeta(job.Metadata, "land_on_libvirt"); ok {
+			meta["land_on_libvirt"] = v
 		}
 		applyPipelineOptionsFromJob(meta, job)
 	}
