@@ -326,11 +326,18 @@ func (c *WSClient) writePump(ctx context.Context) {
 	}
 }
 
+// webSocketProtocol is the subprotocol the dashboard offers next to its session token.
+const webSocketProtocol = "transiva"
+
 // createUpgrader creates a WebSocket upgrader with origin validation
 func (es *EnhancedServer) createUpgrader() websocket.Upgrader {
 	return websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
+		// The browser offers "transiva" plus "transiva-session.<token>" (it cannot set an Authorization header on
+		// a WebSocket). A browser drops the connection unless the server selects one of the offered subprotocols,
+		// so select the constant one: the token is never echoed back.
+		Subprotocols: []string{webSocketProtocol},
 		CheckOrigin: func(r *http.Request) bool {
 			// If authentication is disabled, allow all origins (development mode)
 			if !es.config.Security.EnableAuth {

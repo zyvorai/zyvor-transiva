@@ -6,7 +6,10 @@ package api
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
+
+	"github.com/gorilla/websocket"
 )
 
 func TestIsSameOrigin(t *testing.T) {
@@ -53,5 +56,33 @@ func TestWebSocketUpgraderAllowsTheDashboardsOwnOrigin(t *testing.T) {
 	}
 	if check(req("http://evil.example.com")) {
 		t.Error("a foreign origin must be refused")
+	}
+}
+
+// A browser drops a WebSocket whose server does not select one of the subprotocols it offered (close code 1006).
+// The dashboard offers "transiva" and "transiva-session.<token>"; the server must select "transiva".
+func TestWebSocketSelectsTheConstantSubprotocol(t *testing.T) {
+	server := setupTestServer(t)
+	defer server.scheduler.Stop()
+	upgrader := server.createUpgrader()
+	upgrader.CheckOrigin = func(*http.Request) bool { return true }
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			return
+		}
+		_ = conn.Close()
+	}))
+	defer srv.Close()
+
+	dialer := websocket.Dialer{Subprotocols: []string{"transiva", "transiva-session.c2VjcmV0"}}
+	conn, resp, err := dialer.Dial("ws"+strings.TrimPrefix(srv.URL, "http")+"/ws", nil)
+	if err != nil {
+		t.Fatalf("dial: %v", err)
+	}
+	defer conn.Close()
+	if got := resp.Header.Get("Sec-Websocket-Protocol"); got != "transiva" {
+		t.Errorf("selected subprotocol = %q, want %q (and never the token)", got, "transiva")
 	}
 }

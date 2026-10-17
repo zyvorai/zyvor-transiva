@@ -134,5 +134,6 @@ export function webSocketProtocols(): string[] | undefined {
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
     .replace(/=+$/, "");
-  return ["transiva-session." + encoded];
+  // "transiva" is the protocol the server selects; browsers close the socket if none of the offered ones is.
+  return ["transiva", "transiva-session." + encoded];
 }
