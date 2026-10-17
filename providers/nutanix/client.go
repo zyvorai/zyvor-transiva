@@ -6,6 +6,8 @@ package nutanix
 import (
 	"context"
 	"fmt"
+	"net"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -36,6 +38,7 @@ func NewClient(cfg *ClientConfig, log logger.Logger) (*Client, error) {
 		return nil, fmt.Errorf("nutanix username and password are required")
 	}
 
+	cfg.Host, cfg.Port = SplitHostPort(cfg.Host, cfg.Port)
 	port := cfg.Port
 	if port == 0 {
 		port = 9440
@@ -354,4 +357,27 @@ func bytesToGiB(b *int64) float64 {
 		return 0
 	}
 	return float64(*b) / (1024 * 1024 * 1024)
+}
+
+// SplitHostPort accepts the Prism address the way people type it: "prism.example.com", "prism:9441",
+// "https://prism:9441/" or "[fd00::1]:9441". An explicit port in the address wins when port is 0; otherwise
+// the separate port is kept. The SDK adds ":<port>" itself, so a host that still contains a port would
+// produce an invalid URL such as "https://host:8990:9440".
+func SplitHostPort(host string, port int) (string, int) {
+	host = strings.TrimSpace(host)
+	for _, scheme := range []string{"https://", "http://"} {
+		host = strings.TrimPrefix(host, scheme)
+	}
+	if i := strings.IndexAny(host, "/?#"); i >= 0 {
+		host = host[:i]
+	}
+	h, p, err := net.SplitHostPort(host)
+	if err != nil {
+		// No port in the address (or a bare IPv6 literal): keep what we were given.
+		return strings.Trim(host, "[]"), port
+	}
+	if n, convErr := strconv.Atoi(p); convErr == nil && n > 0 && n < 65536 && port == 0 {
+		port = n
+	}
+	return h, port
 }

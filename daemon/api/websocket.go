@@ -527,8 +527,8 @@ func (es *EnhancedServer) broadcastDashboardMetrics() {
 			"progress":         progressPercent,
 			"start_time":       startTime,
 			"duration_seconds": durationSeconds,
-			"provider":         "vsphere",             // Default to vsphere for now
-			"vm_name":          job.Definition.VMPath, // Using VMPath as vm_name
+			"provider":         jobProvider(job),
+			"vm_name":          jobVMName(job),
 			"vm_path":          job.Definition.VMPath,
 			"output_dir":       job.Definition.OutputDir,
 			"format":           job.Definition.Format,
@@ -537,6 +537,10 @@ func (es *EnhancedServer) broadcastDashboardMetrics() {
 			"updated_at":       job.UpdatedAt.Format(time.RFC3339),
 		}
 
+		if job.Progress != nil {
+			jobInfo["phase"] = job.Progress.Phase
+			jobInfo["current_step"] = job.Progress.CurrentStep
+		}
 		if job.CompletedAt != nil {
 			jobInfo["end_time"] = job.CompletedAt.Format(time.RFC3339)
 		}
@@ -620,4 +624,22 @@ func webSocketSessionToken(r *http.Request) string {
 		}
 	}
 	return ""
+}
+
+// jobProvider names the source platform of a job. Jobs submitted without a provider come from the original
+// vSphere-only API.
+func jobProvider(job *models.Job) string {
+	if p := job.Definition.Provider; p != "" {
+		return p
+	}
+	return "vsphere"
+}
+
+// jobVMName is the VM name to show in the dashboard. Nutanix and other providers identify the VM by UUID in
+// VMPath, so prefer the job's name there; vSphere jobs keep showing the inventory path.
+func jobVMName(job *models.Job) string {
+	if jobProvider(job) != "vsphere" && job.Definition.Name != "" {
+		return job.Definition.Name
+	}
+	return job.Definition.VMPath
 }
