@@ -69,12 +69,16 @@ func (e *NutanixExporter) Export(ctx context.Context, job *models.JobDefinition,
 		return nil, fmt.Errorf("nutanix export: %w", err)
 	}
 
+	finalStep, pipelineErr := finalNutanixStep(result, exportOpts.Metadata)
+	if pipelineErr != nil {
+		return nil, pipelineErr
+	}
 	if progressCallback != nil {
 		progressCallback(&models.JobProgress{
 			Phase:           "completed",
 			PercentComplete: 100,
 			ExportMethod:    string(capabilities.ExportMethodNutanix),
-			CurrentStep:     "Export completed",
+			CurrentStep:     finalStep,
 		})
 	}
 
@@ -408,4 +412,22 @@ func applyPipelineOptionsFromJob(meta map[string]interface{}, job *models.JobDef
 	if opts.H2KVMDaemonTimeout > 0 {
 		meta["h2kvm_daemon_timeout"] = opts.H2KVMDaemonTimeout
 	}
+}
+
+// finalNutanixStep words the last step of a job and turns a failed h2kvm pipeline into a failed job. The
+// pipeline failing is non-fatal inside the provider (the export itself succeeded), but a migration whose
+// conversion or landing failed must not be reported as completed.
+func finalNutanixStep(result *providers.ExportResult, requested map[string]interface{}) (string, error) {
+	if result != nil && result.Metadata != nil {
+		if msg, _ := result.Metadata["pipeline_error"].(string); msg != "" {
+			return "", fmt.Errorf("exported, but the h2kvm pipeline failed: %s", msg)
+		}
+		if ok, _ := result.Metadata["pipeline_success"].(bool); ok {
+			if land, _ := requested["land_on_libvirt"].(bool); land {
+				return "Migration complete: converted by h2kvm and started on this host", nil
+			}
+			return "Migration complete: converted by h2kvm", nil
+		}
+	}
+	return "Export completed", nil
 }
