@@ -6,3 +6,4 @@ coverage.out
 __pycache__/
 *.pyc
 .deploy-last
+website/static/docs/
