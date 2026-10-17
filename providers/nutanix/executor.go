@@ -133,7 +133,7 @@ func ExecutePickupVM(ctx context.Context, vm PickupVM, opts PickupExecuteOptions
 	if opts.Pipeline {
 		convertedDir = filepath.Join(vmOutDir, "converted")
 	}
-	artifact, err := BuildArtifactManifestWithPipeline(vm, converted, format, convertedDir)
+	artifact, err := BuildArtifactManifestWithPipeline(vm, converted, format, convertedDir, opts.Land)
 	if err != nil {
 		return nil, err
 	}

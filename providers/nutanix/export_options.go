@@ -19,6 +19,7 @@ type nutanixExportOptions struct {
 	DryRun            bool
 	ResolveContainers bool
 	EnablePipeline    bool
+	LandOnLibvirt     bool // after conversion, define and start the VM on this host's libvirt (h2kvm)
 	PipelineTimeout   time.Duration
 	Pipeline          common.H2KVMConfig
 }
@@ -70,6 +71,9 @@ func applyProviderMetadata(out *nutanixExportOptions, meta map[string]interface{
 	}
 	if v, ok := metaBool(meta, "enable_pipeline"); ok {
 		out.EnablePipeline = v
+	}
+	if v, ok := metaBool(meta, "land_on_libvirt", "libvirt_integration"); ok {
+		out.LandOnLibvirt = v
 	}
 	if d, ok := metaDuration(meta, "pipeline_timeout"); ok {
 		out.PipelineTimeout = d

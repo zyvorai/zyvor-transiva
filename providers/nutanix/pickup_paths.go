@@ -26,6 +26,9 @@ type PickupExecuteOptions struct {
 	// stages (and write the converted disk under <vm dir>/converted). Without it the manifest only
 	// describes the exported disks.
 	Pipeline bool
+
+	// Land makes h2kvm define the converted VM on this host's libvirt and start it (needs Pipeline).
+	Land bool
 }
 
 // ConvertedDisk records a converted disk artifact on the migration host.

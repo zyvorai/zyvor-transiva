@@ -13,6 +13,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/zyvorai/transiva/manifest"
 )
 
 // mockLogger implements Logger interface for testing
@@ -401,4 +403,28 @@ func TestExecuteDirectPassesTheManifestWithTheManifestFlag(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "--manifest\n"+manifestPath+"\n-v\n", string(got))
 	assert.Equal(t, dir+"/converted.qcow2", result.OutputPath)
+}
+
+func TestFindOutputPathLooksForTheConvertedBootDiskInTheOutputDirectory(t *testing.T) {
+	dir := t.TempDir()
+	conv := filepath.Join(dir, "converted")
+	require.NoError(t, os.MkdirAll(conv, 0o755))
+	require.NoError(t, os.WriteFile(filepath.Join(conv, "disk-0.qcow2"), []byte("x"), 0o644))
+	src := filepath.Join(dir, "disk.qcow2")
+	require.NoError(t, os.WriteFile(src, []byte("x"), 0o644))
+
+	built, err := manifest.NewBuilder().
+		WithSource("nutanix", "uuid", "vm", "cluster", "nutanix-nfs-pickup").
+		WithVM(2, 4, "bios", "unknown", "", false).
+		AddDisk("disk-0", "qcow2", src, 1, 0, "boot").
+		WithOutput(conv, "qcow2", "").
+		Build()
+	require.NoError(t, err)
+	manifestPath := filepath.Join(dir, "artifact-manifest.json")
+	require.NoError(t, manifest.WriteToFile(built, manifestPath))
+
+	executor := NewPipelineExecutor(&H2KVMConfig{ManifestPath: manifestPath}, &mockLogger{})
+	// h2kvm's manifest mode prints log lines with timestamps, never an "Output:" line.
+	got := executor.findOutputPath([]string{"16:09:14 INFO 📤 Output: " + conv})
+	assert.Equal(t, filepath.Join(conv, "disk-0.qcow2"), got)
 }
