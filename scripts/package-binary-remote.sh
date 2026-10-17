@@ -125,8 +125,8 @@ BUILD_DIR='${BUILD_DIR}'
 ARTIFACT='${ARTIFACT}'
 VERSION='${VERSION}'
 
-# shellcheck source=scripts/lib/package-transiva-client-bundle.sh
-source "\${BUILD_DIR}/scripts/lib/package-transiva-client-bundle.sh"
+# shellcheck source=scripts/lib/package-hypersdk-client-bundle.sh
+source "\${BUILD_DIR}/scripts/lib/package-hypersdk-client-bundle.sh"
 STAGE="\${OUT_DIR}/\${ARTIFACT}"
 package_hypersdk_client_bundle "\${STAGE}" "\${BUILD_DIR}" "\${VERSION}"
 package_hypersdk_client_tarball "\${OUT_DIR}" "\${ARTIFACT}" "\${STAGE}"
