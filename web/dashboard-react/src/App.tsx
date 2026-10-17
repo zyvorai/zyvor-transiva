@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  Box,
   LayoutDashboard,
   ArrowUpRight,
   ListChecks,
@@ -17,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { Login } from "./components/Login";
+import ZMark from "./components/ZMark";
 import { Dashboard } from "./components/Dashboard";
 import { WorkflowDashboard } from "./components/WorkflowDashboard";
 import { ManifestBuilder } from "./components/ManifestBuilder";
@@ -147,7 +147,7 @@ export default function App() {
       </a>
       <aside className="sidebar">
         <a className="wordmark" href="#overview">
-          <Box size={25} /> Transiva
+          <ZMark size={24} /> Transiva
         </a>
         <p className="sidebar-caption">MIGRATION WORKSPACE</p>
         <nav aria-label="Workspace">
@@ -164,7 +164,7 @@ export default function App() {
         </nav>
         <div className="sidebar-bottom">
           <div className="suite-mark">
-            <Box size={18} />
+            <ZMark variant="tile" size={20} />
             <span>
               ZYVOR <small>Built for your next chapter.</small>
             </span>

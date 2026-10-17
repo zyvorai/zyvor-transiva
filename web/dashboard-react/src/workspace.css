@@ -161,6 +161,10 @@ button.primary,
 .wordmark > svg {
   color: var(--blue);
 }
+.z-mark {
+  display: block;
+  flex: none;
+}
 .wordmark > span {
   font-size: 11px;
   letter-spacing: 0;

@@ -1,7 +1,8 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
 // SPDX-License-Identifier: Apache-2.0
 
-import { Cloud, Box, ArrowRight, Check } from "lucide-react";
+import { Cloud, ArrowRight, Check } from "lucide-react";
+import ZMark from "./ZMark";
 export function MigrationGraphic() {
   return (
     <div
@@ -18,7 +19,7 @@ export function MigrationGraphic() {
       </div>
       <ArrowRight className="art-arrow" aria-hidden="true" />
       <div className="art-core">
-        <Box size={48} />
+        <ZMark variant="tile" size={48} />
         <b>Transiva</b>
         <small>Move with clarity.</small>
       </div>
