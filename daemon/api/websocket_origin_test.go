@@ -81,7 +81,7 @@ func TestWebSocketSelectsTheConstantSubprotocol(t *testing.T) {
 	if err != nil {
 		t.Fatalf("dial: %v", err)
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 	if got := resp.Header.Get("Sec-Websocket-Protocol"); got != "transiva" {
 		t.Errorf("selected subprotocol = %q, want %q (and never the token)", got, "transiva")
 	}
