@@ -21,6 +21,11 @@ type PickupExecuteOptions struct {
 	QemuImgPath string
 	DryRun      bool
 	Progress    PickupProgressFunc
+
+	// Pipeline makes the artifact manifest ask h2kvm to run its inspect, fix, convert and validate
+	// stages (and write the converted disk under <vm dir>/converted). Without it the manifest only
+	// describes the exported disks.
+	Pipeline bool
 }
 
 // ConvertedDisk records a converted disk artifact on the migration host.

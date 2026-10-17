@@ -205,7 +205,8 @@ func (e *PipelineExecutor) ExecuteDirect(ctx context.Context) (*PipelineResult, 
 	}
 
 	// Build h2kvm command
-	args := []string{e.config.ManifestPath}
+	// h2kvmctl takes the manifest through --manifest; a bare path is rejected as an unrecognized argument.
+	args := []string{"--manifest", e.config.ManifestPath}
 	if e.config.Verbose {
 		args = append(args, "-v")
 	}

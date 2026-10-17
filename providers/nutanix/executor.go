@@ -129,7 +129,11 @@ func ExecutePickupVM(ctx context.Context, vm PickupVM, opts PickupExecuteOptions
 		PercentComplete: 95, Message: "Building artifact manifest",
 	})
 
-	artifact, err := BuildArtifactManifest(vm, converted, format)
+	convertedDir := ""
+	if opts.Pipeline {
+		convertedDir = filepath.Join(vmOutDir, "converted")
+	}
+	artifact, err := BuildArtifactManifestWithPipeline(vm, converted, format, convertedDir)
 	if err != nil {
 		return nil, err
 	}

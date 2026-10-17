@@ -65,17 +65,25 @@ export interface NutanixConnection {
   insecure?: boolean;
 }
 
-export async function listNutanixVMs(conn: NutanixConnection) {
-  const params = new URLSearchParams({
+// The connection details go in a POST body: a GET would put the Prism password in the URL.
+function nutanixBody(conn: NutanixConnection, extra: Record<string, string> = {}) {
+  return JSON.stringify({
     provider: 'nutanix',
     server: conn.server,
     username: conn.username,
     password: conn.password,
-    insecure: String(conn.insecure ?? false),
+    insecure: conn.insecure ?? false,
+    ...(conn.cluster ? { cluster: conn.cluster } : {}),
+    ...extra,
   });
-  if (conn.cluster) params.set('cluster', conn.cluster);
+}
 
-  const response = await authenticatedFetch(`/vms/list?${params.toString()}`, { method: 'GET' });
+export async function listNutanixVMs(conn: NutanixConnection) {
+  const response = await authenticatedFetch('/vms/list', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: nutanixBody(conn),
+  });
   if (!response.ok) {
     const text = await response.text();
     throw new Error(text || `Failed to list Nutanix VMs (${response.status})`);
@@ -84,17 +92,11 @@ export async function listNutanixVMs(conn: NutanixConnection) {
 }
 
 export async function getNutanixVMInfo(conn: NutanixConnection, vm: string) {
-  const params = new URLSearchParams({
-    provider: 'nutanix',
-    vm,
-    server: conn.server,
-    username: conn.username,
-    password: conn.password,
-    insecure: String(conn.insecure ?? false),
+  const response = await authenticatedFetch('/vms/info?provider=nutanix', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: nutanixBody(conn, { vm }),
   });
-  if (conn.cluster) params.set('cluster', conn.cluster);
-
-  const response = await authenticatedFetch(`/vms/info?${params.toString()}`, { method: 'GET' });
   if (!response.ok) {
     const text = await response.text();
     throw new Error(text || `Failed to get VM info (${response.status})`);
