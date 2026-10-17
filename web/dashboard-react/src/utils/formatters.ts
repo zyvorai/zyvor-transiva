@@ -71,8 +71,8 @@ export function formatPercentage(value: number, decimals = 1): string {
   return `${value.toFixed(decimals)}%`;
 }
 
-export function formatNumber(value: number, decimals = 0): string {
-  return value.toLocaleString(undefined, {
+export function formatNumber(value: number, decimals = 0, locale?: string): string {
+  return value.toLocaleString(locale, {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });
