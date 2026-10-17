@@ -41,17 +41,17 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   tab: {
     padding: '10px 18px',
-    border: '1px solid #e5e7eb',
-    borderRadius: '6px',
-    backgroundColor: '#fff',
+    border: '1px solid var(--line)',
+    borderRadius: '12px',
+    backgroundColor: 'var(--surface)',
     cursor: 'pointer',
     fontWeight: 600,
     fontSize: '13px',
   },
   tabActive: {
-    backgroundColor: '#f0583a',
+    backgroundColor: '#0071e3',
     color: '#fff',
-    borderColor: '#f0583a',
+    borderColor: 'var(--blue)',
   },
 };
 

@@ -1,6 +1,8 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
 // SPDX-License-Identifier: Apache-2.0
 
+import { authenticatedFetch } from '../utils/session';
+
 import React, { useState, useEffect } from 'react';
 
 interface VM {
@@ -51,7 +53,7 @@ const VMBrowser: React.FC<VMBrowserProps> = ({
     setError(null);
 
     try {
-      const response = await fetch('/vms/list', {
+      const response = await authenticatedFetch('/vms/list', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -169,7 +171,7 @@ const VMBrowser: React.FC<VMBrowserProps> = ({
       <div style={styles.filters}>
         <input
           type="text"
-          placeholder="Search VMs by name or ID..."
+          aria-label="Search VMs by name or ID..." placeholder="Search VMs by name or ID..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={styles.searchInput}
@@ -368,7 +370,7 @@ const VMBrowser: React.FC<VMBrowserProps> = ({
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
     padding: '20px',
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--surface)',
     borderRadius: '8px',
     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
   },
@@ -377,7 +379,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: '20px',
-    borderBottom: '2px solid #f0f2f7',
+    borderBottom: '2px solid var(--bg)',
     paddingBottom: '15px',
   },
   headerLeft: {
@@ -386,16 +388,16 @@ const styles: { [key: string]: React.CSSProperties } = {
   title: {
     margin: 0,
     fontSize: '24px',
-    color: '#222324',
+    color: 'var(--ink)',
   },
   subtitle: {
     margin: '5px 0 0 0',
     fontSize: '14px',
-    color: '#666',
+    color: 'var(--muted)',
   },
   refreshButton: {
     padding: '10px 20px',
-    backgroundColor: '#f0583a',
+    backgroundColor: '#0071e3',
     color: '#fff',
     border: 'none',
     borderRadius: '5px',
@@ -438,14 +440,14 @@ const styles: { [key: string]: React.CSSProperties } = {
   loading: {
     textAlign: 'center',
     padding: '40px',
-    color: '#666',
+    color: 'var(--muted)',
   },
   spinner: {
     width: '40px',
     height: '40px',
     margin: '0 auto 20px',
-    border: '4px solid #f0f2f7',
-    borderTop: '4px solid #f0583a',
+    border: '4px solid var(--bg)',
+    borderTop: '4px solid var(--blue)',
     borderRadius: '50%',
     animation: 'spin 1s linear infinite',
   },
@@ -471,13 +473,13 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderCollapse: 'collapse',
   },
   tableHeaderRow: {
-    backgroundColor: '#f0f2f7',
+    backgroundColor: 'var(--bg)',
   },
   tableHeader: {
     padding: '12px',
     textAlign: 'left',
     fontWeight: 'bold',
-    color: '#222324',
+    color: 'var(--ink)',
     cursor: 'pointer',
     userSelect: 'none',
   },
@@ -487,11 +489,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     transition: 'background-color 0.2s',
   },
   tableRowSelected: {
-    backgroundColor: '#fff3e0',
+    backgroundColor: 'var(--surface)3e0',
   },
   tableCell: {
     padding: '12px',
-    color: '#333',
+    color: 'var(--ink)',
   },
   vmNameCell: {
     display: 'flex',
@@ -512,10 +514,10 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   selectButton: {
     padding: '6px 12px',
-    backgroundColor: '#f0583a',
+    backgroundColor: '#0071e3',
     color: '#fff',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '12px',
     cursor: 'pointer',
     fontSize: '12px',
     fontWeight: 'bold',
@@ -532,10 +534,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: '8px',
     cursor: 'pointer',
     transition: 'all 0.3s',
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--surface)',
   },
   vmCardSelected: {
-    borderColor: '#f0583a',
+    borderColor: 'var(--blue)',
     boxShadow: '0 0 0 2px rgba(240, 88, 58, 0.2)',
   },
   vmCardHeader: {
@@ -547,7 +549,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   vmCardTitle: {
     margin: 0,
     fontSize: '18px',
-    color: '#222324',
+    color: 'var(--ink)',
   },
   vmCardBody: {
     marginBottom: '15px',
@@ -556,15 +558,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     justifyContent: 'space-between',
     padding: '5px 0',
-    borderBottom: '1px solid #f0f2f7',
+    borderBottom: '1px solid var(--bg)',
   },
   vmCardLabel: {
     fontWeight: 'bold',
-    color: '#666',
+    color: 'var(--muted)',
     fontSize: '14px',
   },
   vmCardValue: {
-    color: '#333',
+    color: 'var(--ink)',
     fontSize: '14px',
   },
   selectedVMInfo: {
@@ -584,7 +586,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
     gap: '10px',
     fontSize: '14px',
-    color: '#333',
+    color: 'var(--ink)',
   },
 };
 

@@ -1,6 +1,8 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
 // SPDX-License-Identifier: Apache-2.0
 
+import { authenticatedFetch } from '../utils/session';
+
 import React, { useState, useEffect } from 'react';
 
 interface ProviderConfig {
@@ -43,7 +45,7 @@ const ProviderManager: React.FC<ProviderManagerProps> = ({ onProviderSelect }) =
 
   const loadProviders = async () => {
     try {
-      const response = await fetch('/api/providers/list');
+      const response = await authenticatedFetch('/api/providers/list');
       if (response.ok) {
         const data = await response.json();
         setProviders(data);
@@ -56,7 +58,7 @@ const ProviderManager: React.FC<ProviderManagerProps> = ({ onProviderSelect }) =
   const testConnection = async (providerId: string) => {
     setTesting(providerId);
     try {
-      const response = await fetch('/api/providers/test', {
+      const response = await authenticatedFetch('/api/providers/test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ provider: providerId }),
@@ -101,7 +103,7 @@ const ProviderManager: React.FC<ProviderManagerProps> = ({ onProviderSelect }) =
 
     setSaving(true);
     try {
-      const response = await fetch('/api/providers/add', {
+      const response = await authenticatedFetch('/api/providers/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -378,11 +380,11 @@ const styles: { [key: string]: React.CSSProperties } = {
   title: {
     margin: 0,
     fontSize: '24px',
-    color: '#222324',
+    color: 'var(--ink)',
   },
   addButton: {
     padding: '10px 20px',
-    backgroundColor: '#f0583a',
+    backgroundColor: '#0071e3',
     color: '#fff',
     border: 'none',
     borderRadius: '5px',
@@ -401,7 +403,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: '8px',
     cursor: 'pointer',
     transition: 'all 0.3s',
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--surface)',
   },
   providerCardConnected: {
     borderColor: '#4caf50',
@@ -424,7 +426,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   providerName: {
     margin: '0 0 5px 0',
     fontSize: '18px',
-    color: '#222324',
+    color: 'var(--ink)',
   },
   statusBadge: {
     display: 'inline-block',
@@ -437,7 +439,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   providerError: {
     padding: '10px',
     backgroundColor: '#ffebee',
-    borderRadius: '4px',
+    borderRadius: '12px',
     color: '#c62828',
     fontSize: '12px',
     marginBottom: '10px',
@@ -457,7 +459,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: '#2196f3',
     color: '#fff',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '12px',
     cursor: 'pointer',
     fontSize: '12px',
     fontWeight: 'bold',
@@ -472,7 +474,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: '#4caf50',
     color: '#fff',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '12px',
     cursor: 'pointer',
     fontSize: '12px',
     fontWeight: 'bold',
@@ -508,7 +510,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     zIndex: 1000,
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--surface)',
     borderRadius: '8px',
     maxWidth: '600px',
     width: '90%',
@@ -526,7 +528,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   modalTitle: {
     margin: 0,
     fontSize: '20px',
-    color: '#222324',
+    color: 'var(--ink)',
   },
   closeButton: {
     background: 'none',
@@ -547,7 +549,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'block',
     marginBottom: '5px',
     fontWeight: 'bold',
-    color: '#333',
+    color: 'var(--ink)',
     fontSize: '14px',
   },
   required: {
@@ -593,7 +595,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   cancelButton: {
     padding: '10px 20px',
     backgroundColor: '#ccc',
-    color: '#333',
+    color: 'var(--ink)',
     border: 'none',
     borderRadius: '5px',
     cursor: 'pointer',
@@ -602,7 +604,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   saveButton: {
     padding: '10px 20px',
-    backgroundColor: '#f0583a',
+    backgroundColor: '#0071e3',
     color: '#fff',
     border: 'none',
     borderRadius: '5px',

@@ -1,6 +1,8 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
 // SPDX-License-Identifier: Apache-2.0
 
+import { authenticatedFetch } from '../utils/session';
+
 import React, { useState, useEffect } from 'react';
 
 interface VM {
@@ -97,7 +99,7 @@ const VSphereExportWorkflow: React.FC = () => {
         insecure: cleanedConfig.insecure.toString(),
       });
 
-      const response = await fetch(`/vms/list?${params}`, {
+      const response = await authenticatedFetch(`/vms/list?${params}`, {
         method: 'GET',
       });
 
@@ -180,7 +182,7 @@ const VSphereExportWorkflow: React.FC = () => {
         vsphere_config: vSphereConfig,
       };
 
-      const response = await fetch('/jobs/submit', {
+      const response = await authenticatedFetch('/jobs/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(jobData),
@@ -238,15 +240,15 @@ const VSphereExportWorkflow: React.FC = () => {
               type="text"
               value={vSphereConfig.vcenter}
               onChange={(e) => setVSphereConfig({ ...vSphereConfig, vcenter: e.target.value })}
-              placeholder="vCenter Server *"
+              aria-label="vCenter Server" placeholder="vCenter Server *"
               required
               style={styles.input}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#f0583a';
+                e.currentTarget.style.borderColor = 'var(--blue)';
               }}
               onBlur={(e) => {
                 setVSphereConfig({ ...vSphereConfig, vcenter: e.target.value.trim().replace(/\s+/g, '') });
-                e.currentTarget.style.borderColor = '#e5e7eb';
+                e.currentTarget.style.borderColor = 'var(--line)';
               }}
             />
           </div>
@@ -256,14 +258,14 @@ const VSphereExportWorkflow: React.FC = () => {
               type="text"
               value={vSphereConfig.datacenter}
               onChange={(e) => setVSphereConfig({ ...vSphereConfig, datacenter: e.target.value })}
-              placeholder="Datacenter (optional)"
+              aria-label="Datacenter (optional)" placeholder="Datacenter (optional)"
               style={styles.input}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#f0583a';
+                e.currentTarget.style.borderColor = 'var(--blue)';
               }}
               onBlur={(e) => {
                 setVSphereConfig({ ...vSphereConfig, datacenter: e.target.value.trim() });
-                e.currentTarget.style.borderColor = '#e5e7eb';
+                e.currentTarget.style.borderColor = 'var(--line)';
               }}
             />
           </div>
@@ -273,15 +275,15 @@ const VSphereExportWorkflow: React.FC = () => {
               type="text"
               value={vSphereConfig.username}
               onChange={(e) => setVSphereConfig({ ...vSphereConfig, username: e.target.value })}
-              placeholder="Username *"
+              aria-label="Username" placeholder="Username *"
               required
               style={styles.input}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#f0583a';
+                e.currentTarget.style.borderColor = 'var(--blue)';
               }}
               onBlur={(e) => {
                 setVSphereConfig({ ...vSphereConfig, username: e.target.value.trim() });
-                e.currentTarget.style.borderColor = '#e5e7eb';
+                e.currentTarget.style.borderColor = 'var(--line)';
               }}
             />
           </div>
@@ -291,15 +293,15 @@ const VSphereExportWorkflow: React.FC = () => {
               type={showPassword ? 'text' : 'password'}
               value={vSphereConfig.password}
               onChange={(e) => setVSphereConfig({ ...vSphereConfig, password: e.target.value })}
-              placeholder="Password *"
+              aria-label="Password" placeholder="Password *"
               required
               style={styles.input}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#f0583a';
+                e.currentTarget.style.borderColor = 'var(--blue)';
               }}
               onBlur={(e) => {
                 setVSphereConfig({ ...vSphereConfig, password: e.target.value.trim() });
-                e.currentTarget.style.borderColor = '#e5e7eb';
+                e.currentTarget.style.borderColor = 'var(--line)';
               }}
             />
           </div>
@@ -357,7 +359,7 @@ const VSphereExportWorkflow: React.FC = () => {
           }}
           onMouseLeave={(e) => {
             if (!loading) {
-              e.currentTarget.style.backgroundColor = '#f0583a';
+              e.currentTarget.style.backgroundColor = 'var(--blue)';
             }
           }}
         >
@@ -411,12 +413,12 @@ const VSphereExportWorkflow: React.FC = () => {
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.12)';
                 e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.borderColor = '#f0583a';
+                e.currentTarget.style.borderColor = 'var(--blue)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.borderColor = '#e5e7eb';
+                e.currentTarget.style.borderColor = 'var(--line)';
               }}
             >
               <div style={styles.vmCardHeader}>
@@ -471,7 +473,7 @@ const VSphereExportWorkflow: React.FC = () => {
                   e.currentTarget.style.transform = 'scale(1.02)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f0583a';
+                  e.currentTarget.style.backgroundColor = 'var(--blue)';
                   e.currentTarget.style.transform = 'scale(1)';
                 }}
               >
@@ -586,7 +588,7 @@ const VSphereExportWorkflow: React.FC = () => {
             type="text"
             value={exportOptions.jobName}
             onChange={(e) => setExportOptions({ ...exportOptions, jobName: e.target.value })}
-            placeholder="my-export-job"
+            aria-label="my-export-job" placeholder="my-export-job"
             required
             style={styles.input}
           />
@@ -600,7 +602,7 @@ const VSphereExportWorkflow: React.FC = () => {
             type="text"
             value={exportOptions.outputDir}
             onChange={(e) => setExportOptions({ ...exportOptions, outputDir: e.target.value })}
-            placeholder="/tmp/exports"
+            aria-label="/tmp/exports" placeholder="/tmp/exports"
             required
             style={styles.input}
           />
@@ -688,7 +690,7 @@ const VSphereExportWorkflow: React.FC = () => {
   );
 
   return (
-    <div style={styles.container}>
+    <div className="export-workflow-panel" style={styles.container}>
       {/* Progress Indicator */}
       <div style={styles.progressBar}>
         <div style={{
@@ -726,7 +728,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '0',
     maxWidth: '1200px',
     margin: '0 auto',
-    backgroundColor: '#f0f2f7',
+    backgroundColor: 'var(--bg)',
   },
   progressBar: {
     display: 'flex',
@@ -734,10 +736,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'center',
     marginBottom: '0',
     padding: '24px 32px',
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--surface)',
     borderRadius: '0',
     border: 'none',
-    borderBottom: '1px solid #e5e7eb',
+    borderBottom: '1px solid var(--line)',
   },
   progressStep: {
     padding: '10px 20px',
@@ -751,19 +753,19 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   progressStepActive: {
     backgroundColor: 'transparent',
-    color: '#000',
-    borderBottom: '3px solid #f0583a',
+    color: 'var(--ink)',
+    borderBottom: '3px solid var(--blue)',
     boxShadow: 'none',
   },
   progressStepComplete: {
     backgroundColor: 'transparent',
-    color: '#000',
+    color: 'var(--ink)',
   },
   progressLine: {
     display: 'none',
   },
   stepContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--surface)',
     padding: '32px',
     borderRadius: '0',
     boxShadow: 'none',
@@ -780,20 +782,20 @@ const styles: { [key: string]: React.CSSProperties } = {
   stepTitle: {
     margin: '0 0 8px 0',
     fontSize: '28px',
-    color: '#000',
+    color: 'var(--ink)',
     fontWeight: '700',
     letterSpacing: '-0.5px',
   },
   stepDescription: {
     margin: 0,
     fontSize: '14px',
-    color: '#6b7280',
+    color: 'var(--muted)',
     fontWeight: '400',
     lineHeight: '1.6',
   },
   backButton: {
     padding: '6px 12px',
-    backgroundColor: '#6b7280',
+    backgroundColor: 'var(--muted)',
     color: '#fff',
     border: 'none',
     borderRadius: '5px',
@@ -828,27 +830,27 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: '#9ca3af',
     pointerEvents: 'none',
     transition: 'all 0.25s cubic-bezier(0.215, 0.61, 0.355, 1)',
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--surface)',
     padding: '0 4px',
   },
   labelFocused: {
     top: '0',
-    fontSize: '11px',
-    color: '#f0583a',
+    fontSize: '12px',
+    color: 'var(--blue)',
     fontWeight: '600',
   },
   required: {
-    color: '#f0583a',
+    color: 'var(--blue)',
   },
   input: {
     width: '100%',
     padding: '14px',
-    border: '1px solid #e5e7eb',
+    border: '1px solid var(--line)',
     borderRadius: '0',
     fontSize: '14px',
     boxSizing: 'border-box',
     transition: 'all 0.25s cubic-bezier(0.215, 0.61, 0.355, 1)',
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--surface)',
     fontFamily: 'inherit',
     outline: 'none',
   },
@@ -857,7 +859,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
     gap: '8px',
     fontSize: '13px',
-    color: '#000',
+    color: 'var(--ink)',
     fontWeight: '400',
     cursor: 'pointer',
     userSelect: 'none',
@@ -866,11 +868,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '16px',
     height: '16px',
     cursor: 'pointer',
-    accentColor: '#f0583a',
+    accentColor: 'var(--blue)',
   },
   helpText: {
     margin: '4px 0 0 20px',
-    fontSize: '10px',
+    fontSize: '12px',
     color: '#9ca3af',
     fontStyle: 'italic',
   },
@@ -879,23 +881,23 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: '14px',
     color: '#111827',
     fontWeight: '600',
-    borderBottom: '1px solid #e5e7eb',
+    borderBottom: '1px solid var(--line)',
     paddingBottom: '6px',
   },
   errorBox: {
     padding: '7px 10px',
     backgroundColor: '#fee2e2',
     border: '1px solid #fecaca',
-    borderRadius: '4px',
+    borderRadius: '12px',
     color: '#991b1b',
     marginBottom: '10px',
-    fontSize: '11px',
+    fontSize: '12px',
     fontWeight: '500',
   },
   submitButton: {
     width: 'auto',
     padding: '14px 32px',
-    backgroundColor: '#f0583a',
+    backgroundColor: '#0071e3',
     color: '#fff',
     border: 'none',
     borderRadius: '0',
@@ -920,11 +922,11 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   vmCard: {
     padding: '18px',
-    border: '1px solid #e5e7eb',
+    border: '1px solid var(--line)',
     borderRadius: '8px',
     cursor: 'pointer',
     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--surface)',
     boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
     position: 'relative',
     overflow: 'hidden',
@@ -946,7 +948,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '4px 10px',
     borderRadius: '12px',
     color: '#fff',
-    fontSize: '11px',
+    fontSize: '12px',
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
@@ -962,12 +964,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '8px 12px',
-    backgroundColor: '#f9fafb',
-    borderRadius: '6px',
+    backgroundColor: 'var(--bg)',
+    borderRadius: '12px',
   },
   vmCardLabel: {
     fontWeight: '600',
-    color: '#6b7280',
+    color: 'var(--muted)',
     fontSize: '12px',
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
@@ -980,12 +982,12 @@ const styles: { [key: string]: React.CSSProperties } = {
   selectButton: {
     width: '100%',
     padding: '6px 10px',
-    backgroundColor: '#f0583a',
+    backgroundColor: '#0071e3',
     color: '#fff',
     border: 'none',
     borderRadius: '5px',
     cursor: 'pointer',
-    fontSize: '11px',
+    fontSize: '12px',
     fontWeight: '600',
     transition: 'all 0.2s',
     letterSpacing: '0.3px',
@@ -1001,17 +1003,17 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   paginationButton: {
     padding: '8px 16px',
-    backgroundColor: '#f0583a',
+    backgroundColor: '#0071e3',
     color: '#fff',
     border: 'none',
-    borderRadius: '6px',
+    borderRadius: '12px',
     cursor: 'pointer',
     fontSize: '13px',
     fontWeight: '600',
     transition: 'all 0.2s',
   },
   paginationButtonDisabled: {
-    backgroundColor: '#d1d5db',
+    backgroundColor: 'var(--line)',
     cursor: 'not-allowed',
     opacity: 0.6,
   },
@@ -1022,10 +1024,10 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   paginationNumber: {
     padding: '8px 12px',
-    backgroundColor: '#fff',
-    color: '#374151',
-    border: '1px solid #e5e7eb',
-    borderRadius: '6px',
+    backgroundColor: 'var(--surface)',
+    color: 'var(--ink)',
+    border: '1px solid var(--line)',
+    borderRadius: '12px',
     cursor: 'pointer',
     fontSize: '13px',
     fontWeight: '500',
@@ -1033,21 +1035,21 @@ const styles: { [key: string]: React.CSSProperties } = {
     minWidth: '40px',
   },
   paginationNumberActive: {
-    backgroundColor: '#f0583a',
+    backgroundColor: '#0071e3',
     color: '#fff',
-    borderColor: '#f0583a',
+    borderColor: 'var(--blue)',
     fontWeight: '700',
   },
   paginationEllipsis: {
     padding: '8px 4px',
-    color: '#6b7280',
+    color: 'var(--muted)',
     fontSize: '13px',
   },
   selectedVMBox: {
     padding: '12px 14px',
     backgroundColor: '#d1e7dd',
     border: '1px solid #a3cfbb',
-    borderRadius: '6px',
+    borderRadius: '12px',
     marginBottom: '16px',
   },
   selectedVMTitle: {

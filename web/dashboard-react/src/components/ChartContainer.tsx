@@ -1,7 +1,7 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React from "react";
 import {
   LineChart,
   Line,
@@ -16,11 +16,11 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
+} from "recharts";
 
 interface ChartContainerProps {
   title: string;
-  type: 'line' | 'bar' | 'pie';
+  type: "line" | "bar" | "pie";
   data: any[];
   dataKeys?: string[];
   colors?: string[];
@@ -28,7 +28,14 @@ interface ChartContainerProps {
   height?: number;
 }
 
-const DEFAULT_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+const DEFAULT_COLORS = [
+  "#3b82f6",
+  "#10b981",
+  "#f59e0b",
+  "#ef4444",
+  "#8b5cf6",
+  "#ec4899",
+];
 
 export const ChartContainer: React.FC<ChartContainerProps> = ({
   title,
@@ -36,35 +43,35 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   data,
   dataKeys = [],
   colors = DEFAULT_COLORS,
-  xAxisKey = 'timestamp',
+  xAxisKey = "timestamp",
   height = 300,
 }) => {
   const renderChart = () => {
     switch (type) {
-      case 'line':
+      case "line":
         return (
           <ResponsiveContainer width="100%" height={height}>
             <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" />
               <XAxis
                 dataKey={xAxisKey}
-                stroke="#6b7280"
+                stroke="var(--muted)"
                 fontSize={12}
                 tickFormatter={(value) => {
-                  if (xAxisKey === 'timestamp') {
+                  if (xAxisKey === "timestamp") {
                     const date = new Date(value);
                     return date.toLocaleTimeString();
                   }
                   return value;
                 }}
               />
-              <YAxis stroke="#6b7280" fontSize={12} />
+              <YAxis stroke="var(--muted)" fontSize={12} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  fontSize: '12px',
+                  backgroundColor: "var(--surface)",
+                  border: "1px solid var(--line)",
+                  borderRadius: "8px",
+                  fontSize: "12px",
                 }}
               />
               <Legend />
@@ -76,26 +83,26 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
                   stroke={colors[index % colors.length]}
                   strokeWidth={2}
                   dot={false}
-                  animationDuration={300}
+                  isAnimationActive={false}
                 />
               ))}
             </LineChart>
           </ResponsiveContainer>
         );
 
-      case 'bar':
+      case "bar":
         return (
           <ResponsiveContainer width="100%" height={height}>
             <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey={xAxisKey} stroke="#6b7280" fontSize={12} />
-              <YAxis stroke="#6b7280" fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" />
+              <XAxis dataKey={xAxisKey} stroke="var(--muted)" fontSize={12} />
+              <YAxis stroke="var(--muted)" fontSize={12} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  fontSize: '12px',
+                  backgroundColor: "var(--surface)",
+                  border: "1px solid var(--line)",
+                  borderRadius: "8px",
+                  fontSize: "12px",
                 }}
               />
               <Legend />
@@ -104,18 +111,19 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
                   key={key}
                   dataKey={key}
                   fill={colors[index % colors.length]}
-                  animationDuration={300}
+                  isAnimationActive={false}
                 />
               ))}
             </BarChart>
           </ResponsiveContainer>
         );
 
-      case 'pie':
+      case "pie":
         return (
           <ResponsiveContainer width="100%" height={height}>
             <PieChart>
               <Pie
+                isAnimationActive={false}
                 data={data}
                 dataKey="value"
                 nameKey="name"
@@ -123,18 +131,20 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
                 cy="50%"
                 outerRadius={80}
                 label
-                animationDuration={300}
               >
                 {data.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={colors[index % colors.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  fontSize: '12px',
+                  backgroundColor: "var(--surface)",
+                  border: "1px solid var(--line)",
+                  borderRadius: "8px",
+                  fontSize: "12px",
                 }}
               />
               <Legend />
@@ -150,23 +160,30 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
   return (
     <div
       style={{
-        backgroundColor: '#fff',
-        borderRadius: '8px',
-        padding: '20px',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+        backgroundColor: "var(--surface)",
+        borderRadius: "8px",
+        padding: "20px",
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: '600', color: '#374151' }}>
+      <h3
+        style={{
+          margin: "0 0 16px 0",
+          fontSize: "16px",
+          fontWeight: "600",
+          color: "var(--ink)",
+        }}
+      >
         {title}
       </h3>
       {data.length === 0 ? (
         <div
           style={{
             height: height,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#9ca3af',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#9ca3af",
           }}
         >
           No data available
