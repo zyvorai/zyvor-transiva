@@ -41,6 +41,7 @@ func main() {
 	addr := flag.String("addr", "", "API server address (overrides config file)")
 	logLevel := flag.String("log-level", "", "Log level (debug, info, warn, error)")
 	disableWeb := flag.Bool("disable-web", false, "Disable web dashboard (API-only mode)")
+	noAuth := flag.Bool("no-auth", false, "DEVELOPMENT ONLY: do not require sign-in or an API key for the API (also TRANSIVA_DISABLE_AUTH=1)")
 	versionFlag := flag.Bool("version", false, "Show version and exit")
 	flag.Parse()
 
@@ -201,7 +202,10 @@ func main() {
 	// Create API config
 	apiConfig := &api.Config{}
 	apiConfig.Metrics.Enabled = false
-	apiConfig.Security.EnableAuth = false // Disable auth for local development
+	apiConfig.Security.EnableAuth, apiConfig.Security.APIKey = authSettings(*noAuth, os.Getenv)
+	if !apiConfig.Security.EnableAuth {
+		pterm.Warning.Println("API authentication is DISABLED (--no-auth / TRANSIVA_DISABLE_AUTH=1): anyone who can reach this port can use the API")
+	}
 	apiConfig.Web.Disabled = *disableWeb  // Set web dashboard state from CLI flag
 
 	// Create Enhanced API server with Phase 2 features
@@ -398,4 +402,15 @@ func showEndpoints(addr string) {
 	}
 
 	pterm.Info.Printfln("\n📊 Open dashboard in browser: %s/web/dashboard/", baseURL)
+}
+
+// authSettings decides whether the API requires authentication. It is on by default: the dashboard sign-in only
+// protects the UI, so the API itself must reject callers that have neither a session token nor the API key.
+// Turning it off needs an explicit --no-auth or TRANSIVA_DISABLE_AUTH=1 and is meant for local development.
+// TRANSIVA_API_KEY sets the key that scripts and CLIs can send as X-API-Key.
+func authSettings(noAuth bool, getenv func(string) string) (enable bool, apiKey string) {
+	if noAuth || getenv("TRANSIVA_DISABLE_AUTH") == "1" {
+		return false, ""
+	}
+	return true, getenv("TRANSIVA_API_KEY")
 }
