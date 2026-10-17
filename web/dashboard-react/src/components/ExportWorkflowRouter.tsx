@@ -8,18 +8,11 @@ import NutanixExportWorkflow from './NutanixExportWorkflow';
 type ProviderTab = 'vsphere' | 'nutanix';
 
 const ExportWorkflowRouter: React.FC = () => {
-  const [provider, setProvider] = useState<ProviderTab>('vsphere');
+  const [provider, setProvider] = useState<ProviderTab>('nutanix');
 
   return (
     <div>
       <div style={styles.tabs}>
-        <button
-          type="button"
-          onClick={() => setProvider('vsphere')}
-          style={{ ...styles.tab, ...(provider === 'vsphere' ? styles.tabActive : {}) }}
-        >
-          vSphere
-        </button>
         <button
           type="button"
           onClick={() => setProvider('nutanix')}
@@ -27,8 +20,15 @@ const ExportWorkflowRouter: React.FC = () => {
         >
           Nutanix AHV
         </button>
+        <button
+          type="button"
+          onClick={() => setProvider('vsphere')}
+          style={{ ...styles.tab, ...(provider === 'vsphere' ? styles.tabActive : {}) }}
+        >
+          vSphere
+        </button>
       </div>
-      {provider === 'vsphere' ? <VSphereExportWorkflow /> : <NutanixExportWorkflow />}
+      {provider === 'nutanix' ? <NutanixExportWorkflow /> : <VSphereExportWorkflow />}
     </div>
   );
 };
