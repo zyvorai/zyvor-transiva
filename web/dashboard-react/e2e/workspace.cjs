@@ -155,11 +155,24 @@ const path = require("node:path");
     .getByRole("navigation", { name: "Workspace" })
     .getByRole("button", { name: "New export", exact: true })
     .click();
-  await page.getByRole("button", { name: "Nutanix AHV", exact: true }).click();
+  // Nutanix is the first tab and opens by default; vSphere is second.
+  const providerTabs = await page
+    .locator("main button")
+    .filter({ hasText: /^(Nutanix AHV|vSphere)$/ })
+    .allTextContents();
+  if (providerTabs.join("|") !== "Nutanix AHV|vSphere")
+    throw new Error("provider tabs out of order: " + providerTabs.join("|"));
   await page
     .getByRole("heading", { name: "Connect to Nutanix Prism" })
     .waitFor();
   await shot("export-nutanix");
+  await page.getByRole("button", { name: "vSphere", exact: true }).click();
+  await page.getByRole("heading", { name: "Connect to vSphere" }).waitFor();
+  await shot("export-vsphere");
+  await page.getByRole("button", { name: "Nutanix AHV", exact: true }).click();
+  await page
+    .getByRole("heading", { name: "Connect to Nutanix Prism" })
+    .waitFor();
   await page.setViewportSize({ width: 390, height: 844 });
   for (const name of [
     "Overview",
