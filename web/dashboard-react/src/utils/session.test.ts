@@ -55,7 +55,9 @@ describe("dashboard session", () => {
         headers: { Authorization: "Bearer tok-2" },
       }),
     );
-    expect(webSocketProtocols()).toBeDefined();
+    // The server selects "transiva"; browsers drop the socket if it selects none of the offered protocols.
+    expect(webSocketProtocols()?.[0]).toBe("transiva");
+    expect(webSocketProtocols()?.[1]).toMatch(/^transiva-session\./);
   });
 
   it("drops a saved session the daemon rejects", async () => {
