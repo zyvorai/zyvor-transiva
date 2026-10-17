@@ -117,7 +117,7 @@ jobs:
     steps:
     - name: Install dependencies
       run: |
-        dnf install -y rpm-build rpmdevtools golang git
+        dnf install -y rpm-build rpmdevtools systemd-rpm-macros golang git
 
     - name: Checkout code
       uses: actions/checkout@v7
@@ -230,10 +230,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v7
 
-    - name: Run Gosec Security Scanner
-      uses: securego/gosec@master
+    # The securego/gosec image bundles an older Go than go.mod's `go` directive, so it cannot load
+    # any package; build gosec with the repository's own toolchain instead.
+    - name: Set up Go
+      uses: actions/setup-go@v5
       with:
-        args: ./...
+        go-version: '1.27'
+
+    - name: Run Gosec Security Scanner
+      run: |
+        go install github.com/securego/gosec/v2/cmd/gosec@latest
+        "$(go env GOPATH)/bin/gosec" ./...
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master

@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/zyvorai/transiva/manifest"
@@ -242,11 +243,19 @@ func (e *PipelineExecutor) ExecuteDirect(ctx context.Context) (*PipelineResult, 
 
 	// Stream output
 	outputChan := make(chan string, 100)
-	go streamOutput(stdoutPipe, outputChan)
-	go streamOutput(stderrPipe, outputChan)
+	var readers sync.WaitGroup
+	for _, pipe := range []io.Reader{stdoutPipe, stderrPipe} {
+		readers.Add(1)
+		go func(r io.Reader) {
+			defer readers.Done()
+			streamOutput(r, outputChan)
+		}(pipe)
+	}
 
 	// Collect output and log it
+	collected := make(chan struct{})
 	go func() {
+		defer close(collected)
 		for line := range outputChan {
 			result.Output = append(result.Output, line)
 			e.logger.Info("h2kvm", "output", line)
@@ -255,6 +264,12 @@ func (e *PipelineExecutor) ExecuteDirect(ctx context.Context) (*PipelineResult, 
 			}
 		}
 	}()
+
+	// Every line must be read before Wait closes the pipes, and result.Output is only read after the
+	// collector has finished.
+	readers.Wait()
+	close(outputChan)
+	<-collected
 
 	// Wait for completion
 	if err := cmd.Wait(); err != nil {
