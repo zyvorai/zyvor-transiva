@@ -8,7 +8,7 @@
 <title>Exit Nutanix: how the projects fit together · Transiva</title>
 <meta name="description" content="Transiva exports from Nutanix, h2kvm repairs and converts, and the VM lands on KVM or KubeVirt. How the projects work together, with diagrams and a measured run.">
 <meta property="og:title" content="Exit Nutanix: how the projects fit together">
-<meta property="og:description" content="Transiva, h2kvm, Zorvia, Kairon and Machina in one picture. 7 of 7 stages passed in 145 s.">
+<meta property="og:description" content="Transiva, h2kvm, Zorvia, Kairon and Machina in one picture. 7 of 7 stages passed in 747 s.">
 <meta property="og:image" content="../social/nutanix-exit-card.png">
 <style>
 :root{
@@ -160,7 +160,7 @@ svg{--c-fg:#1d1d1f;--c-mut:#6e6e73;--c-line:#c7c7cc;--c-card:#fff;--c-bg2:#f5f5f
 <rect x="770" y="292" width="170" height="30" rx="9" class="chip"/><text x="855.0" y="312" class="fg ts" text-anchor="middle">GuestKit repair</text>
 <rect x="770" y="332" width="170" height="30" rx="9" class="chip"/><text x="855.0" y="352" class="fg ts" text-anchor="middle">convert + checksum</text>
 <rect x="770" y="372" width="170" height="30" rx="9" class="chip"/><text x="855.0" y="392" class="fg ts" text-anchor="middle">domain XML</text>
-<rect x="770" y="412" width="170" height="30" rx="9" class="chip"/><text x="855.0" y="432" class="fg ts" text-anchor="middle">Windows, UEFI: not run</text>
+<rect x="770" y="412" width="170" height="30" rx="9" class="chip"/><text x="855.0" y="432" class="fg ts" text-anchor="middle">Windows: not run</text>
 <path d="M700 335 L750 335" class="lnb" marker-end="url(#ab)"/>
 <text x="1030" y="36" class="mut th" text-anchor="start">LAND</text>
 <rect x="1030" y="60" width="230" height="100" rx="16" class="card"/>
@@ -264,16 +264,16 @@ svg{--c-fg:#1d1d1f;--c-mut:#6e6e73;--c-line:#c7c7cc;--c-card:#fff;--c-bg2:#f5f5f
 <text x="490.0" y="349" class="fg tm" text-anchor="middle">run, --cmd local --vmdk &lt;disk> --emit-domain-xml</text>
 <rect x="760.0" y="392" width="260" height="30" rx="9" class="chip"/>
 <text x="890" y="412" class="fg ts" text-anchor="middle">inspect, repair, convert, checksum</text>
-<rect x="755.0" y="432" width="270" height="30" rx="9" class="chip"/>
-<text x="890" y="452" class="fg ts" text-anchor="middle">repair skipped on the test image</text>
-<circle cx="769.0" cy="447" r="4" class="or"/>
+<rect x="740.0" y="432" width="300" height="30" rx="9" class="chip"/>
+<text x="890" y="452" class="fg ts" text-anchor="middle">no network config: install DHCP fallback</text>
+<circle cx="754.0" cy="447" r="4" class="or"/>
 <path d="M896 510 L1086 510" class="lnb" marker-end="url(#ab)"/>
 <rect x="896.9" y="484" width="186.20000000000002" height="22" rx="7" class="pill"/>
 <text x="990.0" y="499" class="fg ts" text-anchor="middle">boot the converted disk</text>
 <path d="M1084 560 L96 560" class="ln" marker-end="url(#a)"/>
 <rect x="480" y="534" width="240" height="22" rx="7" class="pill"/>
-<text x="600" y="549" class="fg ts" text-anchor="middle">guest answers ping: 0% loss</text>
-<text x="20" y="624" class="mut ts" text-anchor="start">Real run: 7 of 7 stages, 145 s. The Prism endpoint was a simulator.</text>
+<text x="600" y="549" class="fg ts" text-anchor="middle">guest gets a lease, answers ping</text>
+<text x="20" y="624" class="mut ts" text-anchor="start">Real run (Ubuntu 24.04): 7 of 7 stages, 747 s. The Prism endpoint was a simulator.</text>
 </svg>
 <!--/svg:sequence-->
   </div>
@@ -284,15 +284,15 @@ svg{--c-fg:#1d1d1f;--c-mut:#6e6e73;--c-line:#c7c7cc;--c-card:#fff;--c-bg2:#f5f5f
   <h2 class="reveal">One run, measured.</h2>
   <div class="stats">
     <div class="stat reveal"><div class="n">7<small> / 7</small></div><p>stages passed</p></div>
-    <div class="stat reveal"><div class="n">145<small> s</small></div><p>download to two running guests</p></div>
-    <div class="stat reveal"><div class="n">0<small>%</small></div><p>packet loss to the guest</p></div>
+    <div class="stat reveal"><div class="n">747<small> s</small></div><p>download to two running guests (Ubuntu 24.04)</p></div>
+    <div class="stat reveal"><div class="n">2<small> / 2</small></div><p>landing targets booted (KVM, KubeVirt)</p></div>
   </div>
   <div class="chart reveal">
-    <div class="row"><span>Export</span><div class="t"><span style="--w:2.7%"></span></div><span class="v">&lt; 2 s</span></div>
-    <div class="row"><span>Convert (h2kvm)</span><div class="t"><span class="o" style="--w:42.7%"></span></div><span class="v">32 s</span></div>
-    <div class="row"><span>Boot on KVM</span><div class="t"><span style="--w:46.7%"></span></div><span class="v">35 s</span></div>
-    <div class="row"><span>Boot on KubeVirt</span><div class="t"><span style="--w:100%"></span></div><span class="v">75 s</span></div>
-    <p class="note">From <a href="results.json"><code>results.json</code></a>. Convert took 150 to 198 s on a loaded host in earlier runs.</p>
+    <div class="row"><span>Export</span><div class="t"><span style="--w:4.8%"></span></div><span class="v">16 s</span></div>
+    <div class="row"><span>Convert (h2kvm)</span><div class="t"><span class="o" style="--w:82.7%"></span></div><span class="v">277 s</span></div>
+    <div class="row"><span>Boot on KVM</span><div class="t"><span style="--w:23.6%"></span></div><span class="v">79 s</span></div>
+    <div class="row"><span>Boot on KubeVirt</span><div class="t"><span style="--w:100%"></span></div><span class="v">335 s</span></div>
+    <p class="note">From <a href="results.json"><code>results.json</code></a>: Ubuntu 24.04 cloud image. The KubeVirt figure includes building and importing the container disk.</p>
   </div>
 </div></section>
 
@@ -300,8 +300,9 @@ svg{--c-fg:#1d1d1f;--c-mut:#6e6e73;--c-line:#c7c7cc;--c-card:#fff;--c-bg2:#f5f5f
   <div class="eyebrow">STRAIGHT TALK</div>
   <h2 class="reveal">What this does and doesn't prove.</h2>
   <div class="cols">
-    <div class="col reveal"><h3>Proven</h3><ul><li>Prism v4 export in code, end to end</li><li>Valid qcow2 and manifest, converted by h2kvm</li><li>Boots on KVM and on KubeVirt, unattended</li></ul></div>
-    <div class="col reveal"><h3>Not yet</h3><ul><li>A real Nutanix cluster (Prism here is a simulator)</li><li>Kairon and Machina landings</li><li>h2kvm guest repair: skipped on the test image</li><li>Windows, UEFI, multi-disk, large VMs; checks beyond ping</li></ul></div>
+    <div class="col reveal"><h3>Proven</h3><ul><li>Prism v4 export in code, end to end</li><li>Valid qcow2 and manifest, converted by h2kvm</li><li>Ubuntu 24.04 boots on KVM (UEFI) and on KubeVirt, unattended</li>
+      <li>A guest with no network config comes up through h2kvm's DHCP fallback</li></ul></div>
+    <div class="col reveal"><h3>Not yet</h3><ul><li>A real Nutanix cluster (Prism here is a simulator)</li><li>Kairon and Machina landings</li><li>Boot repair on a guest that needs it (this image needed only the network fallback)</li><li>Windows, multi-disk and large VMs; checks beyond ping</li></ul></div>
   </div>
   <p class="note reveal"><a href="https://github.com/zyvorai/zyvor-transiva/blob/main/docs/case-study-nutanix-exit-linux.md">Case study</a> · <a href="nutanix-exit-deck.pdf">Deck (PDF)</a> · <a href="https://zyvorai.github.io/zyvor-h2kvm/nutanix-exit">h2kvm's side of the story</a></p>
 </div></section>

@@ -8,7 +8,7 @@
 <title>Out of Nutanix in minutes · Transiva</title>
 <meta name="description" content="One script takes a VM out of Nutanix through the Prism v4 API and boots it on plain Linux/KVM and KubeVirt. Measured, repeatable, no proprietary tooling on the destination.">
 <meta property="og:title" content="Out of Nutanix in minutes">
-<meta property="og:description" content="Export from Prism v4, convert, boot on KVM and KubeVirt. 7 of 7 stages passed in 145 s.">
+<meta property="og:description" content="Export from Prism v4, convert, boot on KVM and KubeVirt. 7 of 7 stages passed in 747 s.">
 <meta property="og:image" content="../social/nutanix-exit-card.png">
 <style>
 :root{
@@ -94,14 +94,14 @@ footer{padding:48px 0;color:var(--mut);font-size:13px;border-top:1px solid var(-
   <div class="term reveal"><div class="bar"><i></i><i></i><i></i></div>
 <pre><span class="p">$</span> ./scripts/e2e-nutanix-exit.sh ops@kvm-host
 <span class="d">== export with hyperexport (Prism v4 + NFS pickup)</span>
-<span class="g">PASS</span> export <span class="d">(under 2s)</span>
+<span class="g">PASS</span> export <span class="d">(16s)</span>
 <span class="d">== convert with h2kvm</span>
-<span class="g">PASS</span> convert <span class="d">(32s)</span>
+<span class="g">PASS</span> convert <span class="d">(277s)</span>
 <span class="d">== boot on libvirt/KVM</span>
-<span class="g">PASS</span> boot on KVM <span class="d">(35s)</span>
+<span class="g">PASS</span> boot on KVM <span class="d">(79s)</span>
 <span class="d">== boot on KubeVirt</span>
-<span class="g">PASS</span> boot on KubeVirt <span class="d">(75s)</span>
-<span class="d">==</span> <span class="g">7 passed, 0 failed, 145s total</span></pre></div>
+<span class="g">PASS</span> boot on KubeVirt <span class="d">(335s)</span>
+<span class="d">==</span> <span class="g">7 passed, 0 failed, 747s total</span></pre></div>
 </div></header>
 
 <section class="alt" id="proof"><div class="wrap" data-io>
@@ -110,29 +110,18 @@ footer{padding:48px 0;color:var(--mut);font-size:13px;border-top:1px solid var(-
   <p class="lead reveal">Every number here comes from one unattended run, saved as <a href="results.json"><code>results.json</code></a>.</p>
   <div class="stats">
     <div class="stat reveal"><div class="n">7<small> / 7</small></div><p>stages passed, none skipped</p></div>
-    <div class="stat reveal"><div class="n">145<small> s</small></div><p>download to two running guests</p></div>
-    <div class="stat reveal"><div class="n">0<small>%</small></div><p>packet loss to the booted guest</p></div>
+    <div class="stat reveal"><div class="n">747<small> s</small></div><p>download to two running guests (Ubuntu 24.04)</p></div>
+    <div class="stat reveal"><div class="n">2<small> / 2</small></div><p>landing targets booted (KVM, KubeVirt)</p></div>
     <div class="stat reveal"><div class="n">1</div><p>command, nothing to click</p></div>
   </div>
   <div class="chart reveal" aria-label="Stage durations in seconds">
-    <div class="row"><span>Serve as VM</span><div class="t"><span style="--w:2.7%"></span></div><span class="v">2 s</span></div>
-    <div class="row"><span>Export</span><div class="t"><span style="--w:2.7%"></span></div><span class="v">&lt; 2 s</span></div>
-    <div class="row"><span>Convert</span><div class="t"><span class="o" style="--w:42.7%"></span></div><span class="v">32 s</span></div>
-    <div class="row"><span>Boot on KVM</span><div class="t"><span style="--w:46.7%"></span></div><span class="v">35 s</span></div>
-    <div class="row"><span>Boot on KubeVirt</span><div class="t"><span style="--w:100%"></span></div><span class="v">75 s</span></div>
-    <p class="note">Orange is the h2kvm conversion. On a heavily loaded host in earlier runs it took 150 to 198 s. The KubeVirt figure includes building and importing the container disk.</p>
+    <div class="row"><span>Serve as VM</span><div class="t"><span style="--w:3.9%"></span></div><span class="v">13 s</span></div>
+    <div class="row"><span>Export</span><div class="t"><span style="--w:4.8%"></span></div><span class="v">16 s</span></div>
+    <div class="row"><span>Convert</span><div class="t"><span class="o" style="--w:82.7%"></span></div><span class="v">277 s</span></div>
+    <div class="row"><span>Boot on KVM</span><div class="t"><span style="--w:23.6%"></span></div><span class="v">79 s</span></div>
+    <div class="row"><span>Boot on KubeVirt</span><div class="t"><span style="--w:100%"></span></div><span class="v">335 s</span></div>
+    <p class="note">Orange is the h2kvm conversion of an Ubuntu 24.04 cloud image. The KubeVirt figure includes building and importing the container disk.</p>
   </div>
-</div></section>
-
-<section id="flow"><div class="wrap" data-io>
-  <div class="eyebrow">HOW IT WORKS</div>
-  <h2 class="reveal">Four hops. All standard.</h2>
-  <p class="lead reveal">The source VM is never modified. The artifact is a plain qcow2 plus a manifest.</p>
-  <div class="flow reveal">
-    <div class="node"><b>Nutanix</b><span>Prism v4 API</span></div><div class="arr">→</div>
-    <div class="node hl"><b>hyperexport</b><span>list, NFS pickup, qcow2</span></div><div class="arr">→</div>
-    <div class="node hl"><b>h2kvm</b><span>convert, driver and boot fixes</span></div><div class="arr">→</div>
-    <div class="node"><b>KVM · KubeVirt</b><span>boots, answers ping</span></div>
   </div>
 </div></section>
 
@@ -141,9 +130,9 @@ footer{padding:48px 0;color:var(--mut);font-size:13px;border-top:1px solid var(-
   <h2 class="reveal">Land it where you want.</h2>
   <p class="lead reveal">Each destination shows exactly what has been run.</p>
   <div class="dest">
-    <div class="dc reveal"><h3>Linux KVM</h3><span class="badge ok">Verified</span><p>Booted under libvirt and answered ping in 35 s.</p></div>
-    <div class="dc reveal"><h3>KubeVirt</h3><span class="badge ok">Verified</span><p>Ready and answering ping in 75 s, scripted.</p></div>
-    <div class="dc reveal"><h3>Zorvia</h3><span class="badge ok">Verified</span><p>Lists the migrated VM as Running through its API (checked by hand, not yet in the script).</p></div>
+    <div class="dc reveal"><h3>Linux KVM</h3><span class="badge ok">Verified</span><p>Ubuntu 24.04 booted under libvirt (UEFI) and answered ping in 79 s.</p></div>
+    <div class="dc reveal"><h3>KubeVirt</h3><span class="badge ok">Verified</span><p>Ready and answering ping in 335 s, including the container-disk build. Scripted.</p></div>
+    <div class="dc reveal"><h3>Zorvia</h3><span class="badge ok">Verified</span><p>Listed a migrated VM as Running through its API in an earlier KubeVirt run (checked by hand, not in the script).</p></div>
     <div class="dc reveal"><h3>Kairon</h3><span class="badge">Not run yet</span><p>h2kvm has a Kairon hand-off. It was not part of this test.</p></div>
     <div class="dc reveal"><h3>Machina</h3><span class="badge">Not run yet</span><p>Planned. Nothing is claimed until it is run.</p></div>
   </div>
@@ -157,11 +146,12 @@ footer{padding:48px 0;color:var(--mut);font-size:13px;border-top:1px solid var(-
       <li>The Prism v4 export path, end to end, in code</li>
       <li>qcow2 and manifest produced, valid, converted</li>
       <li>Boots on KVM and on KubeVirt, unattended</li>
-      <li>Repeatable: rerun it and get the same result</li></ul></div>
+      <li>A cloud image with no network config comes up: h2kvm installs a DHCP fallback</li>
+      <li>One script, no manual steps</li></ul></div>
     <div class="col reveal"><h3>Not yet</h3><ul>
       <li>A real Nutanix cluster (Prism here is a simulator)</li>
-      <li>Windows, UEFI, multi-disk and large VMs (h2kvm's scope)</li>
-      <li>Guest repair: it was skipped on this Alpine image</li>
+      <li>Windows, multi-disk and large VMs (h2kvm's scope)</li>
+      <li>Boot repair on a guest that needs it (the Ubuntu image needed only the network fallback)</li>
       <li>Anything deeper than ping inside the guest</li></ul></div>
   </div>
 </div></section>

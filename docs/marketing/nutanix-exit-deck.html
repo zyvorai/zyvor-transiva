@@ -35,7 +35,7 @@ ul{padding-left:24px;color:var(--mut);font-size:22px}li{margin:9px 0}
 
 <div class="s"><div class="ey">THE RUN</div><h2>Measured, not promised.</h2>
 <p class="l">One unattended run, results saved as <code>results.json</code>.</p>
-<div class="grid"><div class="c"><b>7/7</b><span>stages passed</span></div><div class="c"><b>145 s</b><span>download to two running guests</span></div><div class="c"><b>0%</b><span>packet loss to the guest</span></div><div class="c"><b>1</b><span>command</span></div></div>
+<div class="grid"><div class="c"><b>7/7</b><span>stages passed</span></div><div class="c"><b>747 s</b><span>download to two running guests</span></div><div class="c"><b>2/2</b><span>targets booted (KVM, KubeVirt)</span></div><div class="c"><b>1</b><span>command</span></div></div>
 <div class="ft"><span>Prism endpoint is Chimera's Nutanix simulator</span><span>2 / 6</span></div></div>
 
 <div class="s"><div class="ey">HOW IT WORKS</div><h2>Four hops. All standard.</h2>
@@ -43,13 +43,13 @@ ul{padding-left:24px;color:var(--mut);font-size:22px}li{margin:9px 0}
 <div class="flow"><div class="n"><b>Nutanix</b><span>Prism v4 API</span></div><div class="ar">→</div><div class="n h"><b>hyperexport</b><span>list, NFS pickup, qcow2</span></div><div class="ar">→</div><div class="n h"><b>h2kvm</b><span>convert, boot fixes</span></div><div class="ar">→</div><div class="n"><b>KVM · KubeVirt</b><span>boots, answers ping</span></div></div>
 <div class="ft"><span></span><span>3 / 6</span></div></div>
 
-<div class="s"><div class="ey">TIMINGS</div><h2>Where the 145 seconds go.</h2>
-<div class="row"><span>Serve as VM</span><div class="t"><i style="width:2.7%"></i></div><b>2 s</b></div>
-<div class="row"><span>Export</span><div class="t"><i style="width:2.7%"></i></div><b>&lt; 2 s</b></div>
-<div class="row"><span>Convert (h2kvm)</span><div class="t"><i class="o" style="width:42.7%"></i></div><b>32 s</b></div>
-<div class="row"><span>Boot on KVM</span><div class="t"><i style="width:46.7%"></i></div><b>35 s</b></div>
-<div class="row"><span>Boot on KubeVirt</span><div class="t"><i style="width:100%"></i></div><b>75 s</b></div>
-<p style="color:var(--mut);font-size:16px;margin-top:20px">Convert took 150 to 198 s on a heavily loaded host in earlier runs. KubeVirt includes building and importing the container disk.</p>
+<div class="s"><div class="ey">TIMINGS</div><h2>Where the 747 seconds go.</h2>
+<div class="row"><span>Serve as VM</span><div class="t"><i style="width:3.9%"></i></div><b>13 s</b></div>
+<div class="row"><span>Export</span><div class="t"><i style="width:4.8%"></i></div><b>16 s</b></div>
+<div class="row"><span>Convert (h2kvm)</span><div class="t"><i class="o" style="width:82.7%"></i></div><b>277 s</b></div>
+<div class="row"><span>Boot on KVM</span><div class="t"><i style="width:23.6%"></i></div><b>79 s</b></div>
+<div class="row"><span>Boot on KubeVirt</span><div class="t"><i style="width:100%"></i></div><b>335 s</b></div>
+<p style="color:var(--mut);font-size:16px;margin-top:20px">Ubuntu 24.04 cloud image. KubeVirt includes building and importing the container disk.</p>
 <div class="ft"><span></span><span>4 / 6</span></div></div>
 
 <div class="s"><div class="ey">DESTINATIONS</div><h2>Land it where you want.</h2>
@@ -62,8 +62,8 @@ ul{padding-left:24px;color:var(--mut);font-size:22px}li{margin:9px 0}
 <div class="ft"><span>Nothing is claimed until it has been run</span><span>5 / 6</span></div></div>
 
 <div class="s"><div class="ey">STRAIGHT TALK</div><h2>What it does and doesn't prove.</h2>
-<div class="two"><div class="c"><b style="font-size:28px">Proven</b><ul><li>Prism v4 export, end to end</li><li>Valid qcow2 and manifest</li><li>Boots on KVM and KubeVirt</li><li>Repeatable, unattended</li></ul></div>
-<div class="c"><b style="font-size:28px">Not yet</b><ul><li>A real Nutanix cluster</li><li>Windows, UEFI, multi-disk, large VMs</li><li>Guest repair (skipped here)</li><li>Checks beyond ping</li></ul></div></div>
+<div class="two"><div class="c"><b style="font-size:28px">Proven</b><ul><li>Prism v4 export, end to end</li><li>Valid qcow2 and manifest</li><li>Ubuntu boots on KVM (UEFI) and KubeVirt</li><li>No network config? DHCP fallback</li><li>Unattended, one script</li></ul></div>
+<div class="c"><b style="font-size:28px">Not yet</b><ul><li>A real Nutanix cluster</li><li>Windows, multi-disk, large VMs</li><li>Repair of a guest that needs it</li><li>Checks beyond ping</li></ul></div></div>
 <pre><span class="d">$</span> ./scripts/e2e-nutanix-exit.sh user@kvm-host</pre>
 <div class="ft"><span>github.com/zyvorai/zyvor-transiva</span><span>6 / 6</span></div></div>
 </body></html>
