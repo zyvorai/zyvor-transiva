@@ -1,0 +1,190 @@
+<!-- Copyright 2026 Zyvor AI Labs -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Out of Nutanix in minutes · Transiva</title>
+<meta name="description" content="One script takes a VM out of Nutanix through the Prism v4 API and boots it on plain Linux/KVM and KubeVirt. Measured, repeatable, no proprietary tooling on the destination.">
+<meta property="og:title" content="Out of Nutanix in minutes">
+<meta property="og:description" content="Export from Prism v4, convert, boot on KVM and KubeVirt. 7 of 7 stages passed in 145 s.">
+<meta property="og:image" content="../social/transiva-share-card.png">
+<style>
+:root{
+  --bg:#fff;--bg2:#f5f5f7;--fg:#1d1d1f;--mut:#6e6e73;--line:#d2d2d7;
+  --blue:#0071e3;--blue2:#2997ff;--orange:#ff6a2a;--card:#fff;--ok:#1d8a3a;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]){--bg:#000;--bg2:#0b0b0f;--fg:#f5f5f7;--mut:#a1a1a6;--line:#2c2c2e;--blue:#0a84ff;--blue2:#64b5ff;--card:#111114;--ok:#30d158}
+}
+:root[data-theme=dark]{--bg:#000;--bg2:#0b0b0f;--fg:#f5f5f7;--mut:#a1a1a6;--line:#2c2c2e;--blue:#0a84ff;--blue2:#64b5ff;--card:#111114;--ok:#30d158}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+code,pre,.mono{font-family:Menlo,Consolas,monospace}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:22px;height:48px;font-size:13px}
+nav b{font-weight:600}nav a{color:var(--mut)}nav a:hover{color:var(--fg);text-decoration:none}
+nav .sp{flex:1}
+nav button{background:none;border:1px solid var(--line);color:var(--mut);border-radius:980px;padding:3px 12px;font:inherit;cursor:pointer}
+section{padding:96px 0}
+section.alt{background:var(--bg2)}
+.eyebrow{font-size:14px;font-weight:600;color:var(--orange);letter-spacing:.02em;margin-bottom:10px}
+h1{font-size:clamp(40px,8vw,84px);line-height:1.04;letter-spacing:-.03em;margin:0 0 20px;font-weight:700}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--blue),var(--blue2));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(30px,5vw,52px);line-height:1.08;letter-spacing:-.025em;margin:0 0 16px;font-weight:700}
+p.lead{font-size:clamp(19px,2.4vw,26px);line-height:1.35;color:var(--mut);max-width:720px;margin:0 0 32px}
+.hero{padding:110px 0 70px;text-align:center}
+.hero p.lead{margin-left:auto;margin-right:auto}
+.cta{display:inline-block;background:var(--blue);color:#fff;border-radius:980px;padding:11px 24px;font-size:17px}
+.cta:hover{text-decoration:none;filter:brightness(1.1)}
+.cta2{margin-left:18px}
+.term{margin:48px auto 0;max-width:760px;text-align:left;background:#0b0b0f;color:#e8e8ed;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.25);overflow:hidden}
+.term .bar{display:flex;gap:7px;padding:12px 14px;background:#1c1c1f}
+.term .bar i{width:12px;height:12px;border-radius:50%;background:#ff5f57}.term .bar i:nth-child(2){background:#febc2e}.term .bar i:nth-child(3){background:#28c840}
+.term pre{margin:0;padding:18px 22px 22px;font-size:14px;line-height:1.7;overflow-x:auto}
+.term .p{color:#64b5ff}.term .g{color:#30d158}.term .d{color:#8e8e93}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-top:40px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px}
+.stat .n{font-size:52px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.stat .n small{font-size:20px;color:var(--mut);font-weight:500}
+.stat p{margin:10px 0 0;color:var(--mut);font-size:15px}
+.chart{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px;margin-top:32px}
+.row{display:grid;grid-template-columns:150px 1fr 70px;align-items:center;gap:14px;margin:14px 0;font-size:15px}
+.row .t{height:30px;background:var(--bg2);border-radius:8px;overflow:hidden}
+.row .t span{display:block;height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,var(--blue),var(--blue2));transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.row .t span.o{background:var(--orange)}
+.row .v{text-align:right;font-weight:600}
+.on .row .t span{width:var(--w)}
+.note{color:var(--mut);font-size:14px;margin-top:18px}
+.flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;justify-content:center;margin-top:36px}
+.node{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;min-width:150px;text-align:center}
+.node b{display:block;font-size:17px}.node span{color:var(--mut);font-size:13px}
+.node.hl{border-color:var(--blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 18%,transparent)}
+.arr{align-self:center;padding:0 10px;color:var(--mut);font-size:22px}
+.dest{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:32px}
+.dc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px}
+.dc h3{margin:0 0 6px;font-size:22px}.dc p{margin:8px 0 0;color:var(--mut);font-size:15px}
+.badge{display:inline-block;font-size:12px;font-weight:600;border-radius:980px;padding:3px 10px;border:1px solid var(--line);color:var(--mut)}
+.badge.ok{color:var(--ok);border-color:var(--ok)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:32px}
+.col{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px}
+.col h3{margin:0 0 12px}.col ul{margin:0;padding-left:20px;color:var(--mut)}.col li{margin:7px 0}
+table{width:100%;border-collapse:collapse;margin-top:28px;font-size:15px}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;font-size:13px}
+footer{padding:48px 0;color:var(--mut);font-size:13px;border-top:1px solid var(--line)}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s,transform .8s}
+.on.reveal,.on .reveal{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.row .t span{transition:none}}
+@media (max-width:640px){section{padding:64px 0}.row{grid-template-columns:100px 1fr 54px;font-size:13px}.arr{display:none}.node{margin:6px}.cta2{display:block;margin:14px 0 0}}
+</style>
+</head>
+<body>
+<nav><div class="wrap"><b>Transiva</b><a href="#proof">Proof</a><a href="#flow">How</a><a href="#where">Destinations</a><a href="#honest">Limits</a><span class="sp"></span><button id="th" type="button">Theme</button></div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">NUTANIX EXIT</div>
+  <h1>Out of Nutanix<br>in <em>minutes</em>.</h1>
+  <p class="lead">One script. A real Linux disk leaves Prism, gets converted, and boots on plain KVM and on KubeVirt. Nothing proprietary on the other side.</p>
+  <a class="cta" href="#proof">See the run</a><a class="cta2" href="https://github.com/zyvorai/zyvor-transiva/blob/main/docs/case-study-nutanix-exit-linux.md">Read the case study</a>
+  <div class="term reveal"><div class="bar"><i></i><i></i><i></i></div>
+<pre><span class="p">$</span> ./scripts/e2e-nutanix-exit.sh ops@kvm-host
+<span class="d">== export with hyperexport (Prism v4 + NFS pickup)</span>
+<span class="g">PASS</span> export <span class="d">(under 2s)</span>
+<span class="d">== convert with h2kvm</span>
+<span class="g">PASS</span> convert <span class="d">(32s)</span>
+<span class="d">== boot on libvirt/KVM</span>
+<span class="g">PASS</span> boot on KVM <span class="d">(35s)</span>
+<span class="d">== boot on KubeVirt</span>
+<span class="g">PASS</span> boot on KubeVirt <span class="d">(75s)</span>
+<span class="d">==</span> <span class="g">7 passed, 0 failed, 145s total</span></pre></div>
+</div></header>
+
+<section class="alt" id="proof"><div class="wrap" data-io>
+  <div class="eyebrow">THE RUN</div>
+  <h2 class="reveal">Measured, not promised.</h2>
+  <p class="lead reveal">Every number here comes from one unattended run, saved as <a href="results.json"><code>results.json</code></a>.</p>
+  <div class="stats">
+    <div class="stat reveal"><div class="n">7<small> / 7</small></div><p>stages passed, none skipped</p></div>
+    <div class="stat reveal"><div class="n">145<small> s</small></div><p>download to two running guests</p></div>
+    <div class="stat reveal"><div class="n">0<small>%</small></div><p>packet loss to the booted guest</p></div>
+    <div class="stat reveal"><div class="n">1</div><p>command, nothing to click</p></div>
+  </div>
+  <div class="chart reveal" aria-label="Stage durations in seconds">
+    <div class="row"><span>Serve as VM</span><div class="t"><span style="--w:2.7%"></span></div><span class="v">2 s</span></div>
+    <div class="row"><span>Export</span><div class="t"><span style="--w:2.7%"></span></div><span class="v">&lt; 2 s</span></div>
+    <div class="row"><span>Convert</span><div class="t"><span class="o" style="--w:42.7%"></span></div><span class="v">32 s</span></div>
+    <div class="row"><span>Boot on KVM</span><div class="t"><span style="--w:46.7%"></span></div><span class="v">35 s</span></div>
+    <div class="row"><span>Boot on KubeVirt</span><div class="t"><span style="--w:100%"></span></div><span class="v">75 s</span></div>
+    <p class="note">Orange is the h2kvm conversion. On a heavily loaded host in earlier runs it took 150 to 198 s. The KubeVirt figure includes building and importing the container disk.</p>
+  </div>
+</div></section>
+
+<section id="flow"><div class="wrap" data-io>
+  <div class="eyebrow">HOW IT WORKS</div>
+  <h2 class="reveal">Four hops. All standard.</h2>
+  <p class="lead reveal">The source VM is never modified. The artifact is a plain qcow2 plus a manifest.</p>
+  <div class="flow reveal">
+    <div class="node"><b>Nutanix</b><span>Prism v4 API</span></div><div class="arr">→</div>
+    <div class="node hl"><b>hyperexport</b><span>list, NFS pickup, qcow2</span></div><div class="arr">→</div>
+    <div class="node hl"><b>h2kvm</b><span>convert, driver and boot fixes</span></div><div class="arr">→</div>
+    <div class="node"><b>KVM · KubeVirt</b><span>boots, answers ping</span></div>
+  </div>
+</div></section>
+
+<section class="alt" id="where"><div class="wrap" data-io>
+  <div class="eyebrow">DESTINATIONS</div>
+  <h2 class="reveal">Land it where you want.</h2>
+  <p class="lead reveal">Each destination shows exactly what has been run.</p>
+  <div class="dest">
+    <div class="dc reveal"><h3>Linux KVM</h3><span class="badge ok">Verified</span><p>Booted under libvirt and answered ping in 35 s.</p></div>
+    <div class="dc reveal"><h3>KubeVirt</h3><span class="badge ok">Verified</span><p>Ready and answering ping in 75 s, scripted.</p></div>
+    <div class="dc reveal"><h3>Zorvia</h3><span class="badge ok">Verified</span><p>Lists the migrated VM as Running through its API (checked by hand, not yet in the script).</p></div>
+    <div class="dc reveal"><h3>Kairon</h3><span class="badge">Not run yet</span><p>h2kvm has a Kairon hand-off. It was not part of this test.</p></div>
+    <div class="dc reveal"><h3>Machina</h3><span class="badge">Not run yet</span><p>Planned. Nothing is claimed until it is run.</p></div>
+  </div>
+</div></section>
+
+<section id="honest"><div class="wrap" data-io>
+  <div class="eyebrow">STRAIGHT TALK</div>
+  <h2 class="reveal">What this does and doesn't prove.</h2>
+  <div class="cols">
+    <div class="col reveal"><h3>Proven</h3><ul>
+      <li>The Prism v4 export path, end to end, in code</li>
+      <li>qcow2 and manifest produced, valid, converted</li>
+      <li>Boots on KVM and on KubeVirt, unattended</li>
+      <li>Repeatable: rerun it and get the same result</li></ul></div>
+    <div class="col reveal"><h3>Not yet</h3><ul>
+      <li>A real Nutanix cluster (Prism here is a simulator)</li>
+      <li>Windows, UEFI, multi-disk and large VMs (h2kvm's scope)</li>
+      <li>Guest repair: it was skipped on this Alpine image</li>
+      <li>Anything deeper than ping inside the guest</li></ul></div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  <h2>Run it yourself.</h2>
+<pre class="term" style="padding:18px 22px"><code><span class="p">$</span> git clone https://github.com/zyvorai/zyvor-transiva
+<span class="p">$</span> ./scripts/e2e-nutanix-exit.sh user@your-kvm-host</code></pre>
+  <p class="note">Needs a Linux host with libvirt, hyperexport, h2kvmctl and the Chimera Nutanix service. KubeVirt is detected and used when present.</p>
+</div></section>
+
+<footer><div class="wrap">© 2026 Zyvor AI Labs · Apache-2.0 · Numbers from the 7-stage unattended run in <code>results.json</code>. Prism endpoint is Chimera's Nutanix simulator.</div></footer>
+
+<script>
+(function(){
+  var r=document.documentElement,b=document.getElementById('th');
+  try{var s=localStorage.getItem('theme');if(s)r.setAttribute('data-theme',s)}catch(e){}
+  b.onclick=function(){var d=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme:dark)').matches);var n=d?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('theme',n)}catch(e){}};
+  var els=document.querySelectorAll('[data-io],.hero .reveal,section .chart');
+  if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('on')});return}
+  var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('on');io.unobserve(x.target)}})},{threshold:.15});
+  els.forEach(function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>

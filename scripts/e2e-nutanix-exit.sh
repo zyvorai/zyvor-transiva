@@ -23,9 +23,17 @@ mkdir -p "$WORK"
 
 PASS=0; FAIL=0; T0=$(date +%s)
 stage() { STAGE=$1; S0=$(date +%s); echo "== $1"; }
-ok()    { echo "PASS $STAGE ($(( $(date +%s) - S0 ))s)"; PASS=$((PASS+1)); }
+RES=()
+ok()    { local d=$(( $(date +%s) - S0 )); echo "PASS $STAGE (${d}s)"; PASS=$((PASS+1)); RES+=("{\"stage\":\"$STAGE\",\"seconds\":$d,\"status\":\"pass\"}"); }
 bad()   { echo "FAIL $STAGE: $*"; FAIL=$((FAIL+1)); summary; exit 1; }
-summary() { echo "== $PASS passed, $FAIL failed, $(( $(date +%s) - T0 ))s total"; }
+summary() {
+  local t=$(( $(date +%s) - T0 ))
+  echo "== $PASS passed, $FAIL failed, ${t}s total"
+  local IFS=,
+  printf '{"passed":%d,"failed":%d,"total_seconds":%d,"image":"%s","stages":[%s]}\n' \
+    "$PASS" "$FAIL" "$t" "${DISK_URL##*/}" "${RES[*]}" >"$WORK/results.json"
+  echo "results: $WORK/results.json"
+}
 need()  { command -v "$1" >/dev/null || bad "missing tool: $1"; }
 
 stage "preflight"
@@ -99,5 +107,49 @@ done
 echo "guest up at $IP"
 ok
 
-# KubeVirt landing is not automated here yet (needs a containerDisk build); not claimed as tested.
+KC=
+if [[ ${LAND_KUBEVIRT:-auto} != 0 ]] && command -v podman >/dev/null; then
+  for c in "kubectl" "sudo k3s kubectl"; do
+    $c get crd virtualmachines.kubevirt.io >/dev/null 2>&1 && { KC=$c; break; }
+  done
+fi
+if [[ -n $KC ]]; then
+  stage "boot on KubeVirt"
+  KV=nutanix-e2e-kv; CD=$WORK/cdisk; mkdir -p "$CD"; cp "$CQ" "$CD/disk.qcow2"
+  printf 'FROM scratch\nADD --chown=107:107 disk.qcow2 /disk/\n' >"$CD/Dockerfile"
+  podman build -q -t localhost/$KV:v1 "$CD" >/dev/null || bad "containerDisk build failed"
+  podman save localhost/$KV:v1 | sudo k3s ctr images import - >/dev/null || bad "image import failed"
+  $KC delete vm $KV --ignore-not-found >/dev/null
+  $KC apply -f - >/dev/null <<YAML || bad "$KC apply failed"
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata: {name: $KV, labels: {migrated-from: nutanix}}
+spec:
+  runStrategy: Always
+  template:
+    metadata: {labels: {kubevirt.io/domain: $KV}}
+    spec:
+      domain:
+        cpu: {cores: 1}
+        resources: {requests: {memory: 512Mi}}
+        devices:
+          disks: [{name: root, disk: {bus: virtio}}]
+          interfaces: [{name: default, masquerade: {}}]
+      networks: [{name: default, pod: {}}]
+      volumes:
+      - name: root
+        containerDisk: {image: localhost/$KV:v1, imagePullPolicy: Never}
+YAML
+  $KC wait --for=condition=Ready vmi/$KV --timeout=180s >/dev/null || bad "VMI never became Ready"
+  KIP=
+  for _ in $(seq 30); do
+    KIP=$($KC get vmi $KV -o jsonpath='{.status.interfaces[0].ipAddress}' 2>/dev/null)
+    [[ -n $KIP ]] && ping -c1 -W1 "$KIP" >/dev/null 2>&1 && break; KIP=; sleep 2
+  done
+  [[ -n $KIP ]] || bad "KubeVirt guest never answered ping"
+  echo "KubeVirt guest up"
+  ok
+fi
+[[ -n $KC ]] || echo "SKIP boot on KubeVirt (no cluster with KubeVirt reachable)"
+
 summary

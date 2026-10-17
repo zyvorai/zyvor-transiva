@@ -19,7 +19,7 @@
 
 **2 source hypervisors (CE)** · **1 workflow for both** · **0 guest agents** · **Resumable export jobs** · **CLI + REST**
 
-[**Platform docs**](https://zyvor.dev/docs/transiva-platform?utm_source=github&utm_medium=transiva&utm_campaign=readme_hero) · [**Nutanix guide**](docs/nutanix.md) · [**OpenAPI**](openapi.yaml) · [**Community vs Platform**](#community-edition-vs-transiva-platform)
+[**Platform docs**](https://zyvor.dev/docs/transiva-platform?utm_source=github&utm_medium=transiva&utm_campaign=readme_hero) · [**Nutanix guide**](docs/nutanix.md) · [**Out of Nutanix in minutes**](https://zyvorai.github.io/zyvor-transiva/docs/marketing/nutanix-exit.html) · [**OpenAPI**](openapi.yaml) · [**Community vs Platform**](#community-edition-vs-transiva-platform)
 
 </div>
 
