@@ -86,3 +86,21 @@ func TestResolveJobMounts(t *testing.T) {
 		t.Fatalf("mounts = %v", mounts)
 	}
 }
+
+func TestJobServerAddressOverridesTheConfiguredPort(t *testing.T) {
+	job := &models.JobDefinition{Metadata: map[string]interface{}{"server": "127.0.0.1:8990"}}
+	cfg := providers.ProviderConfig{Host: "prism.example.com", Port: 9440}
+	applyJobOverridesToProviderConfig(&cfg, job)
+	if cfg.Host != "127.0.0.1" || cfg.Port != 8990 {
+		t.Errorf("host/port = %q/%d, want 127.0.0.1/8990", cfg.Host, cfg.Port)
+	}
+}
+
+func TestJobServerWithoutAPortKeepsTheConfiguredPort(t *testing.T) {
+	job := &models.JobDefinition{Metadata: map[string]interface{}{"server": "prism.example.com"}}
+	cfg := providers.ProviderConfig{Port: 9441}
+	applyJobOverridesToProviderConfig(&cfg, job)
+	if cfg.Host != "prism.example.com" || cfg.Port != 9441 {
+		t.Errorf("host/port = %q/%d, want prism.example.com/9441", cfg.Host, cfg.Port)
+	}
+}
