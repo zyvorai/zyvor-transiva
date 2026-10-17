@@ -39,12 +39,19 @@ export async function signIn(username: string, password: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
-  if (!response.ok)
+  if (!response.ok) {
+    if (response.status === 401)
+      throw new Error("Check your username and password.");
+    if (response.status === 429)
+      throw new Error("Too many failed attempts. Try again in a few minutes.");
+    if (response.status === 503)
+      throw new Error(
+        "Sign-in is not configured on this server: password verification (PAM) is unavailable.",
+      );
     throw new Error(
-      response.status === 401
-        ? "Check your username and password."
-        : "Sign in is unavailable. Check that the authenticated daemon is running.",
+      "Sign in is unavailable. Check that the authenticated daemon is running.",
     );
+  }
   const session = await response.json();
   if (!session.token) throw new Error("The server did not return a session.");
   token = session.token;

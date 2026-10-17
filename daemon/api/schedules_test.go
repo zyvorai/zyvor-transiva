@@ -30,6 +30,9 @@ func setupTestServer(t *testing.T) *EnhancedServer {
 	if err != nil {
 		t.Fatalf("Failed to create server: %v", err)
 	}
+	// The default verifier is real PAM (or fails closed). Tests that are not about passwords
+	// use one that accepts any password for an account that exists on this machine.
+	server.authMgr.SetVerifier(existingAccountVerifier{})
 
 	return server
 }

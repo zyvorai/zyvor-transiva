@@ -1,0 +1,9 @@
+#%PAM-1.0
+# /etc/pam.d/transiva: PAM service used by transivad to check dashboard sign-ins.
+#
+# pam_unix only: no TTY requirement, works on Debian and RHEL families. transivad must run as
+# root so pam_unix can read the shadow database (the deploy script configures this).
+# Override the service name with TRANSIVA_PAM_SERVICE if you want a different stack (for example
+# one that adds pam_faillock or an LDAP/SSSD module).
+auth       required    pam_unix.so
+account    required    pam_unix.so

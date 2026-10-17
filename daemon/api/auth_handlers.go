@@ -5,8 +5,11 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
+
+	"github.com/zyvorai/transiva/daemon/auth"
 )
 
 // LoginRequest represents a login request
@@ -38,7 +41,14 @@ func (es *EnhancedServer) handleLogin(w http.ResponseWriter, r *http.Request) {
 	// Authenticate user
 	session, err := es.authMgr.AuthenticateUser(req.Username, req.Password)
 	if err != nil {
-		http.Error(w, "invalid username or password", http.StatusUnauthorized)
+		switch {
+		case errors.Is(err, auth.ErrVerifierUnavailable):
+			http.Error(w, "sign-in is unavailable on this server: password verification is not configured", http.StatusServiceUnavailable)
+		case errors.Is(err, auth.ErrTooManyAttempts):
+			http.Error(w, err.Error(), http.StatusTooManyRequests)
+		default:
+			http.Error(w, "invalid username or password", http.StatusUnauthorized)
+		}
 		return
 	}
 
