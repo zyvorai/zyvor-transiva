@@ -219,7 +219,13 @@ func applyJobOverridesToProviderConfig(cfg *providers.ProviderConfig, job *model
 		cfg.Metadata["mounts"] = mounts
 	}
 	if server, ok := job.Metadata["server"].(string); ok && server != "" {
-		cfg.Host = server
+		// The server given with the job is a complete address: a port in it replaces the default port that
+		// came from the daemon's config, otherwise "host:8990" would still connect to 9440.
+		host, port := nutanix.SplitHostPort(server, 0)
+		cfg.Host = host
+		if port != 0 {
+			cfg.Port = port
+		}
 	}
 	if user, ok := job.Metadata["username"].(string); ok && user != "" {
 		cfg.Username = user
