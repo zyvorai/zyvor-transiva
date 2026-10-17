@@ -342,3 +342,60 @@ func TestHandleLogoutInvalidToken(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", logoutW.Code)
 	}
 }
+
+func TestAuthMiddlewareRequiresASessionWhenEnabled(t *testing.T) {
+	server := setupTestServer(t)
+	defer server.scheduler.Stop()
+	server.config.Security.EnableAuth = true
+	server.authMgr.SetVerifier(strictVerifier{user: "alice", pass: "right"})
+
+	reached := false
+	protected := server.authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		reached = true
+		w.WriteHeader(http.StatusOK)
+	}))
+	call := func(path, bearer string) int {
+		reached = false
+		req := httptest.NewRequest(http.MethodGet, path, nil)
+		if bearer != "" {
+			req.Header.Set("Authorization", "Bearer "+bearer)
+		}
+		w := httptest.NewRecorder()
+		protected.ServeHTTP(w, req)
+		return w.Code
+	}
+
+	if code := call("/jobs", ""); code != http.StatusUnauthorized || reached {
+		t.Errorf("no token: status %d, handler reached=%v; want 401 and not reached", code, reached)
+	}
+	if code := call("/jobs", "not-a-real-token"); code != http.StatusUnauthorized || reached {
+		t.Errorf("bad token: status %d, handler reached=%v; want 401 and not reached", code, reached)
+	}
+	if code := call("/health", ""); code != http.StatusOK {
+		t.Errorf("/health must stay open for probes, got %d", code)
+	}
+
+	session, err := server.authMgr.AuthenticateUser("alice", "right")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if code := call("/jobs", session.Token); code != http.StatusOK || !reached {
+		t.Errorf("valid session: status %d, handler reached=%v; want 200 and reached", code, reached)
+	}
+}
+
+func TestAuthMiddlewareAcceptsTheAPIKey(t *testing.T) {
+	server := setupTestServer(t)
+	defer server.scheduler.Stop()
+	server.config.Security.EnableAuth = true
+	server.config.Security.APIKey = "s3cret"
+
+	protected := server.authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusOK) }))
+	req := httptest.NewRequest(http.MethodGet, "/jobs", nil)
+	req.Header.Set("X-API-Key", "s3cret")
+	w := httptest.NewRecorder()
+	protected.ServeHTTP(w, req)
+	if w.Code != http.StatusOK {
+		t.Errorf("API key: status %d, want 200", w.Code)
+	}
+}

@@ -22,6 +22,16 @@ saying so. It never falls back to accepting any password.
 For local development only you can set `TRANSIVA_ALLOW_INSECURE_AUTH=1`: the daemon then accepts any
 password for an account that exists on the machine and logs a warning. Never set it on a reachable host.
 
+## The API is protected too
+
+The dashboard sign-in is not just a screen: **every API route except `/health`, the dashboard files and `/api/login`
+requires either a session token (`Authorization: Bearer <token>` from `/api/login`) or the API key**
+(`X-API-Key: <key>`, set with `TRANSIVA_API_KEY`). Requests with neither get a 401.
+
+`--no-auth` or `TRANSIVA_DISABLE_AUTH=1` turn this off for local development and print a warning at startup.
+Scripts and CLIs that call the daemon (for example `scripts/test-api.sh`) need the API key, or must run against a
+development daemon started with `--no-auth`.
+
 ## Sessions and lockout
 
 - After sign-in the dashboard keeps a session token. Sessions survive a page refresh and a daemon restart
