@@ -1,0 +1,69 @@
+<!-- Copyright 2026 Zyvor AI Labs · SPDX-License-Identifier: Apache-2.0 -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Out of Nutanix in minutes · deck</title>
+<style>
+@page{size:1280px 720px;margin:0}
+:root{--bg:#fff;--bg2:#f5f5f7;--fg:#1d1d1f;--mut:#6e6e73;--line:#d2d2d7;--blue:#0071e3;--blue2:#2997ff;--or:#ff6a2a;--ok:#1d8a3a}
+*{box-sizing:border-box;margin:0}
+body{background:#888;font:22px/1.45 "Helvetica Neue",Helvetica,Arial,sans-serif;color:var(--fg)}
+.s{width:1280px;height:720px;padding:72px 90px;background:radial-gradient(800px 420px at 90% 0%,rgba(0,113,227,.12),transparent),linear-gradient(var(--bg),var(--bg2));page-break-after:always;break-after:page;position:relative;overflow:hidden;margin:0 auto 20px}
+@media print{body{background:none}.s{margin:0}}
+.ey{color:var(--or);font-weight:600;font-size:18px;letter-spacing:.04em;margin-bottom:12px}
+h1{font-size:96px;line-height:1.02;letter-spacing:-.035em;font-weight:700}
+h1 em{font-style:normal;color:var(--blue)}
+h2{font-size:56px;line-height:1.08;letter-spacing:-.025em;font-weight:700;margin-bottom:22px}
+p.l{font-size:30px;color:var(--mut);max-width:880px;line-height:1.35}
+.ft{position:absolute;left:90px;right:90px;bottom:36px;font-size:14px;color:var(--mut);display:flex;justify-content:space-between}
+pre{background:#0b0b0f;color:#e8e8ed;border-radius:14px;padding:22px 28px;font:18px/1.7 Menlo,Consolas,monospace;margin-top:30px}
+.g{color:#30d158}.d{color:#8e8e93}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:40px}
+.c{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
+.c b{display:block;font-size:56px;letter-spacing:-.03em;line-height:1}.c span{color:var(--mut);font-size:17px}
+.row{display:grid;grid-template-columns:190px 1fr 70px;gap:14px;align-items:center;margin:16px 0;font-size:20px}
+.t{height:32px;background:#ececf0;border-radius:8px;overflow:hidden}.t i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,var(--blue),var(--blue2))}.t i.o{background:var(--or)}
+.flow{display:flex;align-items:center;gap:14px;margin-top:50px}
+.n{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;text-align:center;flex:1}.n.h{border-color:var(--blue);box-shadow:0 0 0 4px rgba(0,113,227,.15)}
+.n b{display:block;font-size:24px}.n span{color:var(--mut);font-size:15px}.ar{color:var(--mut);font-size:30px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:20px}
+ul{padding-left:24px;color:var(--mut);font-size:22px}li{margin:9px 0}
+.bd{display:inline-block;font-size:14px;font-weight:600;border:1px solid var(--line);border-radius:980px;padding:3px 11px;color:var(--mut)}.bd.ok{color:var(--ok);border-color:var(--ok)}
+</style></head><body>
+
+<div class="s"><div class="ey">TRANSIVA · NUTANIX EXIT</div>
+<h1 style="margin-top:110px">Out of Nutanix<br>in <em>minutes</em>.</h1>
+<p class="l" style="margin-top:28px">One script takes a VM out through Prism v4 and boots it on plain KVM and KubeVirt.</p>
+<div class="ft"><span>Zyvor AI Labs</span><span>1 / 6</span></div></div>
+
+<div class="s"><div class="ey">THE RUN</div><h2>Measured, not promised.</h2>
+<p class="l">One unattended run, results saved as <code>results.json</code>.</p>
+<div class="grid"><div class="c"><b>7/7</b><span>stages passed</span></div><div class="c"><b>145 s</b><span>download to two running guests</span></div><div class="c"><b>0%</b><span>packet loss to the guest</span></div><div class="c"><b>1</b><span>command</span></div></div>
+<div class="ft"><span>Prism endpoint is Chimera's Nutanix simulator</span><span>2 / 6</span></div></div>
+
+<div class="s"><div class="ey">HOW IT WORKS</div><h2>Four hops. All standard.</h2>
+<p class="l">The source VM is never modified. The artifact is a plain qcow2 plus a manifest.</p>
+<div class="flow"><div class="n"><b>Nutanix</b><span>Prism v4 API</span></div><div class="ar">→</div><div class="n h"><b>hyperexport</b><span>list, NFS pickup, qcow2</span></div><div class="ar">→</div><div class="n h"><b>h2kvm</b><span>convert, boot fixes</span></div><div class="ar">→</div><div class="n"><b>KVM · KubeVirt</b><span>boots, answers ping</span></div></div>
+<div class="ft"><span></span><span>3 / 6</span></div></div>
+
+<div class="s"><div class="ey">TIMINGS</div><h2>Where the 145 seconds go.</h2>
+<div class="row"><span>Serve as VM</span><div class="t"><i style="width:2.7%"></i></div><b>2 s</b></div>
+<div class="row"><span>Export</span><div class="t"><i style="width:2.7%"></i></div><b>&lt; 2 s</b></div>
+<div class="row"><span>Convert (h2kvm)</span><div class="t"><i class="o" style="width:42.7%"></i></div><b>32 s</b></div>
+<div class="row"><span>Boot on KVM</span><div class="t"><i style="width:46.7%"></i></div><b>35 s</b></div>
+<div class="row"><span>Boot on KubeVirt</span><div class="t"><i style="width:100%"></i></div><b>75 s</b></div>
+<p style="color:var(--mut);font-size:16px;margin-top:20px">Convert took 150 to 198 s on a heavily loaded host in earlier runs. KubeVirt includes building and importing the container disk.</p>
+<div class="ft"><span></span><span>4 / 6</span></div></div>
+
+<div class="s"><div class="ey">DESTINATIONS</div><h2>Land it where you want.</h2>
+<div class="grid" style="grid-template-columns:repeat(5,1fr)">
+<div class="c"><b style="font-size:26px">Linux KVM</b><br><span class="bd ok">Verified</span></div>
+<div class="c"><b style="font-size:26px">KubeVirt</b><br><span class="bd ok">Verified</span></div>
+<div class="c"><b style="font-size:26px">Zorvia</b><br><span class="bd ok">Verified</span><br><span style="font-size:14px">by hand</span></div>
+<div class="c"><b style="font-size:26px">Kairon</b><br><span class="bd">Not run yet</span></div>
+<div class="c"><b style="font-size:26px">Machina</b><br><span class="bd">Not run yet</span></div></div>
+<div class="ft"><span>Nothing is claimed until it has been run</span><span>5 / 6</span></div></div>
+
+<div class="s"><div class="ey">STRAIGHT TALK</div><h2>What it does and doesn't prove.</h2>
+<div class="two"><div class="c"><b style="font-size:28px">Proven</b><ul><li>Prism v4 export, end to end</li><li>Valid qcow2 and manifest</li><li>Boots on KVM and KubeVirt</li><li>Repeatable, unattended</li></ul></div>
+<div class="c"><b style="font-size:28px">Not yet</b><ul><li>A real Nutanix cluster</li><li>Windows, UEFI, multi-disk, large VMs</li><li>Guest repair (skipped here)</li><li>Checks beyond ping</li></ul></div></div>
+<pre><span class="d">$</span> ./scripts/e2e-nutanix-exit.sh user@kvm-host</pre>
+<div class="ft"><span>github.com/zyvorai/zyvor-transiva</span><span>6 / 6</span></div></div>
+</body></html>
