@@ -313,6 +313,7 @@ func TestAuthenticateUser_InvalidUser(t *testing.T) {
 
 func TestAuthenticateUser_ValidUser(t *testing.T) {
 	manager := NewAuthManager()
+	manager.SetVerifier(fakeVerifier{accept: map[string]string{currentTestUser(): "password"}})
 
 	// Get current user from environment (should always exist)
 	currentUser := os.Getenv("USER")
@@ -369,6 +370,7 @@ func TestAuthenticateUser_ValidUser(t *testing.T) {
 
 func TestAuthenticateUser_SessionStorage(t *testing.T) {
 	manager := NewAuthManager()
+	manager.SetVerifier(fakeAnyPassword{})
 
 	currentUser := os.Getenv("USER")
 	if currentUser == "" {

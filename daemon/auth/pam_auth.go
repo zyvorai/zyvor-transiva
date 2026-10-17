@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"sync"
@@ -58,12 +57,65 @@ type AuthManager struct {
 	sessions map[string]*Session
 	mu       sync.RWMutex
 	path     string // optional: where sessions are persisted across restarts
+
+	verifier PasswordVerifier
+	failMu   sync.Mutex
+	failures map[string]*loginFailures
+}
+
+// loginFailures throttles repeated bad passwords for one account.
+type loginFailures struct {
+	count int
+	first time.Time
+	until time.Time // locked until this time once the limit is reached
+}
+
+const (
+	maxLoginFailures   = 5
+	loginFailureWindow = 5 * time.Minute
+	loginLockout       = 5 * time.Minute
+)
+
+// ErrTooManyAttempts is returned while an account is temporarily locked after repeated failures.
+var ErrTooManyAttempts = errors.New("too many failed sign-in attempts; try again in a few minutes")
+
+// SetVerifier replaces the password verifier (used by tests and by embedders).
+func (am *AuthManager) SetVerifier(v PasswordVerifier) { am.verifier = v }
+
+func (am *AuthManager) loginLocked(username string) bool {
+	am.failMu.Lock()
+	defer am.failMu.Unlock()
+	f := am.failures[username]
+	return f != nil && time.Now().Before(f.until)
+}
+
+func (am *AuthManager) recordLogin(username string, ok bool) {
+	am.failMu.Lock()
+	defer am.failMu.Unlock()
+	if ok {
+		delete(am.failures, username)
+		return
+	}
+	now := time.Now()
+	f := am.failures[username]
+	if f == nil || now.Sub(f.first) > loginFailureWindow {
+		f = &loginFailures{first: now}
+		am.failures[username] = f
+	}
+	f.count++
+	if f.count >= maxLoginFailures {
+		f.until = now.Add(loginLockout)
+		f.count = 0
+		f.first = now
+	}
 }
 
 // NewAuthManager creates an in-memory authentication manager.
 func NewAuthManager() *AuthManager {
 	am := &AuthManager{
 		sessions: make(map[string]*Session),
+		verifier: defaultVerifier(),
+		failures: make(map[string]*loginFailures),
 	}
 
 	// Start cleanup goroutine
@@ -78,6 +130,8 @@ func NewPersistentAuthManager(path string) *AuthManager {
 	am := &AuthManager{
 		sessions: make(map[string]*Session),
 		path:     path,
+		verifier: defaultVerifier(),
+		failures: make(map[string]*loginFailures),
 	}
 	am.load()
 	go am.cleanupExpiredSessions()
@@ -162,27 +216,26 @@ func (am *AuthManager) persistLocked() {
 
 // AuthenticateUser authenticates a user against /etc/passwd using PAM
 func (am *AuthManager) AuthenticateUser(username, password string) (*Session, error) {
-	// Validate credentials using the 'login' PAM service via pkexec or sudo
-	// For security, we use a helper script that validates credentials
-
 	// Reject usernames that aren't safe to pass as positional arguments to
 	// external commands (e.g. values that could be interpreted as flags, or
 	// that contain characters outside the portable POSIX username set).
 	if !isValidUsername(username) {
-		return nil, errors.New("invalid username or password")
+		return nil, ErrInvalidCredentials
 	}
 
-	// Check if user exists in /etc/passwd
-	// #nosec G204 -- username is validated by isValidUsername (strict allowlist) above, and "--"
-	// prevents it from being interpreted as a flag by id regardless
-	checkUser := exec.Command("id", "--", username)
-	if err := checkUser.Run(); err != nil {
-		return nil, errors.New("invalid username or password")
+	if am.loginLocked(username) {
+		return nil, ErrTooManyAttempts
 	}
 
-	// For production, you should use a proper PAM library like github.com/msteinert/pam
-	// This is a simplified version that just checks if the user exists
-	// In a real implementation, you'd validate the password against PAM
+	// Check the password against the system's accounts (PAM).
+	if err := am.verifier.Verify(username, password); err != nil {
+		if errors.Is(err, ErrVerifierUnavailable) {
+			return nil, err
+		}
+		am.recordLogin(username, false)
+		return nil, ErrInvalidCredentials
+	}
+	am.recordLogin(username, true)
 
 	// Generate session token
 	token, err := generateToken()

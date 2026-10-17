@@ -71,8 +71,8 @@ build: build-daemon build-export ## Build all binaries
 build-daemon: ## Build transivad daemon (and compatibility hypervisord)
 	@echo "🔨 Building $(DAEMON_BINARY) and compat $(COMPAT_DAEMON)..."
 	@mkdir -p $(BUILD_DIR)
-	$(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(DAEMON_BINARY) ./cmd/hypervisord
-	$(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(COMPAT_DAEMON) ./cmd/hypervisord
+	$(GOBUILD) $(if $(GO_TAGS),-tags $(GO_TAGS)) $(LDFLAGS) -o $(BUILD_DIR)/$(DAEMON_BINARY) ./cmd/hypervisord
+	$(GOBUILD) $(if $(GO_TAGS),-tags $(GO_TAGS)) $(LDFLAGS) -o $(BUILD_DIR)/$(COMPAT_DAEMON) ./cmd/hypervisord
 	@echo "✅ Build complete: $(BUILD_DIR)/$(DAEMON_BINARY) and $(BUILD_DIR)/$(COMPAT_DAEMON)"
 
 build-export: ## Build transivaexport CLI (and compatibility hyperexport)

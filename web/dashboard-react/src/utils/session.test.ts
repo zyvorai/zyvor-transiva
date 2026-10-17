@@ -35,6 +35,13 @@ describe("dashboard session", () => {
     );
   });
 
+  it("explains a lockout and an unconfigured server instead of a generic error", async () => {
+    fetchMock.mockResolvedValueOnce(new Response("locked", { status: 429 }));
+    await expect(signIn("alice", "pw")).rejects.toThrow(/Too many failed attempts/);
+    fetchMock.mockResolvedValueOnce(new Response("no pam", { status: 503 }));
+    await expect(signIn("alice", "pw")).rejects.toThrow(/PAM/);
+  });
+
   it("restores a saved session after a page refresh when the daemon accepts it", async () => {
     sessionStorage.setItem(
       "transiva_session",

@@ -33,6 +33,8 @@
 #   /usr/local/bin/{transivad,hyperexport}
 #   /etc/transiva/config.yaml   written once; re-running never overwrites it
 #   transivad.service           installed only if missing (existing units are kept)
+#   transivad.service.d/10-pam-auth.conf  runs the service as root so PAM can check real passwords
+#   /etc/pam.d/transiva         PAM service (pam_unix); written once, never overwritten
 #   /var/lib/transiva           state and exports (systemd StateDirectory)
 # ============================================================================
 
@@ -138,7 +140,7 @@ if $UNINSTALL_MODE; then
     step "Uninstalling transiva from ${HOST}"
     _ssh "
         $SUDO systemctl disable --now transivad.service 2>/dev/null || true
-        $SUDO rm -f $REMOTE_BIN_DIR/transivad $REMOTE_BIN_DIR/hyperexport $REMOTE_UNIT
+        $SUDO rm -f $REMOTE_BIN_DIR/transivad $REMOTE_BIN_DIR/hyperexport $REMOTE_UNIT /etc/systemd/system/transivad.service.d/10-pam-auth.conf
         $SUDO systemctl daemon-reload 2>/dev/null || true
     "
     deploy_ui_step_finish
@@ -155,6 +157,8 @@ REMOTE_PATH='export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin'
 step "Preflight: ssh, Go and gcc on ${HOST}"
 _ssh "$REMOTE_PATH; command -v go >/dev/null && command -v gcc >/dev/null && go version" \
     || error "Go and gcc are required on ${HOST} (apt install golang gcc / dnf install golang gcc)"
+_ssh "[ -f /usr/include/security/pam_appl.h ]" \
+    || error "PAM development headers are required on ${HOST} for real password checks (apt install libpam0g-dev / dnf install pam-devel)"
 deploy_ui_step_finish
 
 if $REBUILD_WEB; then
@@ -180,7 +184,7 @@ _ssh "
     set -e; $REMOTE_PATH; cd $REMOTE_SRC
     for pair in transivad:cmd/hypervisord hyperexport:cmd/hyperexport; do
         n=\${pair%%:*}; pkg=\${pair#*:}
-        CGO_ENABLED=1 go build -trimpath -ldflags '$HYPERSDK_LDFLAGS' -o /tmp/\$n.new ./\$pkg/
+        CGO_ENABLED=1 go build -tags pam -trimpath -ldflags '$HYPERSDK_LDFLAGS' -o /tmp/\$n.new ./\$pkg/
         echo \"  ✅ \$n\"
     done
 " || error "remote Go build failed"
@@ -209,7 +213,7 @@ Type=simple
 ExecStart=/usr/local/bin/transivad --config /etc/transiva/config.yaml
 Restart=on-failure
 RestartSec=5s
-DynamicUser=yes
+User=root
 StateDirectory=transiva
 WorkingDirectory=/var/lib/transiva
 NoNewPrivileges=yes
@@ -226,7 +230,13 @@ WantedBy=multi-user.target
 UNITEOF
 
 _ssh "$SUDO mkdir -p /etc/transiva"
-_scp "$BUILD_DIR/config.yaml" "$BUILD_DIR/transivad.service" "${USER}@${HOST}:/tmp/"
+cat > "$BUILD_DIR/10-pam-auth.conf" <<'DROPEOF'
+# Real password checks go through PAM (pam_unix), which needs to read the shadow database.
+[Service]
+DynamicUser=no
+User=root
+DROPEOF
+_scp "$BUILD_DIR/config.yaml" "$BUILD_DIR/transivad.service" "$BUILD_DIR/10-pam-auth.conf" "$REPO_DIR/deployments/pam/transiva" "${USER}@${HOST}:/tmp/"
 _ssh "
     set -e
     for b in transivad hyperexport; do
@@ -244,6 +254,13 @@ _ssh "
     # an existing unit (possibly customised: user, env, hardening) is never replaced
     [ -f $REMOTE_UNIT ] || $SUDO install -m 644 /tmp/transivad.service $REMOTE_UNIT
     rm -f /tmp/transivad.service
+    # existing units may still use DynamicUser: a drop-in makes the service run as root for PAM
+    $SUDO mkdir -p /etc/systemd/system/transivad.service.d
+    $SUDO install -m 644 /tmp/10-pam-auth.conf /etc/systemd/system/transivad.service.d/10-pam-auth.conf
+    rm -f /tmp/10-pam-auth.conf
+    [ -f /etc/pam.d/transiva ] || $SUDO install -m 644 /tmp/transiva /etc/pam.d/transiva
+    rm -f /tmp/transiva
+    $SUDO systemctl daemon-reload
 "
 deploy_ui_step_finish
 

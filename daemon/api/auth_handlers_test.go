@@ -9,8 +9,79 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"os/exec"
 	"testing"
+
+	"github.com/zyvorai/transiva/daemon/auth"
 )
+
+// existingAccountVerifier accepts any password for an account that exists here (the old behaviour).
+type existingAccountVerifier struct{}
+
+func (existingAccountVerifier) Verify(user, _ string) error {
+	if err := exec.Command("id", "--", user).Run(); err != nil {
+		return auth.ErrInvalidCredentials
+	}
+	return nil
+}
+
+// strictVerifier knows one account and checks its password.
+type strictVerifier struct{ user, pass string }
+
+func (v strictVerifier) Verify(user, pass string) error {
+	if user == v.user && pass == v.pass {
+		return nil
+	}
+	return auth.ErrInvalidCredentials
+}
+
+type brokenVerifier struct{}
+
+func (brokenVerifier) Verify(string, string) error { return auth.ErrVerifierUnavailable }
+
+func postLogin(t *testing.T, server *EnhancedServer, user, pass string) *httptest.ResponseRecorder {
+	t.Helper()
+	body, _ := json.Marshal(LoginRequest{Username: user, Password: pass})
+	w := httptest.NewRecorder()
+	server.handleLogin(w, httptest.NewRequest(http.MethodPost, "/login", bytes.NewReader(body)))
+	return w
+}
+
+func TestHandleLoginChecksThePassword(t *testing.T) {
+	server := setupTestServer(t)
+	defer server.scheduler.Stop()
+	server.authMgr.SetVerifier(strictVerifier{user: "alice", pass: "right"})
+
+	if w := postLogin(t, server, "alice", "wrong"); w.Code != http.StatusUnauthorized {
+		t.Errorf("wrong password: status %d, want 401", w.Code)
+	}
+	if w := postLogin(t, server, "alice", "right"); w.Code != http.StatusOK {
+		t.Errorf("right password: status %d, want 200 (%s)", w.Code, w.Body.String())
+	}
+}
+
+func TestHandleLoginFailsClosedWithoutPasswordVerification(t *testing.T) {
+	server := setupTestServer(t)
+	defer server.scheduler.Stop()
+	server.authMgr.SetVerifier(brokenVerifier{})
+
+	if w := postLogin(t, server, "alice", "anything"); w.Code != http.StatusServiceUnavailable {
+		t.Errorf("status %d, want 503", w.Code)
+	}
+}
+
+func TestHandleLoginLocksAfterRepeatedFailures(t *testing.T) {
+	server := setupTestServer(t)
+	defer server.scheduler.Stop()
+	server.authMgr.SetVerifier(strictVerifier{user: "alice", pass: "right"})
+
+	for i := 0; i < 5; i++ {
+		postLogin(t, server, "alice", "wrong")
+	}
+	if w := postLogin(t, server, "alice", "right"); w.Code != http.StatusTooManyRequests {
+		t.Errorf("status %d, want 429 while locked", w.Code)
+	}
+}
 
 func TestHandleLogin(t *testing.T) {
 	server := setupTestServer(t)
