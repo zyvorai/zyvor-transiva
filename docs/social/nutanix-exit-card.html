@@ -1,0 +1,33 @@
+<!-- Copyright 2026 Zyvor AI Labs · SPDX-License-Identifier: Apache-2.0 -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Out of Nutanix in minutes</title>
+<style>
+:root{--bg:#fff;--bg2:#f5f5f7;--fg:#1d1d1f;--mut:#6e6e73;--line:#d2d2d7;--blue:#0071e3;--blue2:#2997ff;--or:#ff6a2a}
+html.dark{--bg:#000;--bg2:#0b0b0f;--fg:#f5f5f7;--mut:#a1a1a6;--line:#2c2c2e;--blue:#0a84ff;--blue2:#64b5ff}
+*{box-sizing:border-box;margin:0}
+body{width:1200px;height:630px;overflow:hidden;background:radial-gradient(900px 500px at 85% 0%,color-mix(in srgb,var(--blue) 14%,transparent),transparent),linear-gradient(var(--bg),var(--bg2));color:var(--fg);font:20px/1.4 "Helvetica Neue",Helvetica,Arial,sans-serif;padding:64px 72px;position:relative}
+html.li body{width:1600px;height:900px;padding:96px 110px}
+html.li h1{font-size:124px}html.li p{font-size:34px;max-width:900px}html.li .ey{font-size:22px}
+html.li .bars{right:110px;top:210px;width:400px}html.li .b{font-size:19px;margin-bottom:20px}html.li .b i{height:26px}
+html.li .foot{left:110px;right:110px;bottom:64px;font-size:21px}
+.ey{color:var(--or);font-weight:600;font-size:18px;letter-spacing:.04em}
+h1{font-size:92px;line-height:1.02;letter-spacing:-.035em;margin:14px 0 18px;font-weight:700}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--blue),var(--blue2));-webkit-background-clip:text;background-clip:text;color:transparent}
+p{color:var(--mut);font-size:26px;max-width:760px}
+.bars{position:absolute;right:72px;top:150px;width:300px}
+.b{margin:0 0 15px;font-size:15px;color:var(--mut)}
+.b i{display:block;height:20px;border-radius:6px;margin-top:5px;background:linear-gradient(90deg,var(--blue),var(--blue2))}
+.b i.o{background:var(--or)}
+.foot{position:absolute;left:72px;bottom:48px;right:72px;display:flex;justify-content:space-between;font-size:17px;color:var(--mut);border-top:1px solid var(--line);padding-top:16px}
+.foot b{color:var(--fg)}
+</style></head><body>
+<div class="ey">NUTANIX EXIT · TRANSIVA</div>
+<h1>Out of Nutanix<br>in <em>minutes</em>.</h1>
+<p>One script. Prism export, convert, boot on KVM and KubeVirt.</p>
+<div class="bars">
+ <div class="b">Convert · 32 s<i class="o" style="width:43%"></i></div>
+ <div class="b">Boot on KVM · 35 s<i style="width:47%"></i></div>
+ <div class="b">Boot on KubeVirt · 75 s<i style="width:100%"></i></div>
+</div>
+<div class="foot"><span><b>7 of 7</b> stages passed · 145 s · unattended</span><span>Prism endpoint: simulator</span></div>
+<script>var h=location.hash;if(h.includes('dark'))document.documentElement.classList.add('dark');if(h.includes('li'))document.documentElement.classList.add('li')</script>
+</body></html>
