@@ -51,6 +51,8 @@ export interface JobInfo {
   compress: boolean;
   size_bytes?: number;
   error_msg?: string;
+  phase?: string;
+  current_step?: string;
   created_at: string;
   updated_at: string;
 }

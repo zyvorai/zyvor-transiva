@@ -159,13 +159,14 @@ const NutanixExportWorkflow: React.FC = () => {
           cluster: config.cluster || undefined,
         },
       });
-      const jobIDs = (result as { job_ids?: string[]; JobIDs?: string[] }).job_ids
-        || (result as { job_ids?: string[]; JobIDs?: string[] }).JobIDs
-        || [];
-      alert(`Nutanix export job submitted${jobIDs.length ? `: ${jobIDs[0]}` : ''}`);
-      setCurrentStep('login');
+      if (!(result as { job_ids?: string[]; JobIDs?: string[] }).job_ids?.length && !(result as { JobIDs?: string[] }).JobIDs?.length) {
+        throw new Error('The daemon accepted the request but returned no job ID');
+      }
+      // Show the job in the Jobs workspace instead of a blocking alert (the workspace follows the URL hash).
       setSelectedVM(null);
       setVms([]);
+      setCurrentStep('login');
+      window.location.hash = 'jobs';
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Export failed');
     } finally {

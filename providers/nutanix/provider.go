@@ -51,6 +51,7 @@ func NewProvider(cfg providers.ProviderConfig, log logger.Logger) (providers.Pro
 		}
 	}
 
+	nutanixCfg.Host, nutanixCfg.Port = SplitHostPort(nutanixCfg.Host, nutanixCfg.Port)
 	if nutanixCfg.Port == 0 {
 		nutanixCfg.Port = 9440
 	}

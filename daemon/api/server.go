@@ -432,7 +432,7 @@ func (s *Server) handleQueryJobs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := models.QueryResponse{
-		Jobs:      jobList,
+		Jobs:      redactedJobs(jobList),
 		Total:     len(jobList),
 		Timestamp: time.Now(),
 	}
@@ -460,7 +460,7 @@ func (s *Server) handleGetJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.jsonResponse(w, http.StatusOK, job)
+	s.jsonResponse(w, http.StatusOK, redactedJob(job))
 }
 
 // Cancel jobs

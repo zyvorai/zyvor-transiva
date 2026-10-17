@@ -234,6 +234,22 @@ export const JobsTable: React.FC<JobsTableProps> = ({
                     >
                       {getStatusIcon(job.status)} {job.status}
                     </span>
+                    {job.status === "failed" && job.error_msg && (
+                      <div
+                        title={job.error_msg}
+                        style={{
+                          fontSize: "10px",
+                          color: "var(--muted)",
+                          marginTop: "4px",
+                          maxWidth: "240px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {job.error_msg}
+                      </div>
+                    )}
                   </td>
                   <td style={tableCellStyle}>
                     <div style={{ fontWeight: "500", fontSize: "12px" }}>
@@ -280,6 +296,9 @@ export const JobsTable: React.FC<JobsTableProps> = ({
                       }}
                     >
                       {job.progress}%
+                      {job.current_step && job.status === "running"
+                        ? ` · ${job.current_step}`
+                        : ""}
                     </div>
                   </td>
                   <td style={tableCellStyle}>
