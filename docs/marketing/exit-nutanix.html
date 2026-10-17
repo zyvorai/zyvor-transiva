@@ -1,0 +1,322 @@
+<!-- Copyright 2026 Zyvor AI Labs -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exit Nutanix: how the projects fit together · Transiva</title>
+<meta name="description" content="Transiva exports from Nutanix, h2kvm repairs and converts, and the VM lands on KVM or KubeVirt. How the projects work together, with diagrams and a measured run.">
+<meta property="og:title" content="Exit Nutanix: how the projects fit together">
+<meta property="og:description" content="Transiva, h2kvm, Zorvia, Kairon and Machina in one picture. 7 of 7 stages passed in 145 s.">
+<meta property="og:image" content="../social/nutanix-exit-card.png">
+<style>
+:root{
+  --bg:#fff;--bg2:#f5f5f7;--fg:#1d1d1f;--mut:#6e6e73;--line:#d2d2d7;
+  --blue:#0071e3;--blue2:#2997ff;--orange:#ff6a2a;--card:#fff;--ok:#1d8a3a;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]){--bg:#000;--bg2:#0b0b0f;--fg:#f5f5f7;--mut:#a1a1a6;--line:#2c2c2e;--blue:#0a84ff;--blue2:#64b5ff;--card:#111114;--ok:#30d158}
+}
+:root[data-theme=dark]{--bg:#000;--bg2:#0b0b0f;--fg:#f5f5f7;--mut:#a1a1a6;--line:#2c2c2e;--blue:#0a84ff;--blue2:#64b5ff;--card:#111114;--ok:#30d158}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+code,pre,.mono{font-family:Menlo,Consolas,monospace}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:22px;height:48px;font-size:13px}
+nav b{font-weight:600}nav a{color:var(--mut)}nav a:hover{color:var(--fg);text-decoration:none}
+nav .sp{flex:1}
+nav button{background:none;border:1px solid var(--line);color:var(--mut);border-radius:980px;padding:3px 12px;font:inherit;cursor:pointer}
+section{padding:96px 0}
+section.alt{background:var(--bg2)}
+.eyebrow{font-size:14px;font-weight:600;color:var(--orange);letter-spacing:.02em;margin-bottom:10px}
+h1{font-size:clamp(40px,8vw,84px);line-height:1.04;letter-spacing:-.03em;margin:0 0 20px;font-weight:700}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--blue),var(--blue2));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(30px,5vw,52px);line-height:1.08;letter-spacing:-.025em;margin:0 0 16px;font-weight:700}
+p.lead{font-size:clamp(19px,2.4vw,26px);line-height:1.35;color:var(--mut);max-width:720px;margin:0 0 32px}
+.hero{padding:110px 0 70px;text-align:center}
+.hero p.lead{margin-left:auto;margin-right:auto}
+.cta{display:inline-block;background:var(--blue);color:#fff;border-radius:980px;padding:11px 24px;font-size:17px}
+.cta:hover{text-decoration:none;filter:brightness(1.1)}
+.cta2{margin-left:18px}
+.term{margin:48px auto 0;max-width:760px;text-align:left;background:#0b0b0f;color:#e8e8ed;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.25);overflow:hidden}
+.term .bar{display:flex;gap:7px;padding:12px 14px;background:#1c1c1f}
+.term .bar i{width:12px;height:12px;border-radius:50%;background:#ff5f57}.term .bar i:nth-child(2){background:#febc2e}.term .bar i:nth-child(3){background:#28c840}
+.term pre{margin:0;padding:18px 22px 22px;font-size:14px;line-height:1.7;overflow-x:auto}
+.term .p{color:#64b5ff}.term .g{color:#30d158}.term .d{color:#8e8e93}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-top:40px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px}
+.stat .n{font-size:52px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.stat .n small{font-size:20px;color:var(--mut);font-weight:500}
+.stat p{margin:10px 0 0;color:var(--mut);font-size:15px}
+.chart{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px;margin-top:32px}
+.row{display:grid;grid-template-columns:150px 1fr 70px;align-items:center;gap:14px;margin:14px 0;font-size:15px}
+.row .t{height:30px;background:var(--bg2);border-radius:8px;overflow:hidden}
+.row .t span{display:block;height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,var(--blue),var(--blue2));transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.row .t span.o{background:var(--orange)}
+.row .v{text-align:right;font-weight:600}
+.on .row .t span{width:var(--w)}
+.note{color:var(--mut);font-size:14px;margin-top:18px}
+.flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;justify-content:center;margin-top:36px}
+.node{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;min-width:150px;text-align:center}
+.node b{display:block;font-size:17px}.node span{color:var(--mut);font-size:13px}
+.node.hl{border-color:var(--blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 18%,transparent)}
+.arr{align-self:center;padding:0 10px;color:var(--mut);font-size:22px}
+.dest{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:32px}
+.dc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px}
+.dc h3{margin:0 0 6px;font-size:22px}.dc p{margin:8px 0 0;color:var(--mut);font-size:15px}
+.badge{display:inline-block;font-size:12px;font-weight:600;border-radius:980px;padding:3px 10px;border:1px solid var(--line);color:var(--mut)}
+.badge.ok{color:var(--ok);border-color:var(--ok)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:32px}
+.col{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px}
+.col h3{margin:0 0 12px}.col ul{margin:0;padding-left:20px;color:var(--mut)}.col li{margin:7px 0}
+table{width:100%;border-collapse:collapse;margin-top:28px;font-size:15px}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;font-size:13px}
+footer{padding:48px 0;color:var(--mut);font-size:13px;border-top:1px solid var(--line)}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s,transform .8s}
+.on.reveal,.on .reveal{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.row .t span{transition:none}}
+@media (max-width:640px){section{padding:64px 0}.row{grid-template-columns:100px 1fr 54px;font-size:13px}.arr{display:none}.node{margin:6px}.cta2{display:block;margin:14px 0 0}}
+
+:root{--zx-fg:var(--fg);--zx-mut:var(--mut);--zx-line:var(--line);--zx-card:var(--card);--zx-bg2:var(--bg2);--zx-blue:var(--blue);--zx-ok:var(--ok);--zx-bgp:var(--bg)}
+.dia{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:32px;overflow-x:auto}
+.dia svg{display:block;width:100%;min-width:760px;height:auto}
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:32px}
+.role{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px}
+.role h3{margin:0 0 4px;font-size:22px}.role .k{font-size:13px;color:var(--mut);margin-bottom:10px}.role p{margin:0;color:var(--mut);font-size:15px}
+.role code{font-size:13px;background:var(--bg2);padding:1px 6px;border-radius:6px}
+</style>
+</head>
+<body>
+<nav><div class="wrap"><b>Transiva</b><a href="#map">Map</a><a href="#roles">Roles</a><a href="#seq">Sequence</a><a href="#proof">Proof</a><a href="#honest">Limits</a><span class="sp"></span><a href="nutanix-exit.html">Short version</a><button id="th" type="button">Theme</button></div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">EXIT NUTANIX · THE WHOLE PICTURE</div>
+  <h1>Many projects.<br><em>One</em> exit.</h1>
+  <p class="lead">Transiva takes the VM out of Nutanix. h2kvm makes it boot. Zorvia, Kairon or Machina run it. Chimera lets us test all of it without touching a real cluster.</p>
+  <a class="cta" href="#map">See how they fit</a><a class="cta2" href="nutanix-exit.html">The one-page version</a>
+</div></header>
+
+<section class="alt" id="map"><div class="wrap" data-io>
+  <div class="eyebrow">SYSTEM MAP</div>
+  <h2 class="reveal">Follow the disk.</h2>
+  <p class="lead reveal">A VM leaves Nutanix as a plain qcow2 plus a manifest. Everything after that is standard Linux virtualization.</p>
+  <div class="dia reveal">
+<!--svg:system-map-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 600" role="img" aria-labelledby="t1 d1"><title id="t1">How Transiva, h2kvm and the landing targets fit together</title><desc id="d1">Nutanix Prism v4 is exported by Transiva into a qcow2 and manifest, h2kvm repairs and converts it, and it lands on KVM, KubeVirt with Zorvia (both run), or Kairon and Machina (not run yet). Chimera is a test stand-in for Nutanix.</desc>
+<style>
+svg{--c-fg:#1d1d1f;--c-mut:#6e6e73;--c-line:#c7c7cc;--c-card:#fff;--c-bg2:#f5f5f7;--c-bgp:#fff;--c-blue:#0071e3;--c-blue2:#2997ff;--c-or:#ff6a2a;--c-ok:#1d8a3a;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif}
+@media (prefers-color-scheme:dark){svg{--c-fg:#f5f5f7;--c-mut:#a1a1a6;--c-line:#3a3a3c;--c-card:#111114;--c-bg2:#0b0b0f;--c-bgp:#000;--c-blue:#0a84ff;--c-blue2:#64b5ff;--c-ok:#30d158}}
+.fg{fill:var(--zx-fg,var(--c-fg))}.mut{fill:var(--zx-mut,var(--c-mut))}.ok{fill:var(--zx-ok,var(--c-ok))}.or{fill:var(--c-or)}
+.card{fill:var(--zx-card,var(--c-card));stroke:var(--zx-line,var(--c-line));stroke-width:1.5}
+.hl{fill:var(--zx-card,var(--c-card));stroke:var(--zx-blue,var(--c-blue));stroke-width:2}
+.chip{fill:var(--zx-bg2,var(--c-bg2));stroke:none}.pill{fill:var(--zx-bgp,var(--c-bgp))}
+.dash{stroke-dasharray:7 6}
+.ln{stroke:var(--zx-mut,var(--c-mut));stroke-width:1.6;fill:none}
+.lnb{stroke:var(--zx-blue,var(--c-blue));stroke-width:2.4;fill:none}
+.lnd{stroke:var(--zx-mut,var(--c-mut));stroke-width:1.6;fill:none;stroke-dasharray:6 6}
+.life{stroke:var(--zx-line,var(--c-line));stroke-width:1.5;stroke-dasharray:3 5}
+.ah{fill:var(--zx-mut,var(--c-mut))}.ahb{fill:var(--zx-blue,var(--c-blue))}
+.t{font-size:16px}.tb{font-size:20px;font-weight:700}.ts{font-size:14px}.tm{font-family:Menlo,Consolas,monospace;font-size:14px}.th{font-size:12px;font-weight:700;letter-spacing:.06em}
+</style>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" class="ah"/></marker>
+<marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" class="ahb"/></marker></defs>
+<text x="20" y="36" class="mut th" text-anchor="start">SOURCE</text>
+<rect x="20" y="60" width="190" height="100" rx="16" class="card dash"/>
+<text x="115" y="94" class="fg tb" text-anchor="middle">Chimera</text>
+<text x="115" y="116" class="mut ts" text-anchor="middle">test double (simulator)</text>
+<text x="115" y="136" class="mut ts" text-anchor="middle">Prism v4 + NFS</text>
+<rect x="20" y="250" width="190" height="150" rx="16" class="card"/>
+<text x="115" y="290" class="fg tb" text-anchor="middle">Nutanix</text>
+<text x="115" y="316" class="mut ts" text-anchor="middle">Prism Central v4</text>
+<text x="115" y="338" class="mut ts" text-anchor="middle">storage container</text>
+<text x="115" y="360" class="mut ts" text-anchor="middle">(NFS)</text>
+<path d="M115 160 L115 250" class="lnd" marker-end="url(#a)"/>
+<text x="125" y="210" class="mut ts" text-anchor="start">stands in for</text>
+<text x="260" y="36" class="mut th" text-anchor="start">EXPORT</text>
+<rect x="260" y="215" width="220" height="240" rx="16" class="hl"/>
+<text x="370" y="250" class="fg tb" text-anchor="middle">Transiva</text>
+<text x="370" y="272" class="mut ts" text-anchor="middle">discover and export</text>
+<rect x="280" y="292" width="180" height="30" rx="9" class="chip"/><text x="370.0" y="312" class="fg tm" text-anchor="middle">hyperexport</text>
+<rect x="280" y="332" width="180" height="30" rx="9" class="chip"/><text x="370.0" y="352" class="fg ts" text-anchor="middle">daemon + REST API</text>
+<rect x="280" y="372" width="180" height="30" rx="9" class="chip"/><text x="370.0" y="392" class="fg ts" text-anchor="middle">web dashboard</text>
+<rect x="280" y="412" width="180" height="30" rx="9" class="chip"/><text x="370.0" y="432" class="fg tm" text-anchor="middle">qemu-img convert</text>
+<path d="M210 325 L260 325" class="lnb" marker-end="url(#ab)"/>
+<text x="235" y="312" class="mut ts" text-anchor="middle">v4</text>
+<text x="530" y="36" class="mut th" text-anchor="start">ARTIFACT</text>
+<rect x="530" y="270" width="170" height="130" rx="16" class="card"/>
+<text x="615" y="308" class="fg tb" text-anchor="middle">Artifact</text>
+<rect x="545" y="322" width="140" height="30" rx="9" class="chip"/><text x="615.0" y="342" class="fg tm" text-anchor="middle">disk.qcow2</text>
+<rect x="545" y="358" width="140" height="30" rx="9" class="chip"/><text x="615.0" y="378" class="fg tm" text-anchor="middle">manifest.json</text>
+<path d="M480 335 L530 335" class="lnb" marker-end="url(#ab)"/>
+<text x="750" y="36" class="mut th" text-anchor="start">REPAIR AND CONVERT</text>
+<rect x="750" y="215" width="210" height="240" rx="16" class="hl"/>
+<text x="855" y="250" class="fg tb" text-anchor="middle">h2kvm</text>
+<text x="855" y="272" class="mut ts" text-anchor="middle">first-boot science</text>
+<rect x="770" y="292" width="170" height="30" rx="9" class="chip"/><text x="855.0" y="312" class="fg ts" text-anchor="middle">GuestKit repair</text>
+<rect x="770" y="332" width="170" height="30" rx="9" class="chip"/><text x="855.0" y="352" class="fg ts" text-anchor="middle">convert + checksum</text>
+<rect x="770" y="372" width="170" height="30" rx="9" class="chip"/><text x="855.0" y="392" class="fg ts" text-anchor="middle">domain XML</text>
+<rect x="770" y="412" width="170" height="30" rx="9" class="chip"/><text x="855.0" y="432" class="fg ts" text-anchor="middle">Windows, UEFI: not run</text>
+<path d="M700 335 L750 335" class="lnb" marker-end="url(#ab)"/>
+<text x="1030" y="36" class="mut th" text-anchor="start">LAND</text>
+<rect x="1030" y="60" width="230" height="100" rx="16" class="card"/>
+<text x="1048" y="98" class="fg tb" text-anchor="start">Linux KVM</text>
+<text x="1048" y="122" class="mut ts" text-anchor="start">libvirt: boots, answers ping</text>
+<circle cx="1236" cy="84" r="11" class="ok"/><path d="M1230 84 l4 4 l8 -9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M960 335 C995 335 995 110 1030 110" class="lnb" marker-end="url(#ab)"/>
+<rect x="1030" y="178" width="230" height="100" rx="16" class="card"/>
+<text x="1048" y="216" class="fg tb" text-anchor="start">KubeVirt + Zorvia</text>
+<text x="1048" y="240" class="mut ts" text-anchor="start">Ready, Zorvia lists it</text>
+<circle cx="1236" cy="202" r="11" class="ok"/><path d="M1230 202 l4 4 l8 -9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M960 335 C995 335 995 228 1030 228" class="lnb" marker-end="url(#ab)"/>
+<rect x="1030" y="296" width="230" height="100" rx="16" class="card dash"/>
+<text x="1048" y="334" class="fg tb" text-anchor="start">Kairon</text>
+<text x="1048" y="358" class="mut ts" text-anchor="start">via Veyron: not run yet</text>
+<path d="M960 335 C995 335 995 346 1030 346" class="lnd" marker-end="url(#a)"/>
+<rect x="1030" y="414" width="230" height="100" rx="16" class="card dash"/>
+<text x="1048" y="452" class="fg tb" text-anchor="start">Machina</text>
+<text x="1048" y="476" class="mut ts" text-anchor="start">libvirt host: not run yet</text>
+<path d="M960 335 C995 335 995 464 1030 464" class="lnd" marker-end="url(#a)"/>
+<rect x="20" y="528" width="1240" height="52" rx="12" class="chip"/>
+<circle cx="46" cy="554" r="8" class="ok"/><text x="62" y="559" class="mut ts" text-anchor="start">run end to end</text>
+<rect x="210" y="546" width="30" height="16" rx="5" class="card dash"/><text x="250" y="559" class="mut ts" text-anchor="start">not run yet, or a test stand-in</text>
+<text x="560" y="559" class="mut ts" text-anchor="start">Chimera stands in for a real Prism in tests.</text>
+</svg>
+<!--/svg:system-map-->
+  </div>
+</div></section>
+
+<section id="roles"><div class="wrap" data-io>
+  <div class="eyebrow">WHO DOES WHAT</div>
+  <h2 class="reveal">Each project does one job.</h2>
+  <div class="roles">
+    <div class="role reveal"><h3>Transiva</h3><div class="k">Discover and export</div><p>Talks to Prism Central v4, finds the VM and its disks, picks the disk up from the NFS storage container, converts it with <code>qemu-img</code> and writes <code>artifact-manifest.json</code>. The source VM is never modified.</p></div>
+    <div class="role reveal"><h3>h2kvm</h3><div class="k">Repair and convert</div><p>Takes the disk and makes it boot on KVM: offline guest repair through GuestKit, conversion, checksum and a domain definition. Windows, UEFI, multi-disk and large VMs are h2kvm's territory.</p></div>
+    <div class="role reveal"><h3>Zorvia</h3><div class="k">Runs it on KubeVirt</div><p>The control plane for KubeVirt. In the run, the migrated VM was Ready and Zorvia listed it as Running through its API.</p></div>
+    <div class="role reveal"><h3>Kairon</h3><div class="k">Runs it via Veyron</div><p>h2kvm has a Kairon hand-off (<code>--deploy-kairon</code>). It was <b>not run</b> in this test.</p></div>
+    <div class="role reveal"><h3>Machina</h3><div class="k">Runs it on libvirt hosts</div><p>h2kvm can emit a libvirt domain for a Machina host. A plain libvirt boot was run; Machina itself was <b>not</b>.</p></div>
+    <div class="role reveal"><h3>Chimera</h3><div class="k">The test rig</div><p>Simulates Nutanix Prism v4 and its NFS container, so the whole path can be tested unattended. It is a simulator, not a real cluster.</p></div>
+  </div>
+</div></section>
+
+<section class="alt" id="seq"><div class="wrap" data-io>
+  <div class="eyebrow">SEQUENCE</div>
+  <h2 class="reveal">Who calls whom.</h2>
+  <p class="lead reveal">The order of calls in one run of <code>scripts/e2e-nutanix-exit.sh</code>.</p>
+  <div class="dia reveal">
+<!--svg:sequence-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" role="img" aria-labelledby="t2 d2"><title id="t2">Order of calls in a Nutanix exit</title><desc id="d2">The script runs hyperexport, which negotiates the Prism v4 version, lists the VM, reads the disk from the NFS container and converts it to qcow2 with a manifest. The script then runs h2kvm and boots the result.</desc>
+<style>
+svg{--c-fg:#1d1d1f;--c-mut:#6e6e73;--c-line:#c7c7cc;--c-card:#fff;--c-bg2:#f5f5f7;--c-bgp:#fff;--c-blue:#0071e3;--c-blue2:#2997ff;--c-or:#ff6a2a;--c-ok:#1d8a3a;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif}
+@media (prefers-color-scheme:dark){svg{--c-fg:#f5f5f7;--c-mut:#a1a1a6;--c-line:#3a3a3c;--c-card:#111114;--c-bg2:#0b0b0f;--c-bgp:#000;--c-blue:#0a84ff;--c-blue2:#64b5ff;--c-ok:#30d158}}
+.fg{fill:var(--zx-fg,var(--c-fg))}.mut{fill:var(--zx-mut,var(--c-mut))}.ok{fill:var(--zx-ok,var(--c-ok))}.or{fill:var(--c-or)}
+.card{fill:var(--zx-card,var(--c-card));stroke:var(--zx-line,var(--c-line));stroke-width:1.5}
+.hl{fill:var(--zx-card,var(--c-card));stroke:var(--zx-blue,var(--c-blue));stroke-width:2}
+.chip{fill:var(--zx-bg2,var(--c-bg2));stroke:none}.pill{fill:var(--zx-bgp,var(--c-bgp))}
+.dash{stroke-dasharray:7 6}
+.ln{stroke:var(--zx-mut,var(--c-mut));stroke-width:1.6;fill:none}
+.lnb{stroke:var(--zx-blue,var(--c-blue));stroke-width:2.4;fill:none}
+.lnd{stroke:var(--zx-mut,var(--c-mut));stroke-width:1.6;fill:none;stroke-dasharray:6 6}
+.life{stroke:var(--zx-line,var(--c-line));stroke-width:1.5;stroke-dasharray:3 5}
+.ah{fill:var(--zx-mut,var(--c-mut))}.ahb{fill:var(--zx-blue,var(--c-blue))}
+.t{font-size:16px}.tb{font-size:20px;font-weight:700}.ts{font-size:14px}.tm{font-family:Menlo,Consolas,monospace;font-size:14px}.th{font-size:12px;font-weight:700;letter-spacing:.06em}
+</style>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" class="ah"/></marker>
+<marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" class="ahb"/></marker></defs>
+<rect x="15" y="14" width="150" height="40" rx="12" class="card"/>
+<text x="90" y="40" class="fg t" text-anchor="middle">Script</text>
+<line x1="90" y1="54" x2="90" y2="624" class="life"/>
+<rect x="215" y="14" width="150" height="40" rx="12" class="hl"/>
+<text x="290" y="40" class="fg t" text-anchor="middle">hyperexport</text>
+<line x1="290" y1="54" x2="290" y2="624" class="life"/>
+<rect x="415" y="14" width="150" height="40" rx="12" class="card"/>
+<text x="490" y="40" class="fg t" text-anchor="middle">Prism v4</text>
+<line x1="490" y1="54" x2="490" y2="624" class="life"/>
+<rect x="615" y="14" width="150" height="40" rx="12" class="card"/>
+<text x="690" y="40" class="fg t" text-anchor="middle">NFS container</text>
+<line x1="690" y1="54" x2="690" y2="624" class="life"/>
+<rect x="815" y="14" width="150" height="40" rx="12" class="hl"/>
+<text x="890" y="40" class="fg t" text-anchor="middle">h2kvm</text>
+<line x1="890" y1="54" x2="890" y2="624" class="life"/>
+<rect x="1015" y="14" width="150" height="40" rx="12" class="card"/>
+<text x="1090" y="40" class="fg t" text-anchor="middle">KVM / KubeVirt</text>
+<line x1="1090" y1="54" x2="1090" y2="624" class="life"/>
+<path d="M96 100 L286 100" class="lnb" marker-end="url(#ab)"/>
+<rect x="43.400000000000006" y="74" width="293.2" height="22" rx="7" class="pill"/>
+<text x="190.0" y="89" class="fg tm" text-anchor="middle">run, -provider nutanix -vm &lt;name></text>
+<path d="M296 150 L486 150" class="ln" marker-end="url(#a)"/>
+<rect x="226.6" y="124" width="326.8" height="22" rx="7" class="pill"/>
+<text x="390.0" y="139" class="fg ts" text-anchor="middle">OPTIONS /unversioned/info (negotiate v4.3)</text>
+<path d="M296 200 L486 200" class="ln" marker-end="url(#a)"/>
+<rect x="230.29999999999998" y="174" width="319.40000000000003" height="22" rx="7" class="pill"/>
+<text x="390.0" y="189" class="fg ts" text-anchor="middle">GET vms, then GET vm: disks and container</text>
+<path d="M296 250 L686 250" class="ln" marker-end="url(#a)"/>
+<rect x="371.0" y="224" width="238.0" height="22" rx="7" class="pill"/>
+<text x="490.0" y="239" class="fg ts" text-anchor="middle">read .acropolis/vmdisk/&lt;disk>/</text>
+<rect x="155.0" y="282" width="270" height="30" rx="9" class="chip"/>
+<text x="290" y="302" class="fg ts" text-anchor="middle">qemu-img convert, write manifest</text>
+<path d="M96 360 L886 360" class="lnb" marker-end="url(#ab)"/>
+<rect x="280.4" y="334" width="419.20000000000005" height="22" rx="7" class="pill"/>
+<text x="490.0" y="349" class="fg tm" text-anchor="middle">run, --cmd local --vmdk &lt;disk> --emit-domain-xml</text>
+<rect x="760.0" y="392" width="260" height="30" rx="9" class="chip"/>
+<text x="890" y="412" class="fg ts" text-anchor="middle">inspect, repair, convert, checksum</text>
+<rect x="755.0" y="432" width="270" height="30" rx="9" class="chip"/>
+<text x="890" y="452" class="fg ts" text-anchor="middle">repair skipped on the test image</text>
+<circle cx="769.0" cy="447" r="4" class="or"/>
+<path d="M896 510 L1086 510" class="lnb" marker-end="url(#ab)"/>
+<rect x="896.9" y="484" width="186.20000000000002" height="22" rx="7" class="pill"/>
+<text x="990.0" y="499" class="fg ts" text-anchor="middle">boot the converted disk</text>
+<path d="M1084 560 L96 560" class="ln" marker-end="url(#a)"/>
+<rect x="480" y="534" width="240" height="22" rx="7" class="pill"/>
+<text x="600" y="549" class="fg ts" text-anchor="middle">guest answers ping: 0% loss</text>
+<text x="20" y="624" class="mut ts" text-anchor="start">Real run: 7 of 7 stages, 145 s. The Prism endpoint was a simulator.</text>
+</svg>
+<!--/svg:sequence-->
+  </div>
+</div></section>
+
+<section id="proof"><div class="wrap" data-io>
+  <div class="eyebrow">PROOF</div>
+  <h2 class="reveal">One run, measured.</h2>
+  <div class="stats">
+    <div class="stat reveal"><div class="n">7<small> / 7</small></div><p>stages passed</p></div>
+    <div class="stat reveal"><div class="n">145<small> s</small></div><p>download to two running guests</p></div>
+    <div class="stat reveal"><div class="n">0<small>%</small></div><p>packet loss to the guest</p></div>
+  </div>
+  <div class="chart reveal">
+    <div class="row"><span>Export</span><div class="t"><span style="--w:2.7%"></span></div><span class="v">&lt; 2 s</span></div>
+    <div class="row"><span>Convert (h2kvm)</span><div class="t"><span class="o" style="--w:42.7%"></span></div><span class="v">32 s</span></div>
+    <div class="row"><span>Boot on KVM</span><div class="t"><span style="--w:46.7%"></span></div><span class="v">35 s</span></div>
+    <div class="row"><span>Boot on KubeVirt</span><div class="t"><span style="--w:100%"></span></div><span class="v">75 s</span></div>
+    <p class="note">From <a href="results.json"><code>results.json</code></a>. Convert took 150 to 198 s on a loaded host in earlier runs.</p>
+  </div>
+</div></section>
+
+<section class="alt" id="honest"><div class="wrap" data-io>
+  <div class="eyebrow">STRAIGHT TALK</div>
+  <h2 class="reveal">What this does and doesn't prove.</h2>
+  <div class="cols">
+    <div class="col reveal"><h3>Proven</h3><ul><li>Prism v4 export in code, end to end</li><li>Valid qcow2 and manifest, converted by h2kvm</li><li>Boots on KVM and on KubeVirt, unattended</li></ul></div>
+    <div class="col reveal"><h3>Not yet</h3><ul><li>A real Nutanix cluster (Prism here is a simulator)</li><li>Kairon and Machina landings</li><li>h2kvm guest repair: skipped on the test image</li><li>Windows, UEFI, multi-disk, large VMs; checks beyond ping</li></ul></div>
+  </div>
+  <p class="note reveal"><a href="https://github.com/zyvorai/zyvor-transiva/blob/main/docs/case-study-nutanix-exit-linux.md">Case study</a> · <a href="nutanix-exit-deck.pdf">Deck (PDF)</a> · <a href="https://zyvorai.github.io/zyvor-h2kvm/nutanix-exit">h2kvm's side of the story</a></p>
+</div></section>
+
+<footer><div class="wrap">© 2026 Zyvor AI Labs · Apache-2.0 · Diagrams are generated by <code>docs/marketing/img/build-diagrams.py</code>.</div></footer>
+<script>
+(function(){
+  var r=document.documentElement,b=document.getElementById('th');
+  try{var s=localStorage.getItem('theme');if(s)r.setAttribute('data-theme',s)}catch(e){}
+  b.onclick=function(){var d=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme:dark)').matches);var n=d?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('theme',n)}catch(e){}};
+  var els=document.querySelectorAll('[data-io],.hero .reveal,section .chart');
+  if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('on')});return}
+  var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('on');io.unobserve(x.target)}})},{threshold:.15});
+  els.forEach(function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>
