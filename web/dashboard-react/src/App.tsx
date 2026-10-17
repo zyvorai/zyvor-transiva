@@ -22,7 +22,12 @@ import { WorkflowDashboard } from "./components/WorkflowDashboard";
 import { ManifestBuilder } from "./components/ManifestBuilder";
 import ProviderManager from "./components/ProviderManager";
 import ExportWorkflowRouter from "./components/ExportWorkflowRouter";
-import { signIn, signOut } from "./utils/session";
+import {
+  SESSION_ENDED_EVENT,
+  restoreSession,
+  signIn,
+  signOut,
+} from "./utils/session";
 const views = [
   {
     id: "overview",
@@ -74,11 +79,27 @@ function initialView(): View {
 }
 export default function App() {
   const [authenticated, setAuthenticated] = useState(false);
+  // True until we know whether a saved session can be restored, so the login form does not flash.
+  const [restoring, setRestoring] = useState(true);
   const [view, setView] = useState<View>(initialView);
   const [dark, setDark] = useState(
     () => localStorage.getItem("transiva_theme") === "dark",
   );
   const [search, setSearch] = useState<string | null>(null);
+  useEffect(() => {
+    let active = true;
+    restoreSession().then((ok) => {
+      if (!active) return;
+      setAuthenticated(ok);
+      setRestoring(false);
+    });
+    const ended = () => setAuthenticated(false);
+    window.addEventListener(SESSION_ENDED_EVENT, ended);
+    return () => {
+      active = false;
+      window.removeEventListener(SESSION_ENDED_EVENT, ended);
+    };
+  }, []);
   useEffect(() => {
     ["hypersdk_username", "hypersdk_password", "hypersdk_remember"].forEach(
       (k) => localStorage.removeItem(k),
@@ -108,6 +129,7 @@ export default function App() {
     setSearch(null);
     window.scrollTo(0, 0);
   }
+  if (restoring) return null;
   if (!authenticated)
     return (
       <Login

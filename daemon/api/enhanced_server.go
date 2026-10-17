@@ -148,8 +148,13 @@ func NewEnhancedServer(manager *jobs.Manager, detector *capabilities.Detector, l
 	log.Info("websocket support enabled")
 
 	// Initialize authentication manager
-	es.authMgr = auth.NewAuthManager()
-	log.Info("authentication enabled")
+	if path := auth.DefaultSessionFile(); path != "" {
+		es.authMgr = auth.NewPersistentAuthManager(path)
+		log.Info("authentication enabled", "sessions", path)
+	} else {
+		es.authMgr = auth.NewAuthManager()
+		log.Info("authentication enabled (sessions kept in memory)")
+	}
 
 	// Register enhanced routes
 	es.registerEnhancedRoutes()
@@ -164,6 +169,7 @@ func (es *EnhancedServer) registerEnhancedRoutes() {
 	// Authentication endpoints (no auth required)
 	mux.HandleFunc("/api/login", es.handleLogin)
 	mux.HandleFunc("/api/logout", es.handleLogout)
+	mux.HandleFunc("/api/session", es.handleSession)
 
 	// Copy existing routes from base server
 	mux.HandleFunc("/health", es.handleHealth)

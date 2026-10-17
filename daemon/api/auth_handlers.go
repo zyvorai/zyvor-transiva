@@ -6,6 +6,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 )
 
 // LoginRequest represents a login request
@@ -76,5 +77,27 @@ func (es *EnhancedServer) handleLogout(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(map[string]string{"message": "logged out successfully"}); err != nil {
 		es.logger.Error("failed to encode logout response", "error", err)
+	}
+}
+
+// handleSession reports whether the caller's session token is still valid. The dashboard uses it
+// to restore a signed-in session after a page refresh without asking for the password again.
+func (es *EnhancedServer) handleSession(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	token := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+	session, err := es.authMgr.ValidateSession(token)
+	if err != nil {
+		http.Error(w, "session is not valid", http.StatusUnauthorized)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(map[string]string{
+		"username":   session.Username,
+		"expires_at": session.ExpiresAt.Format("2006-01-02T15:04:05Z07:00"),
+	}); err != nil {
+		es.logger.Error("failed to encode session response", "error", err)
 	}
 }
