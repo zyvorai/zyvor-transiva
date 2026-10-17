@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useState } from "react";
-import { ArrowRight, Box, Eye, EyeOff, LockKeyhole } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, LockKeyhole } from "lucide-react";
+import ZMark from "./ZMark";
 import { MigrationGraphic } from "./MigrationGraphic";
 interface LoginProps {
   onLogin: (username: string, password: string) => Promise<void>;
@@ -36,7 +37,7 @@ export function Login({ onLogin }: LoginProps) {
     <div className="login-page">
       <header className="login-nav">
         <a className="wordmark" href="#">
-          <Box size={23} /> Transiva <span>by Zyvor</span>
+          <ZMark size={24} /> Transiva <span>by Zyvor</span>
         </a>
         <a href="https://github.com/zyvorai/zyvor-transiva/tree/main/docs">
           Documentation <ArrowRight size={14} />
