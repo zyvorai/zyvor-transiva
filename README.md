@@ -2,6 +2,8 @@
 
 # Transiva — Community Edition
 
+[Client overview (PDF)](docs/Transiva-Client-Overview.pdf)
+
 [![CI](https://github.com/zyvorai/zyvor-transiva/actions/workflows/ci.yml/badge.svg)](https://github.com/zyvorai/zyvor-transiva/actions/workflows/ci.yml)
 [![Latest release](https://img.shields.io/github/v/tag/zyvorai/zyvor-transiva?label=release&sort=semver&style=flat-square&color=0071e3&labelColor=1d1d1f)](https://github.com/zyvorai/zyvor-transiva/tags)
 [![Go 1.27+](https://img.shields.io/badge/go-1.27+-0071e3?style=flat-square&labelColor=1d1d1f)](https://go.dev/)
