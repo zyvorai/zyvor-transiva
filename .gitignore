@@ -1,0 +1,9 @@
+node_modules/
+build/
+coverage.out
+*.log
+.DS_Store
+__pycache__/
+*.pyc
+.deploy-last
+website/static/docs/

@@ -1,0 +1,7 @@
+// Copyright 2026 Zyvor AI Labs · https://zyvor.dev
+// SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+
+// Package v1alpha1 contains API Schema definitions for the transiva v1alpha1 API group
+// +kubebuilder:object:generate=true
+// +groupName=transiva.zyvor.ai
+package v1alpha1

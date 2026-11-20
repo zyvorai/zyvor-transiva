@@ -1,0 +1,191 @@
+// Copyright 2026 Zyvor AI Labs · https://zyvor.dev
+// SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+
+import { authenticatedFetch } from './session';
+
+// API utility functions for HyperSDK
+
+const API_BASE = ''; // No /api prefix - endpoints already include it
+
+export async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  const response = await authenticatedFetch(`${API_BASE}${endpoint}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+    ...options,
+  });
+
+  if (!response.ok) {
+    throw new Error(`API error: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function getHealth() {
+  return fetchAPI<{ status: string; version: string }>('/health');
+}
+
+export async function getStatus() {
+  return fetchAPI('/status');
+}
+
+export async function getCapabilities() {
+  return fetchAPI('/capabilities');
+}
+
+export async function submitJob(jobDefinition: unknown) {
+  return fetchAPI('/jobs/submit', {
+    method: 'POST',
+    body: JSON.stringify(jobDefinition),
+  });
+}
+
+export async function queryJobs(query?: string) {
+  const endpoint = query ? `/jobs/query?${query}` : '/jobs/query';
+  return fetchAPI(endpoint);
+}
+
+export async function cancelJob(jobId: string) {
+  return fetchAPI(`/jobs/cancel?id=${jobId}`, {
+    method: 'POST',
+  });
+}
+
+export async function getJob(jobId: string) {
+  return fetchAPI(`/jobs/${jobId}`);
+}
+
+export interface NutanixConnection {
+  server: string;
+  username: string;
+  password: string;
+  cluster?: string;
+  insecure?: boolean;
+}
+
+// The connection details go in a POST body: a GET would put the Prism password in the URL.
+function nutanixBody(conn: NutanixConnection, extra: Record<string, string> = {}) {
+  return JSON.stringify({
+    provider: 'nutanix',
+    server: conn.server,
+    username: conn.username,
+    password: conn.password,
+    insecure: conn.insecure ?? false,
+    ...(conn.cluster ? { cluster: conn.cluster } : {}),
+    ...extra,
+  });
+}
+
+export async function listNutanixVMs(conn: NutanixConnection) {
+  const response = await authenticatedFetch('/vms/list', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: nutanixBody(conn),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || `Failed to list Nutanix VMs (${response.status})`);
+  }
+  return response.json() as Promise<{ vms: unknown[]; total: number }>;
+}
+
+export async function getNutanixVMInfo(conn: NutanixConnection, vm: string) {
+  const response = await authenticatedFetch('/vms/info?provider=nutanix', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: nutanixBody(conn, { vm }),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || `Failed to get VM info (${response.status})`);
+  }
+  return response.json();
+}
+
+export async function submitNutanixExportJob(jobDefinition: unknown) {
+  return fetchAPI('/jobs/submit', {
+    method: 'POST',
+    body: JSON.stringify(jobDefinition),
+  });
+}
+
+export async function exportNutanixVMSync(body: unknown) {
+  const response = await authenticatedFetch('/vms/export?provider=nutanix', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || `Export failed (${response.status})`);
+  }
+  return response.json();
+}
+
+export async function listSchedules() {
+  return fetchAPI('/schedules');
+}
+
+export async function createSchedule(schedule: unknown) {
+  return fetchAPI('/schedules', {
+    method: 'POST',
+    body: JSON.stringify(schedule),
+  });
+}
+
+export async function updateSchedule(id: string, schedule: unknown) {
+  return fetchAPI(`/schedules/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(schedule),
+  });
+}
+
+export async function deleteSchedule(id: string) {
+  return fetchAPI(`/schedules/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function enableSchedule(id: string) {
+  return fetchAPI(`/schedules/${id}/enable`, {
+    method: 'POST',
+  });
+}
+
+export async function disableSchedule(id: string) {
+  return fetchAPI(`/schedules/${id}/disable`, {
+    method: 'POST',
+  });
+}
+
+export async function triggerSchedule(id: string) {
+  return fetchAPI(`/schedules/${id}/trigger`, {
+    method: 'POST',
+  });
+}
+
+export async function listWebhooks() {
+  return fetchAPI('/webhooks');
+}
+
+export async function addWebhook(webhook: unknown) {
+  return fetchAPI('/webhooks', {
+    method: 'POST',
+    body: JSON.stringify(webhook),
+  });
+}
+
+export async function deleteWebhook(id: string) {
+  return fetchAPI(`/webhooks/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function testWebhook(url: string) {
+  return fetchAPI('/webhooks/test', {
+    method: 'POST',
+    body: JSON.stringify({ url }),
+  });
+}
