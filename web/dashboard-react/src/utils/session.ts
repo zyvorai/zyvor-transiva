@@ -1,5 +1,5 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
 
 // The session token lives in memory and in sessionStorage, so a page refresh keeps you signed in
 // but closing the tab does not (sessionStorage is per tab and never shared or persisted to disk).

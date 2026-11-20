@@ -1,5 +1,5 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
 
 // The Zyvor "Z", shared with the other Zyvor products (copied from the Netra dashboard).
 //   "logomark": the bare orange Z, for wordmarks and navigation.

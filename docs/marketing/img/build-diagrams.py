@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2026 Zyvor AI Labs · SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Zyvor AI Labs · SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
 """Generate the Nutanix-exit diagrams as adaptive SVGs.
 
     python3 docs/marketing/img/build-diagrams.py            # writes system-map.svg, sequence.svg

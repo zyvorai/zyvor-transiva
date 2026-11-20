@@ -3,8 +3,7 @@ Version:        1.0.0
 Release:        1%{?dist}
 Summary:        Systemd daemon for h2kvm VM conversion
 
-License:        Apache-2.0
-URL:            https://github.com/zyvorai/h2kvm
+License:        LicenseRef-Zyvor-Production-1.0URL:            https://github.com/zyvorai/h2kvm
 Source0:        %{name}-%{version}.tar.gz
 
 # This package is the renamed successor to hyper2kvm-daemon; Provides/Obsoletes

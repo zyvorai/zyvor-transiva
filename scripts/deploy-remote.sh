@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Copyright 2026 Zyvor AI Labs · https://zyvor.dev
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
 # deploy-remote.sh — Deploy Transiva to a remote Linux host as a systemd service
 # ============================================================================
 # transivad needs CGO (go-sqlite3), so it is built natively on the target. The
