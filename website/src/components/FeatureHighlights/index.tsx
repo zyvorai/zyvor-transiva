@@ -46,7 +46,7 @@ const FeatureList: FeatureItem[] = [
   {
     title: 'Source-available',
     description:
-      'Zyvor Production License v1.0 (free non-production), no phone-home, no agent in the guest. Ships as source, Docker images, and RPM packages.',
+      'Zyvor Production License v1.0 (non-production use permitted), no phone-home, no agent in the guest. Ships as source, Docker images, and RPM packages.',
     to: 'https://github.com/zyvorai/transiva/blob/main/LICENSE',
   },
 ];

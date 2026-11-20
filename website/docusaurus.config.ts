@@ -7,7 +7,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Transiva',
-  tagline: 'Enterprise Workload Mobility & Migration Control Plane — Community Edition.',
+  tagline: 'Enterprise Workload Mobility & Migration Control Plane.',
   favicon: 'img/favicon.svg',
 
   future: {
@@ -85,8 +85,6 @@ const config: Config = {
           title: 'Docs',
           items: [
             {label: 'Nutanix walkthrough', to: '/docs/nutanix'},
-            {label: 'CE vs Platform', to: '/docs/ce-vs-enterprise'},
-            {label: 'Enterprise', to: '/docs/enterprise'},
           ],
         },
         {
@@ -108,7 +106,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Zyvor AI Labs. Transiva Community Edition is source-available under the Zyvor Production License v1.0.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Zyvor AI Labs. Transiva is source-available under the Zyvor Production License v1.0.`,
     },
     prism: {
       theme: prismThemes.github,

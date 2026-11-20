@@ -35,4 +35,4 @@ three outputs above.
 GitHub's repository Social preview can't be set through the API. After changing the card, upload
 `docs/social/transiva-share-card.png` by hand in the repository's **Settings → Social preview**.
 
-Copy follows the project README (Community Edition scope: two sources, full exports, no CBT).
+Copy follows the project README (scope: two sources, full exports, no CBT).

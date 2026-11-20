@@ -2,10 +2,10 @@ blank_issues_enabled: false
 contact_links:
   - name: "Sponsor development (Razorpay)"
     url: https://razorpay.me/@zyvorAILabs
-    about: Support ongoing maintenance by Susant Sahani — not required to use CE
+    about: Support ongoing maintenance by Susant Sahani — not required
   - name: "Watch migration demo (video + dashboard)"
     url: https://zyvor.dev/demo?utm_source=github&utm_medium=transiva
-    about: See the platform before downloading CE — migration video and live dashboard
+    about: See the platform before downloading — migration video and live dashboard
   - name: "Enterprise, sales and SLAs (Zyvor)"
     url: https://zyvor.dev/contact?utm_source=github&utm_medium=transiva
     about: Production migrations, VMware exit, licensing — not for GitHub Issues
@@ -18,9 +18,6 @@ contact_links:
   - name: "Discussions"
     url: https://github.com/zyvorai/transiva/discussions
     about: Ask questions and discuss ideas with the community
-  - name: "CE vs Enterprise"
-    url: https://github.com/zyvorai/transiva/blob/main/docs/enterprise.md
-    about: When to use GitHub vs contact Zyvor for production
   - name: "Documentation"
     url: https://github.com/zyvorai/transiva/blob/main/README.md
     about: Install, quick start, and enterprise options

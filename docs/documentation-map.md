@@ -15,9 +15,6 @@ Every page in this repository's `docs/` folder. Back to the [README](../README.m
 
 | Page | What it covers |
 |---|---|
-| [community-vs-platform.md](community-vs-platform.md) | Stub pointing to the canonical matrix |
-| [ce-vs-enterprise.md](ce-vs-enterprise.md) | Canonical Community vs Transiva Platform matrix |
-| [enterprise.md](enterprise.md) | Stub pointing to the canonical matrix |
 
 ## Project
 
@@ -31,4 +28,4 @@ Every page in this repository's `docs/` folder. Back to the [README](../README.m
 ## Published site pages
 
 The `docs/` folder is also published as a static site: `index.html`, `getting-started.html`,
-`installation-guide.html`, `ce-vs-enterprise.html`, `enterprise.html`, `zyvor-enterprise.html` and `helm-charts/`.
+`installation-guide.html`, `zyvor-enterprise.html` and `helm-charts/`.

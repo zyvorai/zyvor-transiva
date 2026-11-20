@@ -31,6 +31,6 @@ flowchart LR
 | Host | [Machina](https://zyvor.dev/machina?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite) | Bare-metal KVM / libvirt on the hypervisor host |
 | Operate | [Zeus OS](https://zyvor.dev/zeus-os?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite) | VMs + containers — KubeVirt lifecycle, GPU, multi-cluster |
 
-Methodology: **Discover → Assess → Convert → Deploy → Operate → Optimize.** This repo covers discover + export in CE. [Full hypervisor-exit route →](https://zyvor.dev/hypervisor-exit?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite)
+Methodology: **Discover → Assess → Convert → Deploy → Operate → Optimize.** This repo covers discover + export. [Full hypervisor-exit route →](https://zyvor.dev/hypervisor-exit?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite)
 
 ---

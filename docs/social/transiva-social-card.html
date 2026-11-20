@@ -29,7 +29,7 @@
   .step p { margin:0; font-size:20.5px; line-height:1.36; color:var(--soft); }
   .step p b { color:var(--ink); }
   .dot { display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--orange); margin-left:10px; vertical-align:middle; }
-  .attr { margin-top:26px; display:flex; align-items:center; gap:18px; background:var(--ink); color:#f5f5f7; border-radius:14px; padding:15px 24px; font-family:var(--mono); font-size:22px; white-space:nowrap; }
+  .attr { margin-top:26px; display:flex; align-items:center; gap:18px; background:#1d1d1f; border:1px solid rgba(255,255,255,.08); color:#f5f5f7; border-radius:14px; padding:15px 24px; font-family:var(--mono); font-size:22px; white-space:nowrap; }
   .attr .tag { color:var(--blue2); font-weight:700; letter-spacing:.1em; font-size:16px; }
   .attr .why { margin-left:auto; color:#98989d; font-size:15px; letter-spacing:.06em; text-transform:uppercase; }
   .chips { margin-top:auto; padding-top:24px; display:flex; flex-wrap:wrap; gap:10px; }
@@ -42,7 +42,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><img src="zyvor-mark-blue.svg" alt=""><b>Zyvor</b><span>&middot;</span><span>Transiva CE</span><span class="r">Workload mobility</span></div>
+  <div class="top"><img src="zyvor-mark-blue.svg" alt=""><b>Zyvor</b><span>&middot;</span><span>Transiva</span><span class="r">Workload mobility</span></div>
   <h1>One workflow for <em>two</em> hypervisors.</h1>
   <p class="sub">Go control plane for offline export: same CLI and job model for VMware vSphere and Nutanix AHV. Source VMs stay untouched until cutover.</p>
   <div class="flow">
@@ -57,7 +57,7 @@
     <div class="step"><span class="lane">CONVERT</span><span class="n">5</span>
       <h3>Hand to h2kvm<span class="dot"></span></h3><p>hyper2kvm + GuestKit → KVM, KubeVirt, Zeus OS — conversion stays offline.</p></div>
   </div>
-  <div class="attr"><span class="tag">CE SCOPE</span><span>2 sources &nbsp;·&nbsp; CLI + REST &nbsp;·&nbsp; full exports (no CBT in CE)</span><span class="why">Honest</span></div>
+  <div class="attr"><span class="tag">SCOPE</span><span>2 sources &nbsp;·&nbsp; CLI + REST &nbsp;·&nbsp; full exports (no CBT)</span><span class="why">Honest</span></div>
   <div class="chips">
     <span class="chip">OpenAPI</span><span class="chip">Docker deploy</span>
     <span class="chip g">Chimera for CI</span><span class="chip g">Nutanix NFS mounts</span><span class="chip g">Zyvor Production License</span>

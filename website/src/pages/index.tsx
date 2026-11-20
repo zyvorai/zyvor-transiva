@@ -38,7 +38,7 @@ function Hero() {
             renewal <Grad>trap.</Grad>
           </>
         }
-        lede="A Go control plane that discovers, inventories and orchestrates workload exports from VMware vSphere and Nutanix AHV, hands the artifacts to h2kvm for conversion, and runs fleet jobs over REST. Zyvor Production License v1.0, Community Edition."
+        lede="A Go control plane that discovers, inventories and orchestrates workload exports from VMware vSphere and Nutanix AHV, hands the artifacts to h2kvm for conversion, and runs fleet jobs over REST. Zyvor Production License v1.0."
       />
       <Actions>
         <Btn to="https://github.com/zyvorai/transiva#60-second-quick-start">Get started</Btn>
@@ -155,10 +155,10 @@ function Open() {
             Zyvor Production License v1.0. <Grad>No phone-home.</Grad>
           </>
         }
-        lede="No agent in the guest. Source, Docker and RPM packaging. Community Edition is free forever for labs and single-host PoCs: two source hypervisors, CLI and REST, support via GitHub Issues."
+        lede="No agent in the guest. Source, Docker and RPM packaging. Two source hypervisors, CLI and REST; a commercial license is required for production use."
       />
       <Actions>
-        <Btn to="/docs/ce-vs-enterprise">See CE vs Platform</Btn>
+        <Btn to="https://zyvor.dev/pricing">See pricing</Btn>
         <Btn to="https://github.com/zyvorai/transiva" variant="ghost">
           View on GitHub
         </Btn>
@@ -171,7 +171,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="Transiva — Enterprise Workload Mobility & Migration Control Plane"
-      description="Go control plane that discovers, inventories, and orchestrates workload exports from VMware vSphere and Nutanix AHV. Zyvor Production License v1.0 Community Edition.">
+      description="Go control plane that discovers, inventories, and orchestrates workload exports from VMware vSphere and Nutanix AHV. Zyvor Production License v1.0.">
       <SubNav title="Transiva" links={SUB_LINKS} cta={{to: 'https://github.com/zyvorai/transiva#60-second-quick-start', label: 'Get started'}} />
       <main>
         <Hero />
@@ -184,7 +184,7 @@ export default function Home(): ReactNode {
             eyebrow="Moving an estate, not a lab?"
             title={
               <>
-                CE proves export. <Grad>Platform moves the estate.</Grad>
+                This repo proves export. <Grad>Platform moves the estate.</Grad>
               </>
             }
             lede="If you're moving 50 to 10,000+ VMs, HyperSDK Platform adds CBT incremental sync, wave planning, SSO/RBAC and a direct line to Zyvor on cutover night: 10 to 11 source providers instead of 2, and KubeVirt as a deploy target."
