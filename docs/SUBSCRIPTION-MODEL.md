@@ -9,9 +9,7 @@ Transiva is available under an annual **enterprise subscription** for production
 | Enterprise | Advanced edition, updates and upgrades | Priority business hours, four-business-hour critical response |
 | Premium | Contracted enterprise scope and critical escalation | 24x7 critical intake, one-hour initial response target |
 
-Priced per VM or subscription tier, with an annual minimum. 
-
-Rates are quoted by Zyvor: contact [sales@zyvor.dev](mailto:sales@zyvor.dev).
+Migration is priced per VM, one-time, on a single ladder: **USD 75 per VM for 1-99 VMs, USD 60 for 100-499 VMs, USD 50 for 500 or more**, with a project minimum of USD 2,500 (applied after discounts). USD is the GST-free price (about INR 7,434 / 5,947 / 4,956 per VM including 18% GST). h2kvm is included at no extra charge in a Transiva project, so you never pay for it twice. Community Edition stays free under Apache-2.0. Quote or invoice: [sales@zyvor.dev](mailto:sales@zyvor.dev).
 
 ## Terms
 
