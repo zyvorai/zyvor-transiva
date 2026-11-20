@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright 2026 Zyvor AI Labs · https://zyvor.dev
+# SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+
 # Render Transiva social cards with Google Chrome + macOS `sips` (nothing to install).
 #   ./docs/social/build-social-card.sh
 # Writes (names unchanged; the dark card is for the README <picture>):

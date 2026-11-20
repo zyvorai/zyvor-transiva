@@ -1,3 +1,6 @@
+// Copyright 2026 Zyvor AI Labs · https://zyvor.dev
+// SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+
 // Copy the static marketing pages from docs/ into website/static/docs/ so the
 // Docusaurus build publishes them at <baseUrl>/docs/marketing/... (the URLs the
 // README and the pages themselves link to). Runs automatically before `npm run build`.

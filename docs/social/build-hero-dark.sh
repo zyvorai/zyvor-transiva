@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright 2026 Zyvor AI Labs · https://zyvor.dev
+# SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+
 # Render docs/social/transiva-hero-dark.html to transiva-hero-dark.jpg (2400x1260): README hero and GitHub social preview.
 # Needs Google Chrome and macOS `sips`; nothing is installed.
 #   ./docs/social/build-hero-dark.sh

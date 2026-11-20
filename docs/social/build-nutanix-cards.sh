@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright 2026 Zyvor AI Labs · https://zyvor.dev
+# SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+
 # Render the Nutanix-exit cards and deck PDF with Google Chrome (+ macOS sips for the jpg).
 #   ./docs/social/build-nutanix-cards.sh
 set -euo pipefail
