@@ -17,7 +17,7 @@ PRs welcome. Security reports → [SECURITY.md](../SECURITY.md).
 
 ## Support the project
 
-Transiva Community Edition is free and open source, maintained by **Susant Sahani** at [Zyvor AI Labs](https://zyvor.dev?utm_source=github&utm_medium=transiva&utm_campaign=readme_support).
+Transiva Community Edition is source-available (free for non-production use), maintained by **Susant Sahani** at [Zyvor AI Labs](https://zyvor.dev?utm_source=github&utm_medium=transiva&utm_campaign=readme_support).
 
 If it saved you a licence renewal, a ⭐ helps more people find it.
 

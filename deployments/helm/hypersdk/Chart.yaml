@@ -26,7 +26,7 @@ icon: https://raw.githubusercontent.com/ssahani/transiva/main/docs/images/logo.p
 
 annotations:
   category: Infrastructure
-  licenses: Apache-2.0
+  licenses: LicenseRef-Zyvor-Production-1.0
   # OpenShift compatibility
   openshift.io/provides: transiva
   com.redhat.openshift.versions: "v4.10-v4.15"

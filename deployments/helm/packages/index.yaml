@@ -3,7 +3,7 @@ entries:
   transiva:
   - annotations:
       category: Infrastructure
-      licenses: Apache-2.0
+      licenses: LicenseRef-Zyvor-Production-1.0
     apiVersion: v2
     appVersion: 0.2.0
     created: "2026-01-30T20:49:22.168026929+05:30"

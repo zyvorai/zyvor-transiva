@@ -7,7 +7,7 @@
 [![CI](https://github.com/zyvorai/zyvor-transiva/actions/workflows/ci.yml/badge.svg)](https://github.com/zyvorai/zyvor-transiva/actions/workflows/ci.yml)
 [![Latest release](https://img.shields.io/github/v/tag/zyvorai/zyvor-transiva?label=release&sort=semver&style=flat-square&color=0071e3&labelColor=1d1d1f)](https://github.com/zyvorai/zyvor-transiva/tags)
 [![Go 1.27+](https://img.shields.io/badge/go-1.27+-0071e3?style=flat-square&labelColor=1d1d1f)](https://go.dev/)
-[![License: Apache 2.0](https://img.shields.io/badge/license-Apache_2.0-0071e3?style=flat-square&labelColor=1d1d1f)](https://www.apache.org/licenses/LICENSE-2.0)
+[![License: Zyvor Production 1.0](https://img.shields.io/badge/license-Zyvor_Production_1.0-0071e3?style=flat-square&labelColor=1d1d1f)](LICENSE)
 
 [![Book a demo](https://img.shields.io/badge/Book_a_demo-0071e3?style=for-the-badge)](https://zyvor.dev/schedule?utm_source=github&utm_medium=transiva&utm_campaign=readme_hero)
 [![30-day PoC](https://img.shields.io/badge/30--day_PoC-000000?style=for-the-badge)](https://zyvor.dev/poc?utm_source=github&utm_medium=transiva&utm_campaign=readme_hero)
@@ -17,7 +17,7 @@
 
 ### Escape the renewal trap. Export becomes a job.
 
-**Enterprise workload mobility starts with honest offline export.** Transiva Community Edition is a Go control plane that discovers, inventories, and orchestrates workload exports from VMware vSphere and Nutanix AHV, handing artifacts to [h2kvm](https://github.com/zyvorai/zyvor-h2kvm) for conversion. Fleet jobs run over REST and CLI — **Apache-2.0**, no guest agent, source VM untouched until cutover.
+**Enterprise workload mobility starts with honest offline export.** Transiva Community Edition is a Go control plane that discovers, inventories, and orchestrates workload exports from VMware vSphere and Nutanix AHV, handing artifacts to [h2kvm](https://github.com/zyvorai/zyvor-h2kvm) for conversion. Fleet jobs run over REST and CLI — **Zyvor Production License v1.0** (free for non-production use), no guest agent, source VM untouched until cutover.
 
 **2 source hypervisors (CE)** · **1 workflow for both** · **0 guest agents** · **Resumable export jobs** · **CLI + REST**
 
@@ -120,7 +120,7 @@ Every hypervisor renewal buries your VMs deeper in someone else’s proprietary 
 
 | **2** source hypervisors (CE) | **1** workflow for both | **0** guest agents |
 |:---:|:---:|:---:|
-| Apache-2.0 | CLI + REST | Offline export — source VM untouched |
+| Zyvor Production 1.0 (free non-production) | CLI + REST | Offline export — source VM untouched |
 
 </div>
 
@@ -196,7 +196,7 @@ PRs welcome. Security reports → [SECURITY.md](SECURITY.md).
 
 ## Support the project
 
-Transiva Community Edition is free and open source, maintained by **Susant Sahani** at [Zyvor AI Labs](https://zyvor.dev?utm_source=github&utm_medium=transiva&utm_campaign=readme_footer).
+Transiva Community Edition is source-available (free for non-production use), maintained by **Susant Sahani** at [Zyvor AI Labs](https://zyvor.dev?utm_source=github&utm_medium=transiva&utm_campaign=readme_footer).
 
 | | |
 |---|---|
@@ -243,11 +243,11 @@ Legacy `hyper*` binaries remain compatibility aliases for at least one major rel
 
 ## Donate
 
-Free under Apache-2.0. If it helps you, you can donate any amount you like: <https://rzp.io/rzp/utwdYh3>. A donation is voluntary and supports development and maintenance. It is not a purchase: it buys no support, SLA, features, priority or license, and it is not tax-deductible (Zyvor AI Labs Private Limited is a company, not a charity). Support contracts are separate: [sales@zyvor.dev](mailto:sales@zyvor.dev).
+Non-production use is free under the Zyvor Production License v1.0; production use requires a commercial license (sales@zyvor.dev). If it helps you, you can donate any amount you like: <https://rzp.io/rzp/utwdYh3>. A donation is voluntary and supports development and maintenance. It is not a purchase: it buys no support, SLA, features, priority or license, and it is not tax-deductible (Zyvor AI Labs Private Limited is a company, not a charity). Support contracts are separate: [sales@zyvor.dev](mailto:sales@zyvor.dev).
 
 ## License
 
-Transiva Community Edition is **free and open source** under the [Apache License, Version 2.0](LICENSE) (see [NOTICE](NOTICE)). You may use, modify, and run it for personal, lab, and commercial production use at no charge, subject to Apache-2.0 (preserve notices / NOTICE where required). That does not change.
+Transiva Community Edition is licensed under the [Zyvor Production License v1.0](LICENSE) (SPDX: `LicenseRef-Zyvor-Production-1.0`; see [NOTICE](NOTICE)). Non-production use (evaluation, development, testing, research, education) is free. Production Use requires a paid commercial license from Zyvor AI Labs Private Limited: [sales@zyvor.dev](mailto:sales@zyvor.dev) · [zyvor.dev/buy](https://zyvor.dev/buy). A 30-day trial key is available for production evaluation.
 
 **Zyvor Enterprise** adds what production teams ask for: supported releases, deployment and upgrade guidance, priority incident triage, a named technical contact and 24x7 critical intake. Plans and terms: [docs/SUBSCRIPTION-MODEL.md](docs/SUBSCRIPTION-MODEL.md) · [Pricing](https://zyvor.dev/pricing?utm_source=github&utm_medium=transiva&utm_campaign=readme_license) · [sales@zyvor.dev](mailto:sales@zyvor.dev). Migration: USD 75 / 60 / 50 per VM (INR 7,434 / 5,947 / 4,956), minimum USD 2,500 (INR 247,800). Prices: INR incl. 18% GST in India; US dollars excl. tax elsewhere. Buy / get a quote: [zyvor.dev/buy](https://zyvor.dev/buy).
 

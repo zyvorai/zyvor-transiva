@@ -266,7 +266,7 @@ Ensure:
 
 ## License
 
-Apache-2.0 (same as HyperSDK)
+Zyvor Production License v1.0 (same as HyperSDK). See the repository LICENSE.
 
 ## Contributing
 

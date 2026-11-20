@@ -1,17 +1,17 @@
 # Source license headers
 
-Apache-2.0 — Go sources use SPDX at file top (Copyright line optional on older files):
+Zyvor Production License v1.0 — Go sources use SPDX at file top (Copyright line optional on older files):
 
 ```text
 Copyright 2026 Zyvor AI Labs · https://zyvor.dev
-SPDX-License-Identifier: Apache-2.0
+SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
 ```
 
 New files should include both:
 
 ```text
 Copyright 2026 Zyvor AI Labs · https://zyvor.dev
-SPDX-License-Identifier: Apache-2.0
+SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
 ```
 
 Full license: [LICENSE](../LICENSE).

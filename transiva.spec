@@ -4,7 +4,8 @@ Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Zyvor Transiva - Enterprise workload mobility & migration control plane
 
-License:        LicenseRef-Zyvor-Production-1.0URL:            https://github.com/zyvorai/transiva
+License:        LicenseRef-Zyvor-Production-1.0
+URL:            https://github.com/zyvorai/transiva
 Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  golang >= 1.21

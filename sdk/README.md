@@ -267,8 +267,7 @@ We welcome contributions! To add support for a new language:
 
 ## License
 
-Apache-2.0
-
+Zyvor Production License v1.0 (LicenseRef-Zyvor-Production-1.0). See the repository LICENSE. Non-production use is free; production use requires a commercial license (sales@zyvor.dev).
 ---
 
 Made with ❤️ by the HyperSDK team

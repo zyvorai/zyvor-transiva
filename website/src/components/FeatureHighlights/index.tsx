@@ -43,7 +43,7 @@ const FeatureList: FeatureItem[] = [
   {
     title: 'Open by default',
     description:
-      'Apache-2.0, no phone-home, no agent in the guest. Ships as source, Docker images, and RPM packages.',
+      'Zyvor Production License v1.0 (free non-production), no phone-home, no agent in the guest. Ships as source, Docker images, and RPM packages.',
     to: 'https://github.com/zyvorai/transiva/blob/main/LICENSE',
   },
 ];

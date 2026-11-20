@@ -57,8 +57,8 @@ func DefaultConfig() *Config {
 		ServerURL:     "http://localhost:8080",
 		ContactName:   "HyperSDK Team",
 		ContactEmail:  "support@example.com",
-		LicenseName:   "Apache-2.0",
-		LicenseURL:    "https://www.apache.org/licenses/LICENSE-2.0",
+		LicenseName:   "LicenseRef-Zyvor-Production-1.0",
+		LicenseURL:    "https://github.com/zyvorai/zyvor-transiva/blob/main/LICENSE",
 		SwaggerUIPath: "/api/docs",
 		SpecPath:      "/api/openapi.json",
 	}

@@ -18,7 +18,7 @@ Nothing is powered on until the disk is fixed. That one rule removes most of the
 
 ## Step 1: Get the disk out of AHV (Transiva)
 
-Transiva is open source: https://github.com/zyvorai/zyvor-transiva
+Transiva is source-available (free for non-production use): https://github.com/zyvorai/zyvor-transiva
 
 Nutanix export is an offline pickup, not a live pull of disk bytes. You mount the storage containers over NFS on a migration host, and Transiva finds each VM's disks through the Prism Central API and converts them with `qemu-img`.
 
@@ -49,7 +49,7 @@ h2kvmctl --cmd local --vmdk web-prod-01.qcow2 --deploy-kairon ...
 You choose where it runs. Three real options:
 
 - **Kairon, driven through Veyron (the default).** h2kvm asks Veyron to create a Kairon Machine pointing at the converted disk, pinned by sha256. The node boots it straight on KVM. No `virt-launcher` pod per VM, no KubeVirt, no CDI, no PVC upload.
-- **Zorvia on KubeVirt, if you already run it.** Zorvia is the Apache-2.0 control plane around KubeVirt: CLI, TUI and web console, 43 OS templates, day-2 hotplug and live migration, RBAC and an exportable audit trail. h2kvm still supports KubeVirt as a legacy target (`--deploy-k8s`).
+- **Zorvia on KubeVirt, if you already run it.** Zorvia is the control plane around KubeVirt: CLI, TUI and web console, 43 OS templates, day-2 hotplug and live migration, RBAC and an exportable audit trail. h2kvm still supports KubeVirt as a legacy target (`--deploy-k8s`).
 - **Machina, for plain libvirt hosts.** h2kvm emits the domain XML and the private cloud takes over from there.
 
 One target per run, and the CLI rejects combinations.

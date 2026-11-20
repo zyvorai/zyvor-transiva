@@ -91,7 +91,7 @@ const config: Config = {
           items: [
             {label: 'GitHub', href: 'https://github.com/zyvorai/zyvor-transiva'},
             {
-              label: 'License (Apache-2.0)',
+              label: 'License (Zyvor Production 1.0)',
               href: 'https://github.com/zyvorai/zyvor-transiva/blob/main/LICENSE',
             },
           ],
@@ -105,7 +105,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Zyvor AI Labs. Transiva Community Edition is Apache-2.0 licensed.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Zyvor AI Labs. Transiva Community Edition is source-available under the Zyvor Production License v1.0.`,
     },
     prism: {
       theme: prismThemes.github,

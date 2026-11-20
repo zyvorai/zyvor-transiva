@@ -540,8 +540,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-Apache-2.0
-
+Zyvor Production License v1.0 (LicenseRef-Zyvor-Production-1.0). See the repository LICENSE. Non-production use is free; production use requires a commercial license (sales@zyvor.dev).
 ## Support
 
 - **Issues**: https://github.com/zyvorai/transiva/issues

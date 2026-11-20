@@ -1,6 +1,6 @@
 # Zyvor company terms — HyperSDK distribution
 
-**Supplemental agreement — read together with [LICENSE](LICENSE) (Apache-2.0).**
+**Supplemental agreement — read together with [LICENSE](LICENSE) (Zyvor Production License v1.0).**
 
 **Company:** ZyvorAI Labs Private Limited · [zyvor.dev](https://zyvor.dev)  
 **Product:** HyperSDK  
@@ -12,10 +12,10 @@
 
 | Layer | Governs |
 |-------|---------|
-| **[LICENSE](LICENSE)** | HyperSDK **software** — Apache-2.0 (Community Edition; open source) |
+| **[LICENSE](LICENSE)** | HyperSDK **software** — Zyvor Production License v1.0 (Community Edition; source-available, free for non-production use) |
 | **This document** | **Zyvor-branded** builds, binaries, user bundles, and zyvor.dev distribution |
 
-You must comply with **both**. The Apache license controls use of the **Community Edition software**; this document covers **brand, distribution, and commercial relationship** with Zyvor.
+You must comply with **both**. The Zyvor Production License v1.0 controls use of the **Community Edition software**; this document covers **brand, distribution, and commercial relationship** with Zyvor.
 
 ## 2. Acceptance
 

@@ -45,7 +45,7 @@ function Hero() {
             renewal <Grad>trap.</Grad>
           </>
         }
-        lede="A Go control plane that discovers, inventories and orchestrates workload exports from VMware vSphere and Nutanix AHV, hands the artifacts to h2kvm for conversion, and runs fleet jobs over REST. Apache-2.0, Community Edition."
+        lede="A Go control plane that discovers, inventories and orchestrates workload exports from VMware vSphere and Nutanix AHV, hands the artifacts to h2kvm for conversion, and runs fleet jobs over REST. Zyvor Production License v1.0, Community Edition."
       />
       <Actions>
         <Btn to="https://github.com/zyvorai/transiva#60-second-quick-start">Get started</Btn>
@@ -187,7 +187,7 @@ function Open() {
         eyebrow="Open by default"
         title={
           <>
-            Apache-2.0. <Grad>No phone-home.</Grad>
+            Zyvor Production License v1.0. <Grad>No phone-home.</Grad>
           </>
         }
         lede="No agent in the guest. Source, Docker and RPM packaging. Community Edition is free forever for labs and single-host PoCs: two source hypervisors, CLI and REST, support via GitHub Issues."
@@ -206,7 +206,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="Transiva — Enterprise Workload Mobility & Migration Control Plane"
-      description="Go control plane that discovers, inventories, and orchestrates workload exports from VMware vSphere and Nutanix AHV. Apache-2.0 Community Edition.">
+      description="Go control plane that discovers, inventories, and orchestrates workload exports from VMware vSphere and Nutanix AHV. Zyvor Production License v1.0 Community Edition.">
       <SubNav title="Transiva" links={SUB_LINKS} cta={{to: 'https://github.com/zyvorai/transiva#60-second-quick-start', label: 'Get started'}} />
       <main>
         <Hero />

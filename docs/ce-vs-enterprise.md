@@ -1,6 +1,6 @@
 # Community Edition vs Transiva Platform (Enterprise)
 
-> **Note:** Zyvor is moving to an enterprise subscription model for new quotes: an annual subscription that includes updates and the stated support level, with open-source and non-production terms unchanged. See `docs/SUBSCRIPTION-MODEL.md` in this repository. Rates below apply to existing agreements; contact [sales@zyvor.dev](mailto:sales@zyvor.dev) for current rates.
+> **Note:** Zyvor is moving to an enterprise subscription model for new quotes: an annual subscription that includes updates and the stated support level, with non-production terms unchanged. See `docs/SUBSCRIPTION-MODEL.md` in this repository. Rates below apply to existing agreements; contact [sales@zyvor.dev](mailto:sales@zyvor.dev) for current rates.
 
 
 **Community Edition (this repo) proves export in a lab.**  
@@ -10,7 +10,7 @@ CE is free forever for PoC. The moment you need CBT cutover windows, waves, SSO,
 
 Canonical Enterprise tree: commercial Transiva Platform builds (private). Product: [zyvor.dev/transiva](https://zyvor.dev/transiva?utm_source=github&utm_medium=transiva&utm_campaign=readme_edition) · [Book a demo](https://zyvor.dev/schedule?utm_source=github&utm_medium=transiva&utm_campaign=readme_edition) · [30-day PoC](https://zyvor.dev/poc?utm_source=github&utm_medium=transiva&utm_campaign=readme_edition) · [sales@zyvor.dev](mailto:sales@zyvor.dev)
 
-Pipeline: **Transiva** (export, Apache-2.0) → **[h2kvm](https://github.com/zyvorai/h2kvm)** (convert and deploy) → **[GuestKit](https://github.com/zyvorai/guestkit)** (assure, Apache-2.0) → **[Zeus OS](https://zyvor.dev/zeus-os?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite)** or **[Zorvia](https://github.com/zyvorai/zorvia)** (operate)
+Pipeline: **Transiva** (export, Zyvor Production License v1.0) → **[h2kvm](https://github.com/zyvorai/h2kvm)** (convert and deploy) → **[GuestKit](https://github.com/zyvorai/guestkit)** (assure, Zyvor Production License v1.0) → **[Zeus OS](https://zyvor.dev/zeus-os?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite)** or **[Zorvia](https://github.com/zyvorai/zorvia)** (operate)
 
 ---
 
@@ -24,7 +24,7 @@ Pipeline: **Transiva** (export, Apache-2.0) → **[h2kvm](https://github.com/zyv
 | Who it is for | Labs, PoC, single-host exports | Platform / SRE leads · **50–10,000+ VMs** |
 | Success metric | Disks land as artifacts | Wave completion % · CBT windows · attributable exit |
 | Cost of staying on CE | Full exports · 2 providers · Issues | Avoided: slipped waves, security blockers, unowned cutovers |
-| License | Apache-2.0 | Commercial + SLA |
+| License | Zyvor Production 1.0 (free non-production) | Commercial + SLA |
 | Support | GitHub Issues | SLA · workshops · hypervisor-exit programs |
 
 ### Sources & export

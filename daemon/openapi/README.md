@@ -59,8 +59,8 @@ config := &openapi.Config{
     ContactURL:    "https://example.com/support",
 
     // License
-    LicenseName:   "Apache-2.0",
-    LicenseURL:    "https://www.apache.org/licenses/LICENSE-2.0",
+    LicenseName:   "LicenseRef-Zyvor-Production-1.0",
+    LicenseURL:    "https://github.com/zyvorai/zyvor-transiva/blob/main/LICENSE",
 
     // Paths
     SwaggerUIPath: "/api/docs",

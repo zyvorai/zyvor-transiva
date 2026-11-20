@@ -316,8 +316,7 @@ hyperconvert --source huge-disk.vmdk --target-format qcow2 --buffer-size 1
 
 ## License
 
-Apache-2.0
-
+Zyvor Production License v1.0 (LicenseRef-Zyvor-Production-1.0). See the repository LICENSE. Non-production use is free; production use requires a commercial license (sales@zyvor.dev).
 ## References
 
 - [QCOW2 Specification](https://github.com/qemu/qemu/blob/master/docs/interop/qcow2.txt)

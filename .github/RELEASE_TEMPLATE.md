@@ -4,7 +4,7 @@
 
 ## Community Edition
 
-This release is the open-source **Community Edition** of HyperSDK.
+This release is the source-available **Community Edition** (Zyvor Production License v1.0) of HyperSDK.
 
 ## Enterprise & production
 
