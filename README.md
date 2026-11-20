@@ -2,8 +2,6 @@
 
 # Transiva — Community Edition
 
-[Client overview (PDF)](docs/Transiva-Client-Overview.pdf)
-
 [![CI](https://github.com/zyvorai/zyvor-transiva/actions/workflows/ci.yml/badge.svg)](https://github.com/zyvorai/zyvor-transiva/actions/workflows/ci.yml)
 [![Latest release](https://img.shields.io/github/v/tag/zyvorai/zyvor-transiva?label=release&sort=semver&style=flat-square&color=0071e3&labelColor=1d1d1f)](https://github.com/zyvorai/zyvor-transiva/tags)
 [![Go 1.27+](https://img.shields.io/badge/go-1.27+-0071e3?style=flat-square&labelColor=1d1d1f)](https://go.dev/)
@@ -21,7 +19,7 @@
 
 **2 source hypervisors (CE)** · **1 workflow for both** · **0 guest agents** · **Resumable export jobs** · **CLI + REST**
 
-[**Platform docs**](https://zyvor.dev/docs/transiva-platform?utm_source=github&utm_medium=transiva&utm_campaign=readme_hero) · [**Nutanix guide**](docs/nutanix.md) · [**Out of Nutanix in minutes**](https://zyvorai.github.io/zyvor-transiva/docs/marketing/nutanix-exit.html) · [**OpenAPI**](openapi.yaml) · [**Community vs Platform**](#community-edition-vs-transiva-platform)
+[**Platform docs**](https://zyvor.dev/docs/transiva-platform?utm_source=github&utm_medium=transiva&utm_campaign=readme_hero) · [**Nutanix guide**](docs/nutanix.md) · [**OpenAPI**](openapi.yaml) · [**Community vs Platform**](#community-edition-vs-transiva-platform)
 
 </div>
 
@@ -42,36 +40,11 @@
 
 ---
 
-## Transiva vs ovftool scripts
-
-![Transiva vs ovftool scripts: from one-off commands to export jobs](docs/ux/readme-vs.jpg)
-
-| | **Transiva CE** | **ovftool scripts** (the usual way out) |
-|---|---|---|
-| Unit of work | An export job you submit, track and resume | One `ovftool` invocation per VM |
-| Fleet control | `transivad` REST daemon and `transivactl` (`list`, `export`, `info`, `submit`) | Shell loops and a spreadsheet |
-| Failure mid-transfer | Resumable job | Run it again |
-| Sources | VMware vSphere and Nutanix AHV, one workflow | VMware products |
-| Discovery | Provider API discovery and inventory before export | Not part of the tool |
-| API | REST, described in [openapi.yaml](openapi.yaml) | Command line only |
-| **Choose ovftool when** | | You have a handful of one-time exports from vSphere and a script is enough |
-
----
-
 ## How it fits together
 
 ![Export with Transiva, convert with h2kvm](docs/ux/readme-how-it-works.jpg)
 
-<div align="center">
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/social/migration-1200x630-dark.png">
-  <img src="docs/social/migration-1200x630.png" alt="VMware to KubeVirt, four tools one path: Transiva exports, h2kvm converts and deploys, GuestKit assures, Zorvia operates, each with Community and Enterprise tiers." width="820">
-</picture>
-
-**Export with Transiva → convert with [h2kvm](https://github.com/zyvorai/zyvor-h2kvm) → assure with [GuestKit](https://github.com/zyvorai/zyvor-guestkit) → operate on [Zeus OS](https://zyvor.dev/zeus-os?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite) or the open-source [Zorvia](https://github.com/zyvorai/zyvor-zorvia/blob/main/docs/leave-openshift.md).** Each is a separate tool; Zorvia's own importer is Experimental.
-
-</div>
+**Export with Transiva → convert with [h2kvm](https://github.com/zyvorai/zyvor-h2kvm) → assure with [GuestKit](https://github.com/zyvorai/zyvor-guestkit) → operate on [Zeus OS](https://zyvor.dev/zeus-os?utm_source=github&utm_medium=transiva&utm_campaign=readme_suite) or [Zorvia](https://github.com/zyvorai/zyvor-zorvia).** Each is a separate tool; Zorvia's own importer is Experimental.
 
 ### Where this fits: the Zyvor suite
 
@@ -169,7 +142,7 @@ Artifacts flow into h2kvm and GuestKit, then KVM, KubeVirt and Zeus OS.<br>
 
 **CE proves export. Platform runs the hypervisor-exit program.**
 
-CE is free forever for labs — two sources, CLI, GitHub Issues. If you are moving an estate: no CBT, no waves, no SSO, no named owner on cutover night. **Buy Platform.**
+CE is free for non-production use (labs, PoC) — two sources, CLI, GitHub Issues. If you are moving an estate: no CBT, no waves, no SSO, no named owner on cutover night. **Buy Platform.**
 
 | | **Community Edition** *(this repo)* | **[Transiva Platform](https://zyvor.dev/transiva?utm_source=github&utm_medium=transiva&utm_campaign=readme_edition)** |
 |---|---|---|
@@ -204,7 +177,7 @@ Transiva Community Edition is source-available (free for non-production use), ma
 | **Community** | [GitHub Issues](https://github.com/zyvorai/zyvor-transiva/issues) |
 | **General** | [info@zyvor.dev](mailto:info@zyvor.dev) |
 
-<a id="related-open-source-repos"></a>Related repositories (h2kvm, guestkit, chimera, netevd), social assets and more: [docs/support-and-related.md](docs/support-and-related.md).
+<a id="related-repos"></a>Related repositories (h2kvm, guestkit, chimera, netevd), social assets and more: [docs/support-and-related.md](docs/support-and-related.md).
 
 ## Documentation
 
@@ -235,7 +208,7 @@ Legacy `hyper*` binaries remain compatibility aliases for at least one major rel
 | **[Scout](https://github.com/zyvorai/scout)** | Pairs with Transiva before export: read-only readiness scoring and migration-wave planning |
 | **[h2kvm](https://github.com/zyvorai/zyvor-h2kvm)** | Converts Transiva's exported artifacts to QCOW2 and deploys them |
 | **[GuestKit](https://github.com/zyvorai/zyvor-guestkit)** | Inspects and repairs the converted guests |
-| **[Zorvia](https://github.com/zyvorai/zyvor-zorvia)** | Open-source KubeVirt platform to operate the workloads on |
+| **[Zorvia](https://github.com/zyvorai/zyvor-zorvia)** | Source-available KubeVirt platform to operate the workloads on |
 
 → [zyvor.dev](https://zyvor.dev)
 

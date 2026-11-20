@@ -6,7 +6,7 @@
 **Community Edition (this repo) proves export in a lab.**  
 **Transiva Platform is what you buy to run a hypervisor-exit program.**
 
-CE is free forever for PoC. The moment you need CBT cutover windows, waves, SSO, the full provider matrix, or a named owner when the bridge is live — that is Platform. Day-2 lands on **Zeus OS**. One slipped estate wave usually costs more than the license.
+CE is free for non-production use (PoC). The moment you need CBT cutover windows, waves, SSO, the full provider matrix, or a named owner when the bridge is live — that is Platform. Day-2 lands on **Zeus OS**. One slipped estate wave usually costs more than the license.
 
 Canonical Enterprise tree: commercial Transiva Platform builds (private). Product: [zyvor.dev/transiva](https://zyvor.dev/transiva?utm_source=github&utm_medium=transiva&utm_campaign=readme_edition) · [Book a demo](https://zyvor.dev/schedule?utm_source=github&utm_medium=transiva&utm_campaign=readme_edition) · [30-day PoC](https://zyvor.dev/poc?utm_source=github&utm_medium=transiva&utm_campaign=readme_edition) · [sales@zyvor.dev](mailto:sales@zyvor.dev)
 
@@ -111,6 +111,6 @@ Pipeline: **Transiva** (export, Zyvor Production License v1.0) → **[h2kvm](htt
 4. **Executives need wave plans, readiness checks, and exportable reports** — CLI screenshots do not survive steering  
 5. **You want Zyvor on the critical path** — GitHub Issues is not a cutover war-room  
 
-**CE is free forever for labs. Buy Platform when the estate must move.**
+**CE is free for non-production use. Buy Platform when the estate must move.**
 
 **→ [Book a demo](https://zyvor.dev/schedule?utm_source=github&utm_medium=transiva&utm_campaign=readme_edition)** · **[30-day PoC](https://zyvor.dev/poc?utm_source=github&utm_medium=transiva&utm_campaign=readme_edition)** · **[Pricing](https://zyvor.dev/pricing?utm_source=github&utm_medium=transiva&utm_campaign=readme_edition)** · **[transiva product](https://zyvor.dev/transiva?utm_source=github&utm_medium=transiva&utm_campaign=readme_edition)**

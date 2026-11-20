@@ -1,6 +1,6 @@
 # Development, support and related projects
 
-Contributing, where to get help, and the sibling open-source repositories.
+Contributing, where to get help, and the sibling Zyvor repositories.
 
 [Back to the README](../README.md)
 
@@ -29,7 +29,7 @@ If it saved you a licence renewal, a ⭐ helps more people find it.
 
 Social assets: [docs/social/](social/).
 
-## Related open-source repos
+## Related Zyvor repos
 
 | Repo | Role |
 |---|---|
@@ -38,4 +38,4 @@ Social assets: [docs/social/](social/).
 | [chimera](https://github.com/zyvorai/chimera) | Infrastructure simulation for export CI |
 | [netevd](https://github.com/zyvorai/netevd) | Real-time network event tracking |
 
-[Browse all open-source →](https://zyvor.dev/about?utm_source=github&utm_medium=transiva&utm_campaign=readme_footer#support-open-source)
+[Browse all Zyvor projects →](https://zyvor.dev/about?utm_source=github&utm_medium=transiva&utm_campaign=readme_footer#support-open-source)

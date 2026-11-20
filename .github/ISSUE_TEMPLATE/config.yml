@@ -2,7 +2,7 @@ blank_issues_enabled: false
 contact_links:
   - name: "Sponsor development (Razorpay)"
     url: https://razorpay.me/@zyvorAILabs
-    about: Support open-source maintenance by Susant Sahani — not required to use CE
+    about: Support ongoing maintenance by Susant Sahani — not required to use CE
   - name: "Watch migration demo (video + dashboard)"
     url: https://zyvor.dev/demo?utm_source=github&utm_medium=transiva
     about: See the platform before downloading CE — migration video and live dashboard

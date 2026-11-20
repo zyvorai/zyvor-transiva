@@ -47,6 +47,6 @@ Every hypervisor renewal buries your VMs deeper in someone else’s proprietary 
 
 - **Two sources, one workflow.** vSphere and Nutanix AHV behave identically — same CLI, same jobs, same output layout.
 - **Scriptable end to end.** Interactive CLI for one-offs; daemon + REST for fleets.
-- **Open by default.** Zyvor Production License v1.0, no phone-home, no agent in the guest. Source, Docker, RPMs.
+- **Source-available.** Zyvor Production License v1.0, no phone-home, no agent in the guest. Source, Docker, RPMs.
 
 ---

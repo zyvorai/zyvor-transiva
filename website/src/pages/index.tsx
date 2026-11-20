@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
 
 import type {ReactNode} from 'react';
-import useBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
 import {
   Actions,
@@ -10,21 +9,18 @@ import {
   Bento,
   Btn,
   CtaBand,
-  Frame,
   Grad,
   Headline,
   List,
   Steps,
   SubNav,
   Terminal,
-  TextLink,
 } from '@site/src/components/zv';
 
 const SUB_LINKS = [
   {to: '#why', label: 'Why'},
   {to: '#capabilities', label: 'Capabilities'},
   {to: '#flow', label: 'How it flows'},
-  {to: '#nutanix', label: 'Exit Nutanix'},
   {to: '#open', label: 'Open'},
   {to: '#estate', label: 'Estate'},
 ];
@@ -32,9 +28,6 @@ const SUB_LINKS = [
 function Hero() {
   return (
     <Band tone="black" glow center>
-      <p>
-        <TextLink to="/nutanix-exit">New: leaving Nutanix, end to end, with diagrams and a measured run</TextLink>
-      </p>
       <Headline
         size="display"
         eyebrow="Transiva · workload mobility"
@@ -121,7 +114,7 @@ function Capabilities() {
         tiles={[
           {title: 'vSphere and Nutanix AHV', body: 'Discover, inventory and export from both through the same CLI, jobs and output layout.', to: 'https://github.com/zyvorai/transiva', variant: 'dark', more: 'Source on GitHub ›'},
           {title: 'CLI, REST and dashboard', body: 'hyperexport for interactive runs, a daemon with a REST API for fleet jobs, and a web dashboard.', to: 'https://github.com/zyvorai/transiva#60-second-quick-start', variant: 'blue', more: 'Quick start ›'},
-          {title: 'Offline artifacts', body: 'A qcow2 plus artifact-manifest.json. The source VM is never modified.', to: '/nutanix-exit', more: 'See an export ›'},
+          {title: 'Offline artifacts', body: 'A qcow2 plus artifact-manifest.json. The source VM is never modified.', to: '/docs/nutanix', more: 'Nutanix guide ›'},
           {title: 'Hand-off to h2kvm', body: 'h2kvm repairs the guest offline, converts it and lands it on KVM, KubeVirt, Kairon or Machina.', to: 'https://github.com/zyvorai/h2kvm', more: 'About h2kvm ›'},
         ]}
       />
@@ -152,39 +145,11 @@ function Flow() {
   );
 }
 
-function Nutanix() {
-  const map = useBaseUrl('/img/exit-system-map.svg');
-  return (
-    <Band tone="light" id="nutanix" center>
-      <Headline
-        eyebrow="New · Exit Nutanix"
-        title={
-          <>
-            Out of Nutanix <Grad>in minutes.</Grad>
-          </>
-        }
-        lede="One script exports a VM through Prism v4, converts it with h2kvm and boots it on plain KVM and KubeVirt."
-      />
-      <Frame
-        src={map}
-        alt="Nutanix is exported by Transiva into a qcow2 and manifest, repaired and converted by h2kvm, and landed on KVM, KubeVirt, Kairon or Machina."
-        caption="The system map. Solid targets were run; dashed ones were not."
-      />
-      <Actions>
-        <Btn to="/nutanix-exit">See the run</Btn>
-        <Btn to="https://zyvorai.github.io/zyvor-h2kvm/nutanix-exit" variant="ghost">
-          The h2kvm side
-        </Btn>
-      </Actions>
-    </Band>
-  );
-}
-
 function Open() {
   return (
     <Band tone="soft" id="open" center>
       <Headline
-        eyebrow="Open by default"
+        eyebrow="Source-available"
         title={
           <>
             Zyvor Production License v1.0. <Grad>No phone-home.</Grad>
@@ -213,7 +178,6 @@ export default function Home(): ReactNode {
         <Why />
         <Capabilities />
         <Flow />
-        <Nutanix />
         <Open />
         <Band tone="light" id="estate" center>
           <Headline

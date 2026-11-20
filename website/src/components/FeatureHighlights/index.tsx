@@ -44,7 +44,7 @@ const FeatureList: FeatureItem[] = [
     to: 'https://github.com/zyvorai/h2kvm',
   },
   {
-    title: 'Open by default',
+    title: 'Source-available',
     description:
       'Zyvor Production License v1.0 (free non-production), no phone-home, no agent in the guest. Ships as source, Docker images, and RPM packages.',
     to: 'https://github.com/zyvorai/transiva/blob/main/LICENSE',
