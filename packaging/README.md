@@ -339,11 +339,7 @@ For issues or questions:
 Zyvor Production License v1.0 (LicenseRef-Zyvor-Production-1.0). See the repository LICENSE. Non-production use is free; production use requires a commercial license (sales@zyvor.dev).
 ## Contributing
 
-Contributions welcome! Please:
-1. Test packages on target distributions
-2. Update changelog in spec file
-3. Follow distribution packaging guidelines
-4. Submit pull request
+Please contact sales@zyvor.dev before sending a contribution; contributions are accepted only under the terms of the [Zyvor Production License v1.0](../LICENSE).
 
 ## See Also
 

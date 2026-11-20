@@ -536,7 +536,7 @@ mypy transiva/
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Please contact sales@zyvor.dev before sending a contribution; contributions are accepted only under the terms of the [Zyvor Production License v1.0](../../LICENSE).
 
 ## License
 
