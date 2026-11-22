@@ -1,6 +1,6 @@
 #!/bin/bash
 # Copyright 2026 Zyvor AI Labs · https://zyvor.dev
-# SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+# SPDX-License-Identifier: LicenseRef-Zyvor-Production-2.0
 # RPM Build Script for h2kvm-daemon
 #
 # This script builds RPM packages for the h2kvm systemd daemon.
@@ -169,11 +169,11 @@ if [ -f "$PROJECT_ROOT/LICENSE" ]; then
 else
     # Create a basic LICENSE file if it doesn't exist
     cat > "$PACKAGE_DIR/LICENSE" << 'EOF'
-Zyvor Production License v1.0 (LicenseRef-Zyvor-Production-1.0)
+Zyvor Production Licence v2.0 (LicenseRef-Zyvor-Production-2.0)
 
 Copyright 2026 Zyvor AI Labs Private Limited
 
-Non-production use is free. Production Use requires a commercial license.
+A 30-day trial is available on request from sales@zyvor.dev (a paid evaluation Order at no charge); production and any other use needs a paid Order under the Zyvor Production Licence v2.0.
 See https://github.com/zyvorai/zyvor-transiva/blob/main/LICENSE for the full text,
 or contact sales@zyvor.dev (https://zyvor.dev/buy).
 EOF

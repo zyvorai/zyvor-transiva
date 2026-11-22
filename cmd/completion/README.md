@@ -140,4 +140,4 @@ Uses fish's `complete` builtin with subcommand detection via `__fish_use_subcomm
 
 ## License
 
-SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+SPDX-License-Identifier: LicenseRef-Zyvor-Production-2.0

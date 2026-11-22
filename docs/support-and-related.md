@@ -17,7 +17,7 @@ PRs welcome. Security reports → [SECURITY.md](../SECURITY.md).
 
 ## Support the project
 
-Transiva is source-available (non-production use permitted), maintained by **Susant Sahani** at [Zyvor AI Labs](https://zyvor.dev?utm_source=github&utm_medium=transiva&utm_campaign=readme_support).
+Transiva is source-available, maintained by **Susant Sahani** at [Zyvor AI Labs](https://zyvor.dev?utm_source=github&utm_medium=transiva&utm_campaign=readme_support).
 
 If it saved you a licence renewal, a ⭐ helps more people find it.
 

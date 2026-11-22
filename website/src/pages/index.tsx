@@ -1,5 +1,5 @@
 // Copyright 2026 Zyvor · https://zyvor.dev
-// SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+// SPDX-License-Identifier: LicenseRef-Zyvor-Production-2.0
 
 import type {ReactNode} from 'react';
 import Layout from '@theme/Layout';
@@ -38,7 +38,7 @@ function Hero() {
             renewal <Grad>trap.</Grad>
           </>
         }
-        lede="A Go control plane that discovers, inventories and orchestrates workload exports from VMware vSphere and Nutanix AHV, hands the artifacts to h2kvm for conversion, and runs fleet jobs over REST. Zyvor Production License v1.0."
+        lede="A Go control plane that discovers, inventories and orchestrates workload exports from VMware vSphere and Nutanix AHV, hands the artifacts to h2kvm for conversion, and runs fleet jobs over REST. Zyvor Production Licence v2.0."
       />
       <Actions>
         <Btn to="https://github.com/zyvorai/transiva#60-second-quick-start">Get started</Btn>
@@ -152,7 +152,7 @@ function Open() {
         eyebrow="Source-available"
         title={
           <>
-            Zyvor Production License v1.0. <Grad>No phone-home.</Grad>
+            Zyvor Production Licence v2.0. <Grad>No phone-home.</Grad>
           </>
         }
         lede="No agent in the guest. Source, Docker and RPM packaging. Two source hypervisors, CLI and REST; a commercial license is required for production use."
@@ -171,7 +171,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="Transiva — Enterprise Workload Mobility & Migration Control Plane"
-      description="Go control plane that discovers, inventories, and orchestrates workload exports from VMware vSphere and Nutanix AHV. Zyvor Production License v1.0.">
+      description="Go control plane that discovers, inventories, and orchestrates workload exports from VMware vSphere and Nutanix AHV. Zyvor Production Licence v2.0.">
       <SubNav title="Transiva" links={SUB_LINKS} cta={{to: 'https://github.com/zyvorai/transiva#60-second-quick-start', label: 'Get started'}} />
       <main>
         <Hero />

@@ -1,5 +1,5 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
-// SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+// SPDX-License-Identifier: LicenseRef-Zyvor-Production-2.0
 
 // Package openapi provides OpenAPI/Swagger documentation support
 package openapi
@@ -57,7 +57,7 @@ func DefaultConfig() *Config {
 		ServerURL:     "http://localhost:8080",
 		ContactName:   "HyperSDK Team",
 		ContactEmail:  "support@example.com",
-		LicenseName:   "LicenseRef-Zyvor-Production-1.0",
+		LicenseName:   "LicenseRef-Zyvor-Production-2.0",
 		LicenseURL:    "https://github.com/zyvorai/zyvor-transiva/blob/main/LICENSE",
 		SwaggerUIPath: "/api/docs",
 		SpecPath:      "/api/openapi.json",

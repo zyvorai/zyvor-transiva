@@ -17,6 +17,6 @@ Prices: INR incl. 18% GST in India; US dollars excl. tax elsewhere (VAT, GST or 
 - Annual prepaid subscription is the default, with a 12-month minimum. Multi-year prepay is available.
 - Minimums apply after any discounts.
 - Implementation, migration, training and managed operations are separate services.
-- At expiry, updates, downloads and support end. Non-production rights, where they apply, continue under the licence.
+- At expiry, updates, downloads and support end.
 - Response targets need a contracted scope and are not uptime guarantees.
 - Existing signed agreements keep their agreed terms.

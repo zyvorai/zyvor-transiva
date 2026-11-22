@@ -1,6 +1,6 @@
 # ZyvorAI Labs — HyperSDK corporate reference
 
-**Source code:** [LICENSE](../../LICENSE) (Zyvor Production License v1.0)  
+**Source code:** [LICENSE](../../LICENSE) (Zyvor Production Licence v2.0)  
 **Zyvor distribution:** [ZYVOR-COMPANY-TERMS.md](../../ZYVOR-COMPANY-TERMS.md)
 
 | Field | Value |

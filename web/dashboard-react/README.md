@@ -266,7 +266,7 @@ Ensure:
 
 ## License
 
-Zyvor Production License v1.0 (same as HyperSDK). See the repository LICENSE.
+Zyvor Production Licence v2.0 (same as HyperSDK). See the repository LICENSE.
 
 ## Contributing
 

@@ -59,7 +59,7 @@ config := &openapi.Config{
     ContactURL:    "https://example.com/support",
 
     // License
-    LicenseName:   "LicenseRef-Zyvor-Production-1.0",
+    LicenseName:   "LicenseRef-Zyvor-Production-2.0",
     LicenseURL:    "https://github.com/zyvorai/zyvor-transiva/blob/main/LICENSE",
 
     // Paths
@@ -478,4 +478,4 @@ func getCachedSpec(generator *openapi.Generator) *openapi3.T {
 
 ## License
 
-SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+SPDX-License-Identifier: LicenseRef-Zyvor-Production-2.0
