@@ -173,7 +173,7 @@ Zyvor Production Licence v2.0 (LicenseRef-Zyvor-Production-2.0)
 
 Copyright 2026 Zyvor AI Labs Private Limited
 
-Non-production use is free. Production Use requires a commercial license.
+A 30-day trial is available on request from sales@zyvor.dev (a paid evaluation Order at no charge); production and any other use needs a paid Order under the Zyvor Production Licence v2.0.
 See https://github.com/zyvorai/zyvor-transiva/blob/main/LICENSE for the full text,
 or contact sales@zyvor.dev (https://zyvor.dev/buy).
 EOF
