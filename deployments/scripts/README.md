@@ -666,4 +666,4 @@ When adding new scripts:
 
 ## License
 
-All scripts are licensed under the Zyvor Production License v1.0, same as HyperSDK.
+All scripts are licensed under the Zyvor Production Licence v2.0, same as HyperSDK.

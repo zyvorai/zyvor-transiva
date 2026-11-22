@@ -4,7 +4,7 @@ entries:
   - annotations:
       category: Infrastructure
       com.redhat.openshift.versions: v4.10-v4.15
-      licenses: LicenseRef-Zyvor-Production-1.0
+      licenses: LicenseRef-Zyvor-Production-2.0
       openshift.io/provides: transiva
     apiVersion: v2
     appVersion: 2.3.5

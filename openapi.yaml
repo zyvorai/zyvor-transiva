@@ -1,5 +1,5 @@
 # Copyright 2026 Zyvor AI Labs · https://zyvor.dev
-# SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+# SPDX-License-Identifier: LicenseRef-Zyvor-Production-2.0
 openapi: 3.0.3
 info:
   title: HyperSDK API
@@ -18,7 +18,7 @@ info:
     name: HyperSDK
     url: https://github.com/zyvorai/transiva
   license:
-    name: LicenseRef-Zyvor-Production-1.0
+    name: LicenseRef-Zyvor-Production-2.0
     url: https://github.com/zyvorai/zyvor-transiva/blob/main/LICENSE
 
 servers:

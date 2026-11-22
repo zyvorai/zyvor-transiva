@@ -1,5 +1,5 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
-// SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+// SPDX-License-Identifier: LicenseRef-Zyvor-Production-2.0
 
 import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
@@ -46,7 +46,7 @@ const FeatureList: FeatureItem[] = [
   {
     title: 'Source-available',
     description:
-      'Zyvor Production License v1.0 (non-production use permitted), no phone-home, no agent in the guest. Ships as source, Docker images, and RPM packages.',
+      'Zyvor Production Licence v2.0, no phone-home, no agent in the guest. Ships as source, Docker images, and RPM packages.',
     to: 'https://github.com/zyvorai/transiva/blob/main/LICENSE',
   },
 ];

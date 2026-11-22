@@ -1,5 +1,5 @@
 # Copyright 2026 Zyvor AI Labs · https://zyvor.dev
-# SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+# SPDX-License-Identifier: LicenseRef-Zyvor-Production-2.0
 .PHONY: all build build-daemon build-all clean test test-quick test-short test-verbose bench \
         fmt vet lint lint-fix security check ci \
         docker-build docker-run docker-push \

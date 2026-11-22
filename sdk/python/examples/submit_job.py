@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Copyright 2026 Zyvor AI Labs · https://zyvor.dev
-# SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+# SPDX-License-Identifier: LicenseRef-Zyvor-Production-2.0
 """Example: Submit a VM export job to HyperSDK."""
 
 from transiva import HyperSDK, JobDefinition, VCenterConfig, ExportFormat

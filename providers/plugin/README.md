@@ -221,4 +221,4 @@ See the interface definitions in this package and `providers/` for integration p
 
 ## License
 
-Zyvor Production License v1.0 (LicenseRef-Zyvor-Production-1.0). See the repository LICENSE. Evaluation is free for 30 days per organization; production use requires a commercial license (sales@zyvor.dev).
+Zyvor Production Licence v2.0 (LicenseRef-Zyvor-Production-2.0). See the repository LICENSE. A 30-day trial is available on request from sales@zyvor.dev (a paid evaluation Order at no charge); production and any other use needs a paid Order under the Zyvor Production Licence v2.0.

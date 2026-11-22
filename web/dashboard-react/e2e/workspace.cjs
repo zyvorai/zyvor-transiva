@@ -1,5 +1,5 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
-// SPDX-License-Identifier: LicenseRef-Zyvor-Production-1.0
+// SPDX-License-Identifier: LicenseRef-Zyvor-Production-2.0
 // Run with NODE_PATH=<directory containing playwright> node e2e/workspace.cjs.
 // Start Vite on 127.0.0.1:5173 first. API and WebSocket data are fixture-only.
 const { chromium } = require("playwright");

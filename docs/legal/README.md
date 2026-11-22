@@ -1,6 +1,6 @@
 # HyperSDK legal
 
-- [LICENSE](../../LICENSE) — Zyvor Production License v1.0
+- [LICENSE](../../LICENSE) — Zyvor Production Licence v2.0
 - [NOTICE](../../NOTICE)
 - [ZYVOR-COMPANY-TERMS.md](../../ZYVOR-COMPANY-TERMS.md)
 
