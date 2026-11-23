@@ -6,6 +6,7 @@ package manifest
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -76,9 +77,9 @@ func ReadFromFile(filePath string) (*ArtifactManifest, error) {
 	// #nosec G304 -- filePath is a manifest path supplied by the local CLI
 	// operator or pipeline config (see providers/vsphere, providers/nutanix,
 	// providers/common/pipeline.go), not derived from an HTTP request.
-	data, err := os.ReadFile(filePath)
+	data, err := ReadFileLimited(filePath, MaxManifestFileBytes)
 	if err != nil {
-		return nil, fmt.Errorf("read file: %w", err)
+		return nil, err
 	}
 
 	// Determine format based on file extension
@@ -99,4 +100,39 @@ func ReadFromFile(filePath string) (*ArtifactManifest, error) {
 	}
 
 	return m, nil
+}
+
+// MaxManifestFileBytes is the largest manifest file ReadFromFile will load.
+// Real manifests are a few KiB; the cap stops a hostile or corrupt file from
+// exhausting memory.
+const MaxManifestFileBytes = 8 << 20
+
+// ReadFileLimited reads a regular file of at most max bytes. It rejects
+// directories, devices and FIFOs (which could block or never end) and files
+// larger than max, without reading past max+1 bytes.
+func ReadFileLimited(filePath string, max int64) ([]byte, error) {
+	// #nosec G304 -- filePath is an operator-supplied manifest path.
+	f, err := os.Open(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("read file: %w", err)
+	}
+	defer func() { _ = f.Close() }()
+	info, err := f.Stat()
+	if err != nil {
+		return nil, fmt.Errorf("read file: %w", err)
+	}
+	if !info.Mode().IsRegular() {
+		return nil, fmt.Errorf("read file: %q is not a regular file", filePath)
+	}
+	if info.Size() > max {
+		return nil, fmt.Errorf("read file: %q is %d bytes, exceeds the %d byte limit", filePath, info.Size(), max)
+	}
+	data, err := io.ReadAll(io.LimitReader(f, max+1))
+	if err != nil {
+		return nil, fmt.Errorf("read file: %w", err)
+	}
+	if int64(len(data)) > max {
+		return nil, fmt.Errorf("read file: %q exceeds the %d byte limit", filePath, max)
+	}
+	return data, nil
 }
