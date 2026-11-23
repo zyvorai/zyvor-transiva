@@ -56,6 +56,8 @@ tags:
     description: VMware vSphere infrastructure management
   - name: Carbon
     description: Carbon-aware scheduling for sustainable VM backups (30-50% carbon reduction)
+  - name: Artifacts
+    description: Offline integrity verification of exported artifacts (never executes, mounts or boots them)
 
 paths:
   /health:
@@ -1126,6 +1128,113 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /artifacts/verify-bundle:
+    post:
+      summary: Verify an exported bundle against its Artifact Manifest
+      description: |
+        Reads the manifest and every disk it lists, inside the configured
+        `artifact_root` only, and checks sizes, header format versus declared
+        format, backing-file references and SHA-256 checksums. Optionally
+        requires a valid detached Ed25519 signature over the manifest.
+        Disabled (503) unless `artifact_root` / `ARTIFACT_ROOT` is set.
+        Offline integrity check only: nothing is executed, mounted or booted,
+        and a pass does not prove the guest boots or is malware-free.
+      tags: [Artifacts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyBundleRequest'
+      responses:
+        '200':
+          description: Verification report (check `ok`; failed checks are findings, not HTTP errors)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleReport'
+        '400':
+          description: Invalid body, or a path that is not inside the artifact root
+        '422':
+          description: Manifest unreadable, oversized or structurally invalid
+        '429':
+          description: Too many verifications in progress
+        '503':
+          description: artifact_root is not configured
+  /artifacts/inspect-ova:
+    post:
+      summary: Inspect an OVA without extracting it
+      description: |
+        Streams the (plain tar) OVA, validates entry names and types, count and
+        size caps, the OVF descriptor's file references and every digest in the
+        `.mf` manifest. A `.cert` file is reported but its signature is NOT
+        verified. Gzip-compressed OVAs are refused, not decompressed.
+      tags: [Artifacts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              additionalProperties: false
+              properties:
+                path:
+                  type: string
+                  description: OVA path, absolute or relative to artifact_root
+      responses:
+        '200':
+          description: Inspection report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OVAReport'
+        '400':
+          description: Invalid body or path outside the artifact root
+        '422':
+          description: Archive could not be opened
+        '429':
+          description: Too many verifications in progress
+        '503':
+          description: artifact_root is not configured
+  /artifacts/verify-signature:
+    post:
+      summary: Verify a detached Ed25519 manifest signature
+      description: |
+        Attests only that the manifest bytes were signed by the holder of the
+        private key matching the supplied public key. Signing is CLI-only
+        (`-sign-manifest`); the daemon never accepts private keys.
+      tags: [Artifacts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [manifest_path, signature_path, public_key_path]
+              additionalProperties: false
+              properties:
+                manifest_path: {type: string}
+                signature_path: {type: string}
+                public_key_path: {type: string}
+      responses:
+        '200':
+          description: Signature result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid: {type: boolean}
+                  key_id: {type: string}
+                  error: {type: string}
+                  scope: {type: string}
+        '400':
+          description: Invalid body, path outside the root, or malformed key or signature
+        '422':
+          description: Manifest unreadable or oversized
+        '503':
+          description: artifact_root is not configured
   /ws:
     get:
       summary: WebSocket connection
@@ -1148,6 +1257,86 @@ components:
       description: API key for authentication
 
   schemas:
+    VerifyBundleRequest:
+      type: object
+      required: [manifest_path]
+      additionalProperties: false
+      properties:
+        manifest_path:
+          type: string
+          description: Artifact Manifest path, absolute or relative to artifact_root
+        skip_checksums: {type: boolean, description: Check structure and headers only}
+        require_checksums: {type: boolean, description: Treat a disk without a checksum as an error}
+        allow_backing_files: {type: boolean, description: Downgrade backing-file findings to warnings}
+        public_key_path: {type: string, description: Ed25519 public key (PEM); requires signature_path}
+        signature_path: {type: string, description: Detached signature; requires public_key_path}
+    Finding:
+      type: object
+      properties:
+        severity: {type: string, enum: [error, warning, info]}
+        code: {type: string}
+        subject: {type: string}
+        message: {type: string}
+    BundleReport:
+      type: object
+      properties:
+        manifest_path: {type: string}
+        manifest_sha256: {type: string}
+        ok: {type: boolean}
+        signature_verified: {type: boolean}
+        signature_key_id: {type: string}
+        disks:
+          type: array
+          items:
+            type: object
+            properties:
+              id: {type: string}
+              path: {type: string}
+              declared_format: {type: string}
+              declared_bytes: {type: integer, format: int64}
+              file_bytes: {type: integer, format: int64}
+              expected_checksum: {type: string}
+              actual_checksum: {type: string}
+              checksum_checked: {type: boolean}
+              checksum_match: {type: boolean}
+              sniff:
+                type: object
+                properties:
+                  format: {type: string}
+                  variant: {type: string}
+                  virtual_bytes: {type: integer, format: int64}
+                  backing_file: {type: string}
+                  extent_files: {type: array, items: {type: string}}
+                  encrypted: {type: boolean}
+        findings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Finding'
+        disclaimer: {type: string}
+    OVAReport:
+      type: object
+      properties:
+        path: {type: string}
+        ok: {type: boolean}
+        virtual_system: {type: string}
+        disk_files: {type: array, items: {type: string}}
+        entries:
+          type: array
+          items:
+            type: object
+            properties:
+              name: {type: string}
+              bytes: {type: integer, format: int64}
+              sha256: {type: string}
+        manifest_found: {type: boolean}
+        manifest_verified: {type: boolean}
+        manifest_algorithm: {type: string}
+        certificate_present: {type: boolean}
+        findings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Finding'
+        disclaimer: {type: string}
     JobDefinition:
       type: object
       required:

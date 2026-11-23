@@ -5,6 +5,34 @@ All notable changes to Transiva are recorded here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Offline artifact verification (package `artifact`, docs/artifact-verification.md):
+  - `-verify-bundle` / `POST /artifacts/verify-bundle`: checks every disk in an
+    Artifact Manifest (size, SHA-256, header versus declared format, qcow2
+    backing files, VMDK extents, duplicate paths, path confinement, size caps).
+  - `-inspect-ova` / `POST /artifacts/inspect-ova`: streams an OVA without
+    extracting; validates entry names and types, OVF file references and `.mf`
+    digests (SHA1/SHA256/SHA512). `.cert` signatures are reported, not verified.
+  - Ed25519 detached manifest signatures: `-gen-signing-key`, `-sign-manifest`,
+    `-verify-signature`, `POST /artifacts/verify-signature` (signing is CLI-only).
+  - New config `artifact_root` / env `ARTIFACT_ROOT` confines the endpoints;
+    unset disables them.
+- docs/RESEARCH.md: migration-tooling research with ranked ideas.
+- openapi.yaml documents the `/artifacts/*` routes; `daemon/openapi` has a test
+  that fails if a registered route is not in the spec.
+
+### Fixed
+
+- `manifest.VerifyChecksums` panicked on a short checksum value and stopped at
+  the first mismatch; it now rejects malformed values and reports every mismatch.
+- `manifest.ReadFromFile` read files of any size and type; it now caps at 8 MiB
+  and refuses non-regular files. New `manifest.ValidateSchema` validates without
+  touching the filesystem; NUL bytes in `local_path` are rejected.
+- Workflow manifest submit/validate endpoints read unbounded request bodies;
+  both now cap at 8 MiB.
+- `gofmt -l .` was non-empty (75 files); the tree is now gofmt-clean.
+
 ### Changed (dependency and toolchain upgrades)
 
 - `go get -u ./...` plus `go mod tidy`; `go` directive raised to 1.27.4.
