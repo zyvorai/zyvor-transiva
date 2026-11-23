@@ -101,7 +101,7 @@ func (s *Server) ManifestSubmitHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body, err := io.ReadAll(r.Body)
+	body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 8<<20))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to read request: %v", err), http.StatusBadRequest)
 		return
@@ -144,7 +144,7 @@ func (s *Server) ManifestValidateHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	body, err := io.ReadAll(r.Body)
+	body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 8<<20))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to read request: %v", err), http.StatusBadRequest)
 		return

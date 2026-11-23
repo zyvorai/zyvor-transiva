@@ -272,6 +272,11 @@ func (es *EnhancedServer) registerEnhancedRoutes() {
 	mux.HandleFunc("/api/workflow/manifest/submit", es.ManifestSubmitHandler)
 	mux.HandleFunc("/api/workflow/manifest/validate", es.ManifestValidateHandler)
 
+	// Offline artifact verification (confined to artifact_root; nothing executed)
+	mux.HandleFunc("/artifacts/verify-bundle", es.handleVerifyBundle)
+	mux.HandleFunc("/artifacts/inspect-ova", es.handleInspectOVA)
+	mux.HandleFunc("/artifacts/verify-signature", es.handleVerifySignature)
+
 	// Console & display
 	mux.HandleFunc("/console/info", es.handleGetConsoleInfo)
 	mux.HandleFunc("/console/vnc", es.handleVNCProxy)
