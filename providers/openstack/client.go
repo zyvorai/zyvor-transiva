@@ -5,14 +5,14 @@ package openstack
 
 import (
 	"context"
+	"net/http"
 	"fmt"
 	"time"
 
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack"
-	"github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/startstop"
-	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
-	"github.com/gophercloud/gophercloud/openstack/imageservice/v2/images"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack"
+	"github.com/gophercloud/gophercloud/v2/openstack/compute/v2/servers"
+	"github.com/gophercloud/gophercloud/v2/openstack/image/v2/images"
 
 	"github.com/zyvorai/transiva/config"
 	"github.com/zyvorai/transiva/logger"
@@ -46,7 +46,7 @@ func NewClient(cfg *config.OpenStackConfig, log logger.Logger) (*Client, error) 
 	}
 
 	// Create provider client
-	provider, err := openstack.AuthenticatedClient(authOpts)
+	provider, err := openstack.AuthenticatedClient(context.Background(), authOpts)
 	if err != nil {
 		return nil, fmt.Errorf("authenticate to OpenStack: %w", err)
 	}
@@ -60,7 +60,7 @@ func NewClient(cfg *config.OpenStackConfig, log logger.Logger) (*Client, error) 
 	}
 
 	// Create image client
-	imageClient, err := openstack.NewImageServiceV2(provider, gophercloud.EndpointOpts{
+	imageClient, err := openstack.NewImageV2(provider, gophercloud.EndpointOpts{
 		Region: cfg.Region,
 	})
 	if err != nil {
@@ -99,7 +99,7 @@ func (c *Client) ListInstances(ctx context.Context) ([]InstanceInfo, error) {
 			c.logger.Info("retrying list instances", "attempt", attempt)
 		}
 
-		allPages, err := servers.List(c.computeClient, nil).AllPages()
+		allPages, err := servers.List(c.computeClient, nil).AllPages(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("list servers: %w", err)
 		}
@@ -138,10 +138,10 @@ func (c *Client) GetInstance(ctx context.Context, instanceID string) (*InstanceI
 			c.logger.Info("retrying get instance", "instance_id", instanceID, "attempt", attempt)
 		}
 
-		server, err := servers.Get(c.computeClient, instanceID).Extract()
+		server, err := servers.Get(ctx, c.computeClient, instanceID).Extract()
 		if err != nil {
 			// Not found errors are not retryable
-			if _, ok := err.(gophercloud.ErrDefault404); ok {
+			if gophercloud.ResponseCodeIs(err, http.StatusNotFound) {
 				return nil, retry.IsNonRetryable(fmt.Errorf("instance not found: %w", err))
 			}
 			return nil, fmt.Errorf("get server: %w", err)
@@ -173,7 +173,7 @@ func (c *Client) StopInstance(ctx context.Context, instanceID string) error {
 			c.logger.Info("retrying stop instance", "instance_id", instanceID, "attempt", attempt)
 		}
 
-		err := startstop.Stop(c.computeClient, instanceID).ExtractErr()
+		err := servers.Stop(ctx, c.computeClient, instanceID).ExtractErr()
 		if err != nil {
 			return fmt.Errorf("stop server: %w", err)
 		}
@@ -190,7 +190,7 @@ func (c *Client) StartInstance(ctx context.Context, instanceID string) error {
 			c.logger.Info("retrying start instance", "instance_id", instanceID, "attempt", attempt)
 		}
 
-		err := startstop.Start(c.computeClient, instanceID).ExtractErr()
+		err := servers.Start(ctx, c.computeClient, instanceID).ExtractErr()
 		if err != nil {
 			return fmt.Errorf("start server: %w", err)
 		}
@@ -211,7 +211,7 @@ func (c *Client) CreateSnapshot(ctx context.Context, instanceID, snapshotName st
 			Name: snapshotName,
 		}
 
-		imageID, err := servers.CreateImage(c.computeClient, instanceID, createOpts).ExtractImageID()
+		imageID, err := servers.CreateImage(ctx, c.computeClient, instanceID, createOpts).ExtractImageID()
 		if err != nil {
 			return nil, fmt.Errorf("create image: %w", err)
 		}
@@ -247,7 +247,7 @@ func (c *Client) WaitForImageStatus(ctx context.Context, imageID, desiredStatus 
 				return fmt.Errorf("timeout waiting for image status %s", desiredStatus)
 			}
 
-			image, err := images.Get(c.imageClient, imageID).Extract()
+			image, err := images.Get(ctx, c.imageClient, imageID).Extract()
 			if err != nil {
 				return fmt.Errorf("get image: %w", err)
 			}
@@ -280,10 +280,10 @@ func (c *Client) DeleteImage(ctx context.Context, imageID string) error {
 			c.logger.Info("retrying delete image", "image_id", imageID, "attempt", attempt)
 		}
 
-		err := images.Delete(c.imageClient, imageID).ExtractErr()
+		err := images.Delete(ctx, c.imageClient, imageID).ExtractErr()
 		if err != nil {
 			// Ignore not found errors
-			if _, ok := err.(gophercloud.ErrDefault404); ok {
+			if gophercloud.ResponseCodeIs(err, http.StatusNotFound) {
 				return nil
 			}
 			return fmt.Errorf("delete image: %w", err)

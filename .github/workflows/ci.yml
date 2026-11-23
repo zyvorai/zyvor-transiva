@@ -19,7 +19,7 @@ jobs:
       uses: actions/checkout@v7
 
     - name: Set up Go
-      uses: actions/setup-go@v6
+      uses: actions/setup-go@v7
       with:
         go-version: ${{ matrix.go-version }}
 
@@ -68,7 +68,7 @@ jobs:
       uses: actions/checkout@v7
 
     - name: Set up Go
-      uses: actions/setup-go@v6
+      uses: actions/setup-go@v7
       with:
         go-version: '1.27'
 
@@ -87,7 +87,7 @@ jobs:
       uses: actions/checkout@v7
 
     - name: Set up Go
-      uses: actions/setup-go@v6
+      uses: actions/setup-go@v7
       with:
         go-version: '1.27'
 
@@ -127,7 +127,7 @@ jobs:
     # toolchain and put it first on PATH (actions/setup-go prepends its own
     # bin dir via GITHUB_PATH, ahead of dnf's /usr/bin/go) before rpmbuild runs.
     - name: Set up Go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v7
       with:
         go-version: '1.27'
 
@@ -233,7 +233,7 @@ jobs:
     # The securego/gosec image bundles an older Go than go.mod's `go` directive, so it cannot load
     # any package; build gosec with the repository's own toolchain instead.
     - name: Set up Go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v7
       with:
         go-version: '1.27'
 
@@ -260,9 +260,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: "22"
+          node-version: '24'
           cache: npm
           cache-dependency-path: website/package-lock.json
 
