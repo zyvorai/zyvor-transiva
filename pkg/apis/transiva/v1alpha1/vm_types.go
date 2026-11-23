@@ -23,8 +23,8 @@ type VirtualMachine struct {
 // VirtualMachineSpec defines the desired state of VirtualMachine
 type VirtualMachineSpec struct {
 	// VM Resources
-	CPUs   int32  `json:"cpus"`
-	Memory string `json:"memory"`
+	CPUs   int32   `json:"cpus"`
+	Memory string  `json:"memory"`
 	GPUs   []VMGPU `json:"gpus,omitempty"`
 
 	// USB Devices
@@ -46,9 +46,9 @@ type VirtualMachineSpec struct {
 	Running bool `json:"running"`
 
 	// Scheduling
-	NodeSelector map[string]string      `json:"nodeSelector,omitempty"`
-	Affinity     *corev1.Affinity       `json:"affinity,omitempty"`
-	Tolerations  []corev1.Toleration    `json:"tolerations,omitempty"`
+	NodeSelector map[string]string   `json:"nodeSelector,omitempty"`
+	Affinity     *corev1.Affinity    `json:"affinity,omitempty"`
+	Tolerations  []corev1.Toleration `json:"tolerations,omitempty"`
 
 	// Carbon-aware scheduling
 	CarbonAware *CarbonAwareSpec `json:"carbonAware,omitempty"`
@@ -72,12 +72,12 @@ type VirtualMachineSpec struct {
 
 // VMDisk represents a virtual disk
 type VMDisk struct {
-	Name         string         `json:"name"`
-	Size         string         `json:"size"`
-	StorageClass string         `json:"storageClass,omitempty"`
-	BootOrder    *int32         `json:"bootOrder,omitempty"`
-	Type         string         `json:"type,omitempty"` // disk, cdrom
-	Source       *VMDiskSource  `json:"source,omitempty"`
+	Name         string        `json:"name"`
+	Size         string        `json:"size"`
+	StorageClass string        `json:"storageClass,omitempty"`
+	BootOrder    *int32        `json:"bootOrder,omitempty"`
+	Type         string        `json:"type,omitempty"` // disk, cdrom
+	Source       *VMDiskSource `json:"source,omitempty"`
 }
 
 // VMDiskSource defines disk source
@@ -123,8 +123,8 @@ type VMUSBDevice struct {
 
 // VMImage defines the VM image source
 type VMImage struct {
-	Source      string        `json:"source,omitempty"`
-	TemplateRef *TemplateRef  `json:"templateRef,omitempty"`
+	Source      string         `json:"source,omitempty"`
+	TemplateRef *TemplateRef   `json:"templateRef,omitempty"`
 	Checksum    *ImageChecksum `json:"checksum,omitempty"`
 }
 
@@ -136,7 +136,7 @@ type TemplateRef struct {
 
 // ImageChecksum for image verification
 type ImageChecksum struct {
-	Type  string `json:"type"`  // md5, sha256, sha512
+	Type  string `json:"type"` // md5, sha256, sha512
 	Value string `json:"value"`
 }
 
@@ -149,10 +149,10 @@ type CloudInitConfig struct {
 
 // CarbonAwareSpec for carbon-aware scheduling
 type CarbonAwareSpec struct {
-	Enabled          bool   `json:"enabled"`
-	MaxIntensity     int32  `json:"maxIntensity,omitempty"`
+	Enabled           bool   `json:"enabled"`
+	MaxIntensity      int32  `json:"maxIntensity,omitempty"`
 	PreferGreenEnergy bool   `json:"preferGreenEnergy,omitempty"`
-	Zone             string `json:"zone,omitempty"`
+	Zone              string `json:"zone,omitempty"`
 }
 
 // VMFirmware configuration
@@ -177,17 +177,17 @@ type VMHighAvailability struct {
 
 // VirtualMachineStatus defines the observed state of VirtualMachine
 type VirtualMachineStatus struct {
-	Phase       VMPhase              `json:"phase,omitempty"`
-	Conditions  []VMCondition        `json:"conditions,omitempty"`
-	GuestAgent  *GuestAgentStatus    `json:"guestAgent,omitempty"`
-	IPAddresses []string             `json:"ipAddresses,omitempty"`
-	NodeName    string               `json:"nodeName,omitempty"`
-	Resources   *VMResourceStatus    `json:"resources,omitempty"`
-	QEMUPid     int32                `json:"qemuPid,omitempty"`
-	VNC         *VNCStatus           `json:"vnc,omitempty"`
-	CreationTimestamp *metav1.Time   `json:"creationTimestamp,omitempty"`
-	StartTime   *metav1.Time         `json:"startTime,omitempty"`
-	CarbonIntensity float64          `json:"carbonIntensity,omitempty"`
+	Phase             VMPhase           `json:"phase,omitempty"`
+	Conditions        []VMCondition     `json:"conditions,omitempty"`
+	GuestAgent        *GuestAgentStatus `json:"guestAgent,omitempty"`
+	IPAddresses       []string          `json:"ipAddresses,omitempty"`
+	NodeName          string            `json:"nodeName,omitempty"`
+	Resources         *VMResourceStatus `json:"resources,omitempty"`
+	QEMUPid           int32             `json:"qemuPid,omitempty"`
+	VNC               *VNCStatus        `json:"vnc,omitempty"`
+	CreationTimestamp *metav1.Time      `json:"creationTimestamp,omitempty"`
+	StartTime         *metav1.Time      `json:"startTime,omitempty"`
+	CarbonIntensity   float64           `json:"carbonIntensity,omitempty"`
 }
 
 // VMPhase represents VM lifecycle phase
@@ -229,21 +229,21 @@ type VMResourceStatus struct {
 
 // GPUStatus represents GPU device status
 type GPUStatus struct {
-	Name        string  `json:"name"`
-	Model       string  `json:"model,omitempty"`
-	UUID        string  `json:"uuid,omitempty"`
-	PCIAddress  string  `json:"pciAddress,omitempty"`
-	Utilization float64 `json:"utilization,omitempty"` // GPU utilization percentage
+	Name        string           `json:"name"`
+	Model       string           `json:"model,omitempty"`
+	UUID        string           `json:"uuid,omitempty"`
+	PCIAddress  string           `json:"pciAddress,omitempty"`
+	Utilization float64          `json:"utilization,omitempty"` // GPU utilization percentage
 	Memory      *GPUMemoryStatus `json:"memory,omitempty"`
-	Temperature int32   `json:"temperature,omitempty"` // GPU temperature in Celsius
-	PowerUsage  int32   `json:"powerUsage,omitempty"`  // Power usage in watts
+	Temperature int32            `json:"temperature,omitempty"` // GPU temperature in Celsius
+	PowerUsage  int32            `json:"powerUsage,omitempty"`  // Power usage in watts
 }
 
 // GPUMemoryStatus represents GPU memory status
 type GPUMemoryStatus struct {
-	Total string  `json:"total,omitempty"`
-	Used  string  `json:"used,omitempty"`
-	Free  string  `json:"free,omitempty"`
+	Total string `json:"total,omitempty"`
+	Used  string `json:"used,omitempty"`
+	Free  string `json:"free,omitempty"`
 }
 
 // ResourceMetrics for CPU/Memory
@@ -282,14 +282,14 @@ type VMOperation struct {
 
 // VMOperationSpec defines the desired operation
 type VMOperationSpec struct {
-	VMRef     VMReference       `json:"vmRef"`
-	Operation VMOperationType   `json:"operation"`
-	Force     bool              `json:"force,omitempty"`
+	VMRef     VMReference     `json:"vmRef"`
+	Operation VMOperationType `json:"operation"`
+	Force     bool            `json:"force,omitempty"`
 
 	// Operation-specific specs
-	CloneSpec   *CloneSpec   `json:"cloneSpec,omitempty"`
-	MigrateSpec *MigrateSpec `json:"migrateSpec,omitempty"`
-	ResizeSpec  *ResizeSpec  `json:"resizeSpec,omitempty"`
+	CloneSpec    *CloneSpec    `json:"cloneSpec,omitempty"`
+	MigrateSpec  *MigrateSpec  `json:"migrateSpec,omitempty"`
+	ResizeSpec   *ResizeSpec   `json:"resizeSpec,omitempty"`
 	SnapshotSpec *SnapshotSpec `json:"snapshotSpec,omitempty"`
 
 	Timeout string `json:"timeout,omitempty"`
@@ -317,12 +317,12 @@ const (
 
 // CloneSpec for clone operations
 type CloneSpec struct {
-	TargetName       string `json:"targetName"`
-	TargetNamespace  string `json:"targetNamespace,omitempty"`
-	LinkedClone      bool   `json:"linkedClone,omitempty"`
-	StartAfterClone  bool   `json:"startAfterClone,omitempty"`
-	SnapshotRef      string `json:"snapshotRef,omitempty"`      // Clone from snapshot instead of VM
-	PowerOnAfter     bool   `json:"powerOnAfter,omitempty"`     // Power on after cloning from snapshot
+	TargetName      string `json:"targetName"`
+	TargetNamespace string `json:"targetNamespace,omitempty"`
+	LinkedClone     bool   `json:"linkedClone,omitempty"`
+	StartAfterClone bool   `json:"startAfterClone,omitempty"`
+	SnapshotRef     string `json:"snapshotRef,omitempty"`  // Clone from snapshot instead of VM
+	PowerOnAfter    bool   `json:"powerOnAfter,omitempty"` // Power on after cloning from snapshot
 }
 
 // MigrateSpec for migrate operations
@@ -394,16 +394,16 @@ type VMTemplate struct {
 
 // VMTemplateSpec defines the template specification
 type VMTemplateSpec struct {
-	DisplayName  string                  `json:"displayName"`
-	Description  string                  `json:"description,omitempty"`
-	Version      string                  `json:"version,omitempty"`
-	Tags         []string                `json:"tags,omitempty"`
-	Icon         string                  `json:"icon,omitempty"`
-	OSInfo       *OSInfo                 `json:"osInfo,omitempty"`
-	DefaultSpec  *VirtualMachineSpec     `json:"defaultSpec,omitempty"`
-	Image        VMTemplateImage         `json:"image"`
-	CloudInit    *CloudInitDefaults      `json:"cloudInit,omitempty"`
-	RequiredFeatures []string            `json:"requiredFeatures,omitempty"`
+	DisplayName          string                   `json:"displayName"`
+	Description          string                   `json:"description,omitempty"`
+	Version              string                   `json:"version,omitempty"`
+	Tags                 []string                 `json:"tags,omitempty"`
+	Icon                 string                   `json:"icon,omitempty"`
+	OSInfo               *OSInfo                  `json:"osInfo,omitempty"`
+	DefaultSpec          *VirtualMachineSpec      `json:"defaultSpec,omitempty"`
+	Image                VMTemplateImage          `json:"image"`
+	CloudInit            *CloudInitDefaults       `json:"cloudInit,omitempty"`
+	RequiredFeatures     []string                 `json:"requiredFeatures,omitempty"`
 	RecommendedResources *ResourceRecommendations `json:"recommendedResources,omitempty"`
 }
 
@@ -430,17 +430,17 @@ type CloudInitDefaults struct {
 
 // ResourceRecommendations for templates
 type ResourceRecommendations struct {
-	MinCPUs      int32  `json:"minCpus,omitempty"`
-	MinMemory    string `json:"minMemory,omitempty"`
-	MinDiskSize  string `json:"minDiskSize,omitempty"`
+	MinCPUs     int32  `json:"minCpus,omitempty"`
+	MinMemory   string `json:"minMemory,omitempty"`
+	MinDiskSize string `json:"minDiskSize,omitempty"`
 }
 
 // VMTemplateStatus represents template status
 type VMTemplateStatus struct {
-	Ready       bool         `json:"ready"`
-	Size        string       `json:"size,omitempty"`
-	LastUpdated *metav1.Time `json:"lastUpdated,omitempty"`
-	UsageCount  int32        `json:"usageCount,omitempty"`
+	Ready       bool          `json:"ready"`
+	Size        string        `json:"size,omitempty"`
+	LastUpdated *metav1.Time  `json:"lastUpdated,omitempty"`
+	UsageCount  int32         `json:"usageCount,omitempty"`
 	Conditions  []VMCondition `json:"conditions,omitempty"`
 }
 
@@ -467,12 +467,12 @@ type VMSnapshot struct {
 
 // VMSnapshotSpec defines the snapshot specification
 type VMSnapshotSpec struct {
-	VMRef         VMReference           `json:"vmRef"`
-	IncludeMemory bool                  `json:"includeMemory,omitempty"`
-	Quiesce       bool                  `json:"quiesce,omitempty"`
-	Description   string                `json:"description,omitempty"`
-	Retention     *SnapshotRetention    `json:"retention,omitempty"`
-	Destination   *SnapshotDestination  `json:"destination,omitempty"`
+	VMRef         VMReference          `json:"vmRef"`
+	IncludeMemory bool                 `json:"includeMemory,omitempty"`
+	Quiesce       bool                 `json:"quiesce,omitempty"`
+	Description   string               `json:"description,omitempty"`
+	Retention     *SnapshotRetention   `json:"retention,omitempty"`
+	Destination   *SnapshotDestination `json:"destination,omitempty"`
 }
 
 // SnapshotRetention defines retention policy
@@ -491,16 +491,16 @@ type SnapshotDestination struct {
 
 // VMSnapshotStatus represents snapshot status
 type VMSnapshotStatus struct {
-	Phase          VMSnapPhase   `json:"phase,omitempty"`
-	Conditions     []VMCondition `json:"conditions,omitempty"`
-	Size           string        `json:"size,omitempty"`
-	SizeBytes      int64         `json:"sizeBytes,omitempty"`
-	CreationTime   *metav1.Time  `json:"creationTime,omitempty"`
-	ReadyToRestore bool          `json:"readyToRestore"`
-	BackingFiles   []string      `json:"backingFiles,omitempty"`
+	Phase          VMSnapPhase      `json:"phase,omitempty"`
+	Conditions     []VMCondition    `json:"conditions,omitempty"`
+	Size           string           `json:"size,omitempty"`
+	SizeBytes      int64            `json:"sizeBytes,omitempty"`
+	CreationTime   *metav1.Time     `json:"creationTime,omitempty"`
+	ReadyToRestore bool             `json:"readyToRestore"`
+	BackingFiles   []string         `json:"backingFiles,omitempty"`
 	VMState        *VMStateSnapshot `json:"vmState,omitempty"`
-	ParentSnapshot string        `json:"parentSnapshot,omitempty"`
-	SnapshotChain  []string      `json:"snapshotChain,omitempty"`
+	ParentSnapshot string           `json:"parentSnapshot,omitempty"`
+	SnapshotChain  []string         `json:"snapshotChain,omitempty"`
 }
 
 // VMSnapPhase represents snapshot phase
@@ -556,44 +556,44 @@ type VMBackupScheduleSpec struct {
 
 // VMSelector selects VMs for backup
 type VMSelector struct {
-	MatchLabels      map[string]string `json:"matchLabels,omitempty"`
-	MatchNames       []string          `json:"matchNames,omitempty"`
-	MatchNamespaces  []string          `json:"matchNamespaces,omitempty"`
-	ExcludeNames     []string          `json:"excludeNames,omitempty"`
+	MatchLabels     map[string]string `json:"matchLabels,omitempty"`
+	MatchNames      []string          `json:"matchNames,omitempty"`
+	MatchNamespaces []string          `json:"matchNamespaces,omitempty"`
+	ExcludeNames    []string          `json:"excludeNames,omitempty"`
 }
 
 // VMSnapshotTemplateSpec defines snapshot creation template
 type VMSnapshotTemplateSpec struct {
-	IncludeMemory bool                  `json:"includeMemory,omitempty"`
-	Quiesce       bool                  `json:"quiesce,omitempty"`
-	Destination   *SnapshotDestination  `json:"destination,omitempty"`
-	Labels        map[string]string     `json:"labels,omitempty"`
-	Annotations   map[string]string     `json:"annotations,omitempty"`
+	IncludeMemory bool                 `json:"includeMemory,omitempty"`
+	Quiesce       bool                 `json:"quiesce,omitempty"`
+	Destination   *SnapshotDestination `json:"destination,omitempty"`
+	Labels        map[string]string    `json:"labels,omitempty"`
+	Annotations   map[string]string    `json:"annotations,omitempty"`
 }
 
 // BackupRetentionPolicy defines backup retention rules
 type BackupRetentionPolicy struct {
-	KeepLast     int32  `json:"keepLast,omitempty"`     // Keep last N backups
-	KeepDaily    int32  `json:"keepDaily,omitempty"`    // Keep daily backups for N days
-	KeepWeekly   int32  `json:"keepWeekly,omitempty"`   // Keep weekly backups for N weeks
-	KeepMonthly  int32  `json:"keepMonthly,omitempty"`  // Keep monthly backups for N months
-	KeepYearly   int32  `json:"keepYearly,omitempty"`   // Keep yearly backups for N years
-	MaxAge       string `json:"maxAge,omitempty"`       // Max age (e.g., "30d", "6m", "1y")
-	AutoDelete   bool   `json:"autoDelete,omitempty"`   // Auto-delete expired backups
+	KeepLast    int32  `json:"keepLast,omitempty"`    // Keep last N backups
+	KeepDaily   int32  `json:"keepDaily,omitempty"`   // Keep daily backups for N days
+	KeepWeekly  int32  `json:"keepWeekly,omitempty"`  // Keep weekly backups for N weeks
+	KeepMonthly int32  `json:"keepMonthly,omitempty"` // Keep monthly backups for N months
+	KeepYearly  int32  `json:"keepYearly,omitempty"`  // Keep yearly backups for N years
+	MaxAge      string `json:"maxAge,omitempty"`      // Max age (e.g., "30d", "6m", "1y")
+	AutoDelete  bool   `json:"autoDelete,omitempty"`  // Auto-delete expired backups
 }
 
 // VMBackupScheduleStatus represents backup schedule status
 type VMBackupScheduleStatus struct {
-	LastBackupTime      *metav1.Time  `json:"lastBackupTime,omitempty"`
-	NextBackupTime      *metav1.Time  `json:"nextBackupTime,omitempty"`
-	LastBackupSnapshot  string        `json:"lastBackupSnapshot,omitempty"`
-	TotalBackups        int32         `json:"totalBackups,omitempty"`
-	ActiveBackups       int32         `json:"activeBackups,omitempty"`
-	FailedBackups       int32         `json:"failedBackups,omitempty"`
-	LastBackupStatus    string        `json:"lastBackupStatus,omitempty"`
-	LastBackupMessage   string        `json:"lastBackupMessage,omitempty"`
-	MatchedVMs          []string      `json:"matchedVMs,omitempty"`
-	Conditions          []VMCondition `json:"conditions,omitempty"`
+	LastBackupTime     *metav1.Time  `json:"lastBackupTime,omitempty"`
+	NextBackupTime     *metav1.Time  `json:"nextBackupTime,omitempty"`
+	LastBackupSnapshot string        `json:"lastBackupSnapshot,omitempty"`
+	TotalBackups       int32         `json:"totalBackups,omitempty"`
+	ActiveBackups      int32         `json:"activeBackups,omitempty"`
+	FailedBackups      int32         `json:"failedBackups,omitempty"`
+	LastBackupStatus   string        `json:"lastBackupStatus,omitempty"`
+	LastBackupMessage  string        `json:"lastBackupMessage,omitempty"`
+	MatchedVMs         []string      `json:"matchedVMs,omitempty"`
+	Conditions         []VMCondition `json:"conditions,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -639,14 +639,14 @@ type MigrationTrigger struct {
 type MigrationTriggerType string
 
 const (
-	TriggerNodePressure      MigrationTriggerType = "NodePressure"       // High CPU/memory on node
-	TriggerCarbonIntensity   MigrationTriggerType = "CarbonIntensity"    // High carbon intensity
-	TriggerCost              MigrationTriggerType = "Cost"               // Cost optimization
-	TriggerMaintenance       MigrationTriggerType = "Maintenance"        // Planned maintenance
-	TriggerLoadBalancing     MigrationTriggerType = "LoadBalancing"      // Distribute load
-	TriggerNodeDrain         MigrationTriggerType = "NodeDrain"          // Node being drained
-	TriggerPowerUsage        MigrationTriggerType = "PowerUsage"         // High power consumption
-	TriggerTemperature       MigrationTriggerType = "Temperature"        // High temperature
+	TriggerNodePressure    MigrationTriggerType = "NodePressure"    // High CPU/memory on node
+	TriggerCarbonIntensity MigrationTriggerType = "CarbonIntensity" // High carbon intensity
+	TriggerCost            MigrationTriggerType = "Cost"            // Cost optimization
+	TriggerMaintenance     MigrationTriggerType = "Maintenance"     // Planned maintenance
+	TriggerLoadBalancing   MigrationTriggerType = "LoadBalancing"   // Distribute load
+	TriggerNodeDrain       MigrationTriggerType = "NodeDrain"       // Node being drained
+	TriggerPowerUsage      MigrationTriggerType = "PowerUsage"      // High power consumption
+	TriggerTemperature     MigrationTriggerType = "Temperature"     // High temperature
 )
 
 // MigrationConstraints defines migration constraints
@@ -670,23 +670,23 @@ type TimeWindow struct {
 
 // TargetSelectionStrategy defines how to select migration targets
 type TargetSelectionStrategy struct {
-	Strategy  TargetStrategy         `json:"strategy"`
-	Weights   map[string]int32       `json:"weights,omitempty"`   // Factor weights for scoring
-	Filters   []TargetFilter         `json:"filters,omitempty"`   // Filter criteria
-	AntiAffinity *AntiAffinityRule   `json:"antiAffinity,omitempty"`
+	Strategy     TargetStrategy    `json:"strategy"`
+	Weights      map[string]int32  `json:"weights,omitempty"` // Factor weights for scoring
+	Filters      []TargetFilter    `json:"filters,omitempty"` // Filter criteria
+	AntiAffinity *AntiAffinityRule `json:"antiAffinity,omitempty"`
 }
 
 // TargetStrategy represents target selection strategies
 type TargetStrategy string
 
 const (
-	StrategyLeastUtilized   TargetStrategy = "LeastUtilized"   // Node with lowest utilization
-	StrategyMostAvailable   TargetStrategy = "MostAvailable"   // Node with most free resources
-	StrategyLowestCarbon    TargetStrategy = "LowestCarbon"    // Node in lowest carbon zone
-	StrategyLowestCost      TargetStrategy = "LowestCost"      // Cheapest node
-	StrategyRoundRobin      TargetStrategy = "RoundRobin"      // Distribute evenly
-	StrategyBinPacking      TargetStrategy = "BinPacking"      // Pack VMs tightly
-	StrategyWeightedScore   TargetStrategy = "WeightedScore"   // Score based on weights
+	StrategyLeastUtilized TargetStrategy = "LeastUtilized" // Node with lowest utilization
+	StrategyMostAvailable TargetStrategy = "MostAvailable" // Node with most free resources
+	StrategyLowestCarbon  TargetStrategy = "LowestCarbon"  // Node in lowest carbon zone
+	StrategyLowestCost    TargetStrategy = "LowestCost"    // Cheapest node
+	StrategyRoundRobin    TargetStrategy = "RoundRobin"    // Distribute evenly
+	StrategyBinPacking    TargetStrategy = "BinPacking"    // Pack VMs tightly
+	StrategyWeightedScore TargetStrategy = "WeightedScore" // Score based on weights
 )
 
 // TargetFilter represents filtering criteria for target nodes
@@ -704,29 +704,29 @@ type AntiAffinityRule struct {
 
 // VMMigrationPolicyStatus represents migration policy status
 type VMMigrationPolicyStatus struct {
-	Active                   bool              `json:"active"`
-	TotalMigrations          int32             `json:"totalMigrations,omitempty"`
-	SuccessfulMigrations     int32             `json:"successfulMigrations,omitempty"`
-	FailedMigrations         int32             `json:"failedMigrations,omitempty"`
-	PendingMigrations        int32             `json:"pendingMigrations,omitempty"`
-	LastMigrationTime        *metav1.Time      `json:"lastMigrationTime,omitempty"`
-	LastEvaluationTime       *metav1.Time      `json:"lastEvaluationTime,omitempty"`
-	TriggeredMigrations      []MigrationRecord `json:"triggeredMigrations,omitempty"`
-	Conditions               []VMCondition     `json:"conditions,omitempty"`
-	RecommendedMigrations    int32             `json:"recommendedMigrations,omitempty"`
+	Active                bool              `json:"active"`
+	TotalMigrations       int32             `json:"totalMigrations,omitempty"`
+	SuccessfulMigrations  int32             `json:"successfulMigrations,omitempty"`
+	FailedMigrations      int32             `json:"failedMigrations,omitempty"`
+	PendingMigrations     int32             `json:"pendingMigrations,omitempty"`
+	LastMigrationTime     *metav1.Time      `json:"lastMigrationTime,omitempty"`
+	LastEvaluationTime    *metav1.Time      `json:"lastEvaluationTime,omitempty"`
+	TriggeredMigrations   []MigrationRecord `json:"triggeredMigrations,omitempty"`
+	Conditions            []VMCondition     `json:"conditions,omitempty"`
+	RecommendedMigrations int32             `json:"recommendedMigrations,omitempty"`
 }
 
 // MigrationRecord represents a migration event
 type MigrationRecord struct {
-	VMName       string           `json:"vmName"`
-	FromNode     string           `json:"fromNode"`
-	ToNode       string           `json:"toNode"`
-	TriggerType  MigrationTriggerType `json:"triggerType"`
-	StartTime    metav1.Time      `json:"startTime"`
-	CompletionTime *metav1.Time   `json:"completionTime,omitempty"`
-	Status       string           `json:"status"` // pending, running, succeeded, failed
-	Reason       string           `json:"reason,omitempty"`
-	Duration     string           `json:"duration,omitempty"`
+	VMName         string               `json:"vmName"`
+	FromNode       string               `json:"fromNode"`
+	ToNode         string               `json:"toNode"`
+	TriggerType    MigrationTriggerType `json:"triggerType"`
+	StartTime      metav1.Time          `json:"startTime"`
+	CompletionTime *metav1.Time         `json:"completionTime,omitempty"`
+	Status         string               `json:"status"` // pending, running, succeeded, failed
+	Reason         string               `json:"reason,omitempty"`
+	Duration       string               `json:"duration,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

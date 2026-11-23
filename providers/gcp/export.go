@@ -456,10 +456,10 @@ func (c *Client) ExportDiskWithOptions(ctx context.Context, diskName string, opt
 	}
 
 	result := &ExportResult{
-		ImageName:  imageName,
-		DiskName:   diskName,
-		Format:     opts.Format,
-		GCSBucket:  opts.GCSBucket,
+		ImageName: imageName,
+		DiskName:  diskName,
+		Format:    opts.Format,
+		GCSBucket: opts.GCSBucket,
 	}
 
 	// Note: Actual export to GCS requires gcloud CLI or Import/Export tools
@@ -467,4 +467,3 @@ func (c *Client) ExportDiskWithOptions(ctx context.Context, diskName string, opt
 
 	return result, nil
 }
-

@@ -516,8 +516,8 @@ func (v *PostExportValidator) validateChecksums(exportDir string) ValidationResu
 	// Build result message
 	if failed > 0 || missing > 0 {
 		return ValidationResult{
-			Name:    "Checksum Check",
-			Passed:  false,
+			Name:   "Checksum Check",
+			Passed: false,
 			Message: fmt.Sprintf("Checksum verification failed: %d verified, %d failed, %d missing. Failed files: %s",
 				verified, failed, missing, strings.Join(failedFiles, ", ")),
 			Warning: false,

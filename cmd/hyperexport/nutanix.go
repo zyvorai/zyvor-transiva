@@ -26,10 +26,10 @@ import (
 )
 
 var (
-	nutanixMounts           = flag.String("mounts", "", "Nutanix container NFS mounts (name:/path,name2:/path2)")
+	nutanixMounts            = flag.String("mounts", "", "Nutanix container NFS mounts (name:/path,name2:/path2)")
 	nutanixResolveContainers = flag.Bool("resolve-containers", false, "Resolve Nutanix storage container names via Prism API")
-	nutanixCluster          = flag.String("cluster", "", "Filter Nutanix VMs by cluster name or UUID")
-	nutanixInsecure         = flag.Bool("insecure", true, "Skip TLS verification for Nutanix Prism")
+	nutanixCluster           = flag.String("cluster", "", "Filter Nutanix VMs by cluster name or UUID")
+	nutanixInsecure          = flag.Bool("insecure", true, "Skip TLS verification for Nutanix Prism")
 )
 
 func runNutanixExport(ctx context.Context, cfg *config.Config, log logger.Logger) error {
@@ -95,13 +95,13 @@ func exportSingleNutanixVM(ctx context.Context, cfg *config.Config, log logger.L
 		Password: pass,
 		Insecure: *nutanixInsecure || !nxCfg.VerifySSL,
 		Metadata: map[string]interface{}{
-			"detailed":            true,
-			"cluster":             firstNonEmpty(*nutanixCluster, nxCfg.Cluster),
-			"output_dir":          outputPath,
-			"export_format":       formatVal,
-			"mounts":              mounts,
-			"resolve_containers":  resolveContainers,
-			"enable_pipeline":     enablePipeline,
+			"detailed":           true,
+			"cluster":            firstNonEmpty(*nutanixCluster, nxCfg.Cluster),
+			"output_dir":         outputPath,
+			"export_format":      formatVal,
+			"mounts":             mounts,
+			"resolve_containers": resolveContainers,
+			"enable_pipeline":    enablePipeline,
 		},
 	}
 	if nxCfg.PipelineTimeout > 0 {
@@ -136,10 +136,10 @@ func exportSingleNutanixVM(ctx context.Context, cfg *config.Config, log logger.L
 		OutputPath: outputPath,
 		Format:     formatVal,
 		Metadata: map[string]interface{}{
-			"mounts":              mounts,
-			"dry_run":             *dryRun,
-			"resolve_containers":  resolveContainers,
-			"enable_pipeline":     enablePipeline,
+			"mounts":             mounts,
+			"dry_run":            *dryRun,
+			"resolve_containers": resolveContainers,
+			"enable_pipeline":    enablePipeline,
 		},
 	}
 	if nxCfg.PipelineTimeout > 0 {

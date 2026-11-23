@@ -70,9 +70,9 @@ func TestHyperVProvider_Disconnect(t *testing.T) {
 	log := logger.New("info")
 
 	tests := []struct {
-		name         string
-		provider     *HyperVProvider
-		expectError  bool
+		name        string
+		provider    *HyperVProvider
+		expectError bool
 	}{
 		{
 			name: "disconnect with nil client",

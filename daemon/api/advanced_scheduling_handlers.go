@@ -15,21 +15,21 @@ import (
 
 // CreateAdvancedScheduleRequest represents a request to create a schedule with advanced features
 type CreateAdvancedScheduleRequest struct {
-	Name           string                          `json:"name"`
-	Description    string                          `json:"description"`
-	Schedule       string                          `json:"schedule"` // Cron format
-	JobTemplate    models.JobDefinition            `json:"job_template"`
-	AdvancedConfig *models.AdvancedScheduleConfig  `json:"advanced_config,omitempty"`
+	Name           string                         `json:"name"`
+	Description    string                         `json:"description"`
+	Schedule       string                         `json:"schedule"` // Cron format
+	JobTemplate    models.JobDefinition           `json:"job_template"`
+	AdvancedConfig *models.AdvancedScheduleConfig `json:"advanced_config,omitempty"`
 }
 
 // DependencyStatusResponse represents dependency status for a job
 type DependencyStatusResponse struct {
-	JobID        string                       `json:"job_id"`
-	JobName      string                       `json:"job_name"`
-	Satisfied    bool                         `json:"satisfied"`
-	Reason       string                       `json:"reason,omitempty"`
-	Dependencies []DependencyInfo             `json:"dependencies"`
-	WaitingJobs  []string                     `json:"waiting_jobs,omitempty"`
+	JobID        string           `json:"job_id"`
+	JobName      string           `json:"job_name"`
+	Satisfied    bool             `json:"satisfied"`
+	Reason       string           `json:"reason,omitempty"`
+	Dependencies []DependencyInfo `json:"dependencies"`
+	WaitingJobs  []string         `json:"waiting_jobs,omitempty"`
 }
 
 // DependencyInfo represents information about a single dependency
@@ -43,23 +43,23 @@ type DependencyInfo struct {
 
 // RetryStatusResponse represents retry status for a job
 type RetryStatusResponse struct {
-	JobID        string                    `json:"job_id"`
-	JobName      string                    `json:"job_name"`
-	Attempt      int                       `json:"attempt"`
-	MaxAttempts  int                       `json:"max_attempts"`
-	LastError    string                    `json:"last_error,omitempty"`
-	NextRetry    string                    `json:"next_retry,omitempty"`
-	History      []scheduler.RetryRecord   `json:"history,omitempty"`
+	JobID       string                  `json:"job_id"`
+	JobName     string                  `json:"job_name"`
+	Attempt     int                     `json:"attempt"`
+	MaxAttempts int                     `json:"max_attempts"`
+	LastError   string                  `json:"last_error,omitempty"`
+	NextRetry   string                  `json:"next_retry,omitempty"`
+	History     []scheduler.RetryRecord `json:"history,omitempty"`
 }
 
 // TimeWindowStatusResponse represents time window status for a job
 type TimeWindowStatusResponse struct {
-	JobID           string                        `json:"job_id"`
-	JobName         string                        `json:"job_name"`
-	InWindow        bool                          `json:"in_window"`
-	Message         string                        `json:"message"`
-	NextWindowStart string                        `json:"next_window_start,omitempty"`
-	Windows         []WindowStatusInfo            `json:"windows,omitempty"`
+	JobID           string             `json:"job_id"`
+	JobName         string             `json:"job_name"`
+	InWindow        bool               `json:"in_window"`
+	Message         string             `json:"message"`
+	NextWindowStart string             `json:"next_window_start,omitempty"`
+	Windows         []WindowStatusInfo `json:"windows,omitempty"`
 }
 
 // WindowStatusInfo represents status for a single time window
@@ -76,10 +76,10 @@ type WindowStatusInfo struct {
 
 // JobQueueStatusResponse represents the status of the job queue
 type JobQueueStatusResponse struct {
-	QueueSize    int                 `json:"queue_size"`
-	RunningJobs  int                 `json:"running_jobs"`
-	MaxSlots     int                 `json:"max_slots"`
-	QueuedJobs   []QueuedJobInfo     `json:"queued_jobs"`
+	QueueSize   int             `json:"queue_size"`
+	RunningJobs int             `json:"running_jobs"`
+	MaxSlots    int             `json:"max_slots"`
+	QueuedJobs  []QueuedJobInfo `json:"queued_jobs"`
 }
 
 // QueuedJobInfo represents information about a queued job
@@ -147,8 +147,8 @@ func (s *Server) handleCreateAdvancedSchedule(w http.ResponseWriter, r *http.Req
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(map[string]interface{}{
-		"success": true,
-		"message": "Advanced schedule created successfully",
+		"success":  true,
+		"message":  "Advanced schedule created successfully",
 		"schedule": scheduledJob,
 	}); err != nil {
 		s.logger.Error("failed to encode create schedule response", "error", err)

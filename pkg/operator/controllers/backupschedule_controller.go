@@ -14,8 +14,8 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/record"
 
-	transiva "github.com/zyvorai/transiva/pkg/apis/transiva/v1alpha1"
 	"github.com/zyvorai/transiva/logger"
+	transiva "github.com/zyvorai/transiva/pkg/apis/transiva/v1alpha1"
 )
 
 // BackupScheduleController manages BackupSchedule resources
@@ -200,7 +200,7 @@ func (c *BackupScheduleController) createBackupJob(ctx context.Context, schedule
 			Name:      jobName,
 			Namespace: schedule.Namespace,
 			Labels: map[string]string{
-				"app":                          "transiva",
+				"app":                                "transiva",
 				"transiva.zyvor.ai/schedule":         schedule.Name,
 				"transiva.zyvor.ai/scheduled-backup": "true",
 			},

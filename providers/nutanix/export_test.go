@@ -14,9 +14,9 @@ func TestMergeExportOptions(t *testing.T) {
 	p := &Provider{
 		cfg: providers.ProviderConfig{
 			Metadata: map[string]interface{}{
-				"output_dir":     "/data/exports",
-				"export_format":  "raw",
-				"mounts":         map[string]string{"ctr-a": "/mnt/a"},
+				"output_dir":      "/data/exports",
+				"export_format":   "raw",
+				"mounts":          map[string]string{"ctr-a": "/mnt/a"},
 				"enable_pipeline": true,
 			},
 		},

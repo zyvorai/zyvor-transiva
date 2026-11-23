@@ -25,10 +25,10 @@ import (
 // mockLogger for testing
 type mockLogger struct{}
 
-func (m *mockLogger) Debug(msg string, keysAndValues ...interface{}) {}
-func (m *mockLogger) Info(msg string, keysAndValues ...interface{})  {}
-func (m *mockLogger) Warn(msg string, keysAndValues ...interface{})  {}
-func (m *mockLogger) Error(msg string, keysAndValues ...interface{}) {}
+func (m *mockLogger) Debug(msg string, keysAndValues ...interface{})  {}
+func (m *mockLogger) Info(msg string, keysAndValues ...interface{})   {}
+func (m *mockLogger) Warn(msg string, keysAndValues ...interface{})   {}
+func (m *mockLogger) Error(msg string, keysAndValues ...interface{})  {}
 func (m *mockLogger) With(keysAndValues ...interface{}) logger.Logger { return m }
 
 // setupTestClient creates a test vSphere client using vcsim simulator
@@ -112,9 +112,9 @@ func TestListHosts(t *testing.T) {
 	defer cleanup()
 
 	tests := []struct {
-		name    string
-		pattern string
-		wantErr bool
+		name     string
+		pattern  string
+		wantErr  bool
 		minHosts int
 	}{
 		{

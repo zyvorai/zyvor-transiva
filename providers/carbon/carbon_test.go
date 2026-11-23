@@ -139,10 +139,10 @@ func TestEstimateEnergy(t *testing.T) {
 	}{
 		{
 			name:          "small backup",
-			dataSizeGB:    100.0,  // 100 GB
-			durationHours: 1.0,    // 1 hour
-			minExpected:   0.08,   // At least 80 Wh
-			maxExpected:   0.15,   // At most 150 Wh
+			dataSizeGB:    100.0, // 100 GB
+			durationHours: 1.0,   // 1 hour
+			minExpected:   0.08,  // At least 80 Wh
+			maxExpected:   0.15,  // At most 150 Wh
 		},
 		{
 			name:          "large backup",
@@ -172,9 +172,9 @@ func TestGenerateCarbonReport(t *testing.T) {
 		"job-123",
 		startTime,
 		endTime,
-		500.0,  // 500 GB
-		200.0,  // 200 gCO2/kWh
-		65.0,   // 65% renewable
+		500.0, // 500 GB
+		200.0, // 200 gCO2/kWh
+		65.0,  // 65% renewable
 	)
 
 	if report.OperationID != "job-123" {

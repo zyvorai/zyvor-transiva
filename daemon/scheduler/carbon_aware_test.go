@@ -259,10 +259,10 @@ func TestCarbonAwareScheduler_JobSpecificSettings(t *testing.T) {
 		Name:   "test-job",
 		VMPath: "/datacenter/vm/test",
 		Metadata: map[string]interface{}{
-			"carbon_aware":          true,
-			"carbon_max_intensity":  150.0, // Override default
-			"carbon_zone":           carbon.ZoneEUNorth,
-			"carbon_max_delay":      2 * time.Hour,
+			"carbon_aware":         true,
+			"carbon_max_intensity": 150.0, // Override default
+			"carbon_zone":          carbon.ZoneEUNorth,
+			"carbon_max_delay":     2 * time.Hour,
 		},
 	}
 

@@ -672,7 +672,7 @@ func confirmAndExecute(ctx context.Context, client *vsphere.VSphereClient, vms [
 // Helper functions
 func printBanner() {
 	// Orange colors
-	colorOrange := pterm.NewRGB(211, 84, 0)  // Deep orange #D35400
+	colorOrange := pterm.NewRGB(211, 84, 0)         // Deep orange #D35400
 	styleOrange := pterm.NewStyle(pterm.FgLightRed) // Background style
 
 	pterm.Println()

@@ -140,13 +140,13 @@ func recordIncrementalExport(ctx context.Context, vmPath string, exportResult *v
 
 	// Create metadata
 	metadata := &incremental.ExportMetadata{
-		VMID:         vmID,
-		VMName:       filepath.Base(vmPath),
-		ExportTime:   time.Now(),
-		SnapshotID:   snapshotID,
-		ExportPath:   exportResult.OutputDir,
-		TotalSize:    exportResult.TotalSize,
-		DiskInfo:     []incremental.DiskMetadata{},
+		VMID:       vmID,
+		VMName:     filepath.Base(vmPath),
+		ExportTime: time.Now(),
+		SnapshotID: snapshotID,
+		ExportPath: exportResult.OutputDir,
+		TotalSize:  exportResult.TotalSize,
+		DiskInfo:   []incremental.DiskMetadata{},
 	}
 
 	// Record the export

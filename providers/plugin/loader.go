@@ -50,7 +50,7 @@ func (l *Loader) Load(path string) (*Info, providers.ProviderFactory, error) {
 
 	// Lookup metadata
 	metadataSym, err := p.Lookup("PluginInfo") //nolint:staticcheck // SA4023: false positive under CGO_ENABLED=0, see note above
-	if err != nil { //nolint:staticcheck // SA4023: false positive under CGO_ENABLED=0, see note above
+	if err != nil {                            //nolint:staticcheck // SA4023: false positive under CGO_ENABLED=0, see note above
 		return nil, nil, fmt.Errorf("plugin missing PluginInfo: %w", err)
 	}
 
@@ -66,7 +66,7 @@ func (l *Loader) Load(path string) (*Info, providers.ProviderFactory, error) {
 
 	// Lookup provider factory
 	factorySym, err := p.Lookup("NewProvider") //nolint:staticcheck // SA4023: false positive under CGO_ENABLED=0, see note above
-	if err != nil { //nolint:staticcheck // SA4023: false positive under CGO_ENABLED=0, see note above
+	if err != nil {                            //nolint:staticcheck // SA4023: false positive under CGO_ENABLED=0, see note above
 		return nil, nil, fmt.Errorf("plugin missing NewProvider: %w", err)
 	}
 

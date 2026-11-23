@@ -281,14 +281,14 @@ func (m *Manager) GetStatus() *models.DaemonStatus {
 	}
 
 	return &models.DaemonStatus{
-		Version:        "0.0.1",
-		Uptime:         time.Since(m.startTime).String(),
-		TotalJobs:      len(m.jobs),
-		RunningJobs:    running,
-		CompletedJobs:  completed,
-		FailedJobs:     failed,
-		CancelledJobs:  cancelled,
-		Timestamp:      time.Now(),
+		Version:       "0.0.1",
+		Uptime:        time.Since(m.startTime).String(),
+		TotalJobs:     len(m.jobs),
+		RunningJobs:   running,
+		CompletedJobs: completed,
+		FailedJobs:    failed,
+		CancelledJobs: cancelled,
+		Timestamp:     time.Now(),
 	}
 }
 

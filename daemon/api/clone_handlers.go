@@ -229,8 +229,8 @@ func (s *Server) handleCreateTemplate(w http.ResponseWriter, r *http.Request) {
 		Domain      string            `json:"domain"`      // Source domain
 		Name        string            `json:"name"`        // Template name
 		Description string            `json:"description"` // Template description
-		Metadata    map[string]string `json:"metadata"`     // Additional metadata
-		Seal        bool              `json:"seal"`         // Seal the template (virt-sysprep)
+		Metadata    map[string]string `json:"metadata"`    // Additional metadata
+		Seal        bool              `json:"seal"`        // Seal the template (virt-sysprep)
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "invalid request body", http.StatusBadRequest)

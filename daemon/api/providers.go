@@ -11,10 +11,10 @@ import (
 )
 
 type providerCapabilitiesResponse struct {
-	Provider     string                      `json:"provider"`
+	Provider     string                       `json:"provider"`
 	Capabilities providers.ExportCapabilities `json:"capabilities"`
-	Registered   bool                        `json:"registered"`
-	Timestamp    time.Time                   `json:"timestamp"`
+	Registered   bool                         `json:"registered"`
+	Timestamp    time.Time                    `json:"timestamp"`
 }
 
 func (s *Server) handleProviderCapabilities(w http.ResponseWriter, r *http.Request) {

@@ -1064,7 +1064,7 @@ func TestSaveMetadataWriteError(t *testing.T) {
 	}
 
 	metadata := &BackupMetadata{
-		ID:        "test-backup",
+		ID:         "test-backup",
 		BackupPath: filepath.Join(tmpDir, "test.tar.gz"),
 	}
 

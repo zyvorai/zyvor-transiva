@@ -15,42 +15,42 @@ import (
 
 // MetricsHistory handles historical metrics storage
 type MetricsHistory struct {
-	db             *sql.DB
-	retentionDays  int
-	enabled        bool
+	db            *sql.DB
+	retentionDays int
+	enabled       bool
 }
 
 // HistoricalMetrics represents a snapshot of metrics at a point in time
 type HistoricalMetrics struct {
-	Timestamp       time.Time `json:"timestamp"`
-	TotalVMs        int       `json:"total_vms"`
-	RunningVMs      int       `json:"running_vms"`
-	StoppedVMs      int       `json:"stopped_vms"`
-	FailedVMs       int       `json:"failed_vms"`
-	TotalBackups    int       `json:"total_backups"`
-	CompletedBackups int      `json:"completed_backups"`
-	FailedBackups   int       `json:"failed_backups"`
-	TotalRestores   int       `json:"total_restores"`
-	TotalCPUs       int32     `json:"total_cpus"`
-	TotalMemoryGi   float64   `json:"total_memory_gi"`
-	AvgCarbonIntensity float64 `json:"avg_carbon_intensity"`
-	CarbonAwareVMs  int       `json:"carbon_aware_vms"`
+	Timestamp          time.Time `json:"timestamp"`
+	TotalVMs           int       `json:"total_vms"`
+	RunningVMs         int       `json:"running_vms"`
+	StoppedVMs         int       `json:"stopped_vms"`
+	FailedVMs          int       `json:"failed_vms"`
+	TotalBackups       int       `json:"total_backups"`
+	CompletedBackups   int       `json:"completed_backups"`
+	FailedBackups      int       `json:"failed_backups"`
+	TotalRestores      int       `json:"total_restores"`
+	TotalCPUs          int32     `json:"total_cpus"`
+	TotalMemoryGi      float64   `json:"total_memory_gi"`
+	AvgCarbonIntensity float64   `json:"avg_carbon_intensity"`
+	CarbonAwareVMs     int       `json:"carbon_aware_vms"`
 }
 
 // MetricsTrend represents aggregated metrics over a time period
 type MetricsTrend struct {
-	StartTime      time.Time `json:"start_time"`
-	EndTime        time.Time `json:"end_time"`
-	AvgVMs         float64   `json:"avg_vms"`
-	MaxVMs         int       `json:"max_vms"`
-	MinVMs         int       `json:"min_vms"`
-	AvgRunningVMs  float64   `json:"avg_running_vms"`
-	AvgCPUs        float64   `json:"avg_cpus"`
-	AvgMemoryGi    float64   `json:"avg_memory_gi"`
-	AvgCarbon      float64   `json:"avg_carbon"`
-	TotalBackups   int       `json:"total_backups"`
-	TotalRestores  int       `json:"total_restores"`
-	DataPoints     int       `json:"data_points"`
+	StartTime     time.Time `json:"start_time"`
+	EndTime       time.Time `json:"end_time"`
+	AvgVMs        float64   `json:"avg_vms"`
+	MaxVMs        int       `json:"max_vms"`
+	MinVMs        int       `json:"min_vms"`
+	AvgRunningVMs float64   `json:"avg_running_vms"`
+	AvgCPUs       float64   `json:"avg_cpus"`
+	AvgMemoryGi   float64   `json:"avg_memory_gi"`
+	AvgCarbon     float64   `json:"avg_carbon"`
+	TotalBackups  int       `json:"total_backups"`
+	TotalRestores int       `json:"total_restores"`
+	DataPoints    int       `json:"data_points"`
 }
 
 // NewMetricsHistory creates a new metrics history storage

@@ -206,7 +206,7 @@ func main() {
 	if !apiConfig.Security.EnableAuth {
 		pterm.Warning.Println("API authentication is DISABLED (--no-auth / TRANSIVA_DISABLE_AUTH=1): anyone who can reach this port can use the API")
 	}
-	apiConfig.Web.Disabled = *disableWeb  // Set web dashboard state from CLI flag
+	apiConfig.Web.Disabled = *disableWeb // Set web dashboard state from CLI flag
 
 	// Create Enhanced API server with Phase 2 features
 	server, err := api.NewEnhancedServer(manager, detector, log, cfg.DaemonAddr, apiConfig, providerRegistry, cfg)

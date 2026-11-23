@@ -13,10 +13,10 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/record"
 
-	transiva "github.com/zyvorai/transiva/pkg/apis/transiva/v1alpha1"
 	"github.com/zyvorai/transiva/daemon/jobs"
 	"github.com/zyvorai/transiva/daemon/models"
 	"github.com/zyvorai/transiva/logger"
+	transiva "github.com/zyvorai/transiva/pkg/apis/transiva/v1alpha1"
 	"github.com/zyvorai/transiva/providers"
 )
 

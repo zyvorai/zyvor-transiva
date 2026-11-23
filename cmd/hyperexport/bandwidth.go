@@ -16,14 +16,14 @@ import (
 
 // BandwidthLimiter controls download/upload bandwidth usage
 type BandwidthLimiter struct {
-	limit         int64 // bytes per second
-	bucket        int64 // current available tokens
-	bucketSize    int64 // maximum bucket size
-	lastRefill    time.Time
-	mu            sync.Mutex
-	log           logger.Logger
+	limit            int64 // bytes per second
+	bucket           int64 // current available tokens
+	bucketSize       int64 // maximum bucket size
+	lastRefill       time.Time
+	mu               sync.Mutex
+	log              logger.Logger
 	bytesTransferred int64
-	startTime     time.Time
+	startTime        time.Time
 }
 
 // BandwidthConfig configures bandwidth limiting

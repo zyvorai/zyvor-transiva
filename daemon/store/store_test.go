@@ -857,7 +857,7 @@ func TestNewSQLiteStore_InvalidPath(t *testing.T) {
 	// Try to create a store at an invalid path (directory that doesn't exist)
 	invalidPath := "/nonexistent/directory/that/does/not/exist/test.db"
 	_, err := NewSQLiteStore(invalidPath)
-	
+
 	if err == nil {
 		t.Error("Expected error when creating store with invalid path, got nil")
 	}
@@ -866,7 +866,7 @@ func TestNewSQLiteStore_InvalidPath(t *testing.T) {
 func TestSQLiteStore_CloseNilDB(t *testing.T) {
 	// Create a store with nil db (simulate closed or invalid state)
 	store := &SQLiteStore{db: nil}
-	
+
 	// Should not panic or error when db is nil
 	err := store.Close()
 	if err != nil {
@@ -1220,4 +1220,3 @@ func TestSQLiteStore_ListSchedulesInactive(t *testing.T) {
 		t.Errorf("Expected active-schedule, got %s", schedules[0].ID)
 	}
 }
-

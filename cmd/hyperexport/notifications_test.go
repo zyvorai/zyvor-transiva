@@ -170,16 +170,16 @@ func TestRenderTemplate(t *testing.T) {
 	nm := NewNotificationManager(nil, log)
 
 	notification := &ExportNotification{
-		VMName:      "test-vm",
-		Provider:    "vsphere",
-		Format:      "vmdk",
-		TotalSize:   1024 * 1024 * 500, // 500 MB
-		FilesCount:  3,
-		Compressed:  true,
-		Verified:    true,
-		StartTime:   time.Date(2024, 1, 1, 10, 0, 0, 0, time.UTC),
-		EndTime:     time.Date(2024, 1, 1, 11, 0, 0, 0, time.UTC),
-		Duration:    1 * time.Hour,
+		VMName:     "test-vm",
+		Provider:   "vsphere",
+		Format:     "vmdk",
+		TotalSize:  1024 * 1024 * 500, // 500 MB
+		FilesCount: 3,
+		Compressed: true,
+		Verified:   true,
+		StartTime:  time.Date(2024, 1, 1, 10, 0, 0, 0, time.UTC),
+		EndTime:    time.Date(2024, 1, 1, 11, 0, 0, 0, time.UTC),
+		Duration:   1 * time.Hour,
 	}
 
 	tmpl := `VM: {{.VMName}}, Provider: {{.Provider}}, Size: {{FormatBytes .TotalSize}}`

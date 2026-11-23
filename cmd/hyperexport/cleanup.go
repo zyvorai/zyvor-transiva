@@ -31,11 +31,11 @@ type CleanupConfig struct {
 
 // CleanupResult contains cleanup operation results
 type CleanupResult struct {
-	DeletedCount int
-	DeletedSize  int64
+	DeletedCount   int
+	DeletedSize    int64
 	PreservedCount int
-	Errors       []error
-	DryRun       bool
+	Errors         []error
+	DryRun         bool
 }
 
 // ExportInfo contains information about an export

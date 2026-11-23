@@ -90,9 +90,9 @@ func TestDetectFromExtension(t *testing.T) {
 
 func TestDetectFromMagic(t *testing.T) {
 	tests := []struct {
-		name   string
-		data   []byte
-		want   DiskFormat
+		name string
+		data []byte
+		want DiskFormat
 	}{
 		{
 			name: "QCOW2 magic",

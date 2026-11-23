@@ -200,10 +200,10 @@ func (twm *TimeWindowManager) WaitForTimeWindow(job *models.ScheduledJob, checkI
 // GetTimeWindowStatus returns detailed status about time windows
 func (twm *TimeWindowManager) GetTimeWindowStatus(job *models.ScheduledJob) *TimeWindowStatus {
 	status := &TimeWindowStatus{
-		JobID:      job.ID,
-		JobName:    job.Name,
-		InWindow:   false,
-		Windows:    make([]WindowStatus, 0),
+		JobID:    job.ID,
+		JobName:  job.Name,
+		InWindow: false,
+		Windows:  make([]WindowStatus, 0),
 	}
 
 	if job.AdvancedConfig == nil || len(job.AdvancedConfig.TimeWindows) == 0 {

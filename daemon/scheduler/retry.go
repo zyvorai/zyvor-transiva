@@ -24,13 +24,13 @@ type RetryManager struct {
 
 // RetryAttempt tracks retry information for a job
 type RetryAttempt struct {
-	JobID         string
-	JobName       string
-	Attempt       int
-	MaxAttempts   int
-	LastError     string
-	NextRetry     time.Time
-	RetryHistory  []RetryRecord
+	JobID        string
+	JobName      string
+	Attempt      int
+	MaxAttempts  int
+	LastError    string
+	NextRetry    time.Time
+	RetryHistory []RetryRecord
 }
 
 // RetryRecord represents a single retry attempt
@@ -282,7 +282,7 @@ func (rm *RetryManager) GetRetryStats() RetryStats {
 	defer rm.mu.RUnlock()
 
 	stats := RetryStats{
-		TotalRetries:  0,
+		TotalRetries:   0,
 		SuccessRetries: 0,
 		FailedRetries:  0,
 		AvgAttempts:    0,

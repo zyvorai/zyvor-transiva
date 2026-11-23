@@ -12,11 +12,11 @@ import (
 
 // RetryPolicy defines how a job should be retried on failure
 type RetryPolicy struct {
-	MaxAttempts     int           `json:"max_attempts"`      // Maximum retry attempts (0 = no retry)
-	InitialDelay    time.Duration `json:"initial_delay"`     // Initial delay before first retry
-	MaxDelay        time.Duration `json:"max_delay"`         // Maximum delay between retries
-	BackoffStrategy string        `json:"backoff_strategy"`  // linear, exponential, fibonacci
-	RetryOnErrors   []string      `json:"retry_on_errors"`   // Only retry on specific errors (empty = all)
+	MaxAttempts     int           `json:"max_attempts"`     // Maximum retry attempts (0 = no retry)
+	InitialDelay    time.Duration `json:"initial_delay"`    // Initial delay before first retry
+	MaxDelay        time.Duration `json:"max_delay"`        // Maximum delay between retries
+	BackoffStrategy string        `json:"backoff_strategy"` // linear, exponential, fibonacci
+	RetryOnErrors   []string      `json:"retry_on_errors"`  // Only retry on specific errors (empty = all)
 }
 
 // TimeWindow defines when a job is allowed to run
@@ -37,9 +37,9 @@ type JobCondition struct {
 
 // JobDependency represents a dependency on another job
 type JobDependency struct {
-	JobID         string   `json:"job_id"`          // ID of the job this depends on
-	RequiredState string   `json:"required_state"`  // completed, failed, any
-	Timeout       int      `json:"timeout"`         // Max wait time in seconds (0 = no timeout)
+	JobID         string `json:"job_id"`         // ID of the job this depends on
+	RequiredState string `json:"required_state"` // completed, failed, any
+	Timeout       int    `json:"timeout"`        // Max wait time in seconds (0 = no timeout)
 }
 
 // AdvancedScheduleConfig extends the basic schedule with advanced features
@@ -60,7 +60,7 @@ type AdvancedScheduleConfig struct {
 	Conditions []JobCondition `json:"conditions,omitempty"`
 
 	// Concurrency Control
-	MaxConcurrent int  `json:"max_concurrent"` // Max concurrent runs (0 = unlimited)
+	MaxConcurrent int  `json:"max_concurrent"`  // Max concurrent runs (0 = unlimited)
 	SkipIfRunning bool `json:"skip_if_running"` // Skip if already running
 
 	// Notifications

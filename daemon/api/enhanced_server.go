@@ -16,6 +16,7 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
+	"github.com/zyvorai/transiva/config"
 	"github.com/zyvorai/transiva/daemon/auth"
 	"github.com/zyvorai/transiva/daemon/capabilities"
 	"github.com/zyvorai/transiva/daemon/jobs"
@@ -24,7 +25,6 @@ import (
 	"github.com/zyvorai/transiva/daemon/scheduler"
 	"github.com/zyvorai/transiva/daemon/store"
 	"github.com/zyvorai/transiva/daemon/webhooks"
-	"github.com/zyvorai/transiva/config"
 	"github.com/zyvorai/transiva/logger"
 	"github.com/zyvorai/transiva/providers"
 )
@@ -423,9 +423,9 @@ func (es *EnhancedServer) registerEnhancedRoutes() {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Bypass all middleware for WebSocket connections
 		if r.URL.Path == "/ws" ||
-		   r.URL.Path == "/vsphere/metrics/stream" ||
-		   r.URL.Path == "/vsphere/events/stream" ||
-		   r.URL.Path == "/vsphere/tasks/stream" {
+			r.URL.Path == "/vsphere/metrics/stream" ||
+			r.URL.Path == "/vsphere/events/stream" ||
+			r.URL.Path == "/vsphere/tasks/stream" {
 			wsHandler.ServeHTTP(w, r)
 			return
 		}

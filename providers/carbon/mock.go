@@ -11,11 +11,11 @@ import (
 
 // MockProvider implements Provider interface for testing
 type MockProvider struct {
-	zones               []string
-	baseIntensity       float64
-	fossilFreePercent   float64
-	variancePercent     float64 // How much intensity varies
-	simulateRenewables  bool    // Simulate renewable energy peaks
+	zones              []string
+	baseIntensity      float64
+	fossilFreePercent  float64
+	variancePercent    float64 // How much intensity varies
+	simulateRenewables bool    // Simulate renewable energy peaks
 }
 
 // NewMockProvider creates a mock carbon provider for testing

@@ -5,8 +5,8 @@ package openstack
 
 import (
 	"context"
-	"net/http"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/gophercloud/gophercloud/v2"

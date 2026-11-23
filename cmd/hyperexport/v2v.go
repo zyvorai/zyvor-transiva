@@ -28,33 +28,33 @@ type V2VConfig struct {
 	InputPath    string // Source VM/OVF/OVA path
 
 	// KVM-specific options
-	Network      string // Network mapping (e.g., "vmnet0:bridge:br0")
-	Bridge       string // Default bridge name
-	Storage      string // Storage pool name
+	Network string // Network mapping (e.g., "vmnet0:bridge:br0")
+	Bridge  string // Default bridge name
+	Storage string // Storage pool name
 
 	// Conversion options
-	VMName       string // New VM name
-	VirtIODrivers bool  // Install virtio drivers
-	RemoveVMwareTools bool // Remove VMware Tools
-	InstallGuestAgent bool // Install qemu-guest-agent
+	VMName            string // New VM name
+	VirtIODrivers     bool   // Install virtio drivers
+	RemoveVMwareTools bool   // Remove VMware Tools
+	InstallGuestAgent bool   // Install qemu-guest-agent
 
 	// Advanced options
-	Debug        bool
-	Verbose      bool
-	NoTrim       bool   // Don't trim/zero free space
-	InPlace      bool   // Convert in-place (dangerous)
+	Debug   bool
+	Verbose bool
+	NoTrim  bool // Don't trim/zero free space
+	InPlace bool // Convert in-place (dangerous)
 }
 
 // ConversionResult contains conversion output
 type ConversionResult struct {
-	Success      bool
-	VMName       string
-	OutputPath   string
-	LibvirtXML   string
-	DiskImages   []string
-	Warnings     []string
-	Errors       []string
-	Duration     string
+	Success    bool
+	VMName     string
+	OutputPath string
+	LibvirtXML string
+	DiskImages []string
+	Warnings   []string
+	Errors     []string
+	Duration   string
 }
 
 // NewV2VConverter creates a new V2V converter
@@ -90,8 +90,8 @@ func (c *V2VConverter) Convert(ctx context.Context, config *V2VConfig) (*Convers
 	outputStr := string(output)
 
 	result := &ConversionResult{
-		Success: err == nil,
-		VMName:  config.VMName,
+		Success:    err == nil,
+		VMName:     config.VMName,
 		OutputPath: config.OutputPath,
 	}
 
@@ -249,16 +249,16 @@ func ConvertOVAToKVM(ctx context.Context, ovaPath, outputDir, vmName string, log
 	}
 
 	config := &V2VConfig{
-		InputFormat:  "ova",
-		OutputFormat: "local",
-		InputPath:    ovaPath,
-		OutputPath:   outputDir,
-		VMName:       vmName,
-		Bridge:       "virbr0", // Default libvirt bridge
-		VirtIODrivers: true,
+		InputFormat:       "ova",
+		OutputFormat:      "local",
+		InputPath:         ovaPath,
+		OutputPath:        outputDir,
+		VMName:            vmName,
+		Bridge:            "virbr0", // Default libvirt bridge
+		VirtIODrivers:     true,
 		RemoveVMwareTools: true,
 		InstallGuestAgent: true,
-		Verbose:      true,
+		Verbose:           true,
 	}
 
 	result, err := converter.Convert(ctx, config)

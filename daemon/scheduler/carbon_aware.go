@@ -330,14 +330,14 @@ func (s *CarbonAwareScheduler) EstimateCarbonSavings(
 	savings := currentEmissions - bestEmissions
 
 	result := map[string]interface{}{
-		"current_intensity":  current.CarbonIntensity,
-		"current_emissions":  currentEmissions,
-		"best_intensity":     bestIntensity,
-		"best_emissions":     bestEmissions,
-		"savings_kg_co2":     savings,
-		"savings_percent":    (savings / currentEmissions) * 100,
-		"best_time":          bestTime,
-		"recommendation":     "",
+		"current_intensity": current.CarbonIntensity,
+		"current_emissions": currentEmissions,
+		"best_intensity":    bestIntensity,
+		"best_emissions":    bestEmissions,
+		"savings_kg_co2":    savings,
+		"savings_percent":   (savings / currentEmissions) * 100,
+		"best_time":         bestTime,
+		"recommendation":    "",
 	}
 
 	if savings > 0 {
