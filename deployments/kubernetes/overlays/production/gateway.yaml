@@ -1,0 +1,51 @@
+# Optional Gateway API alternative to ingress.yaml, served by Setura
+# (https://github.com/zyvorai/zyvor-setura-gateway). NOT referenced by kustomization.yaml;
+# apply it in place of the Ingress, not as well:
+#   setura gateway install --image ghcr.io/zyvorai/zyvor-setura-gateway:0.7.0 --namespace setura-system | kubectl apply -f -
+#   kubectl apply -f gateway.yaml
+# nginx-specific annotations (rate limits, proxy timeouts/body size, header snippets) have no
+# direct HTTPRoute equivalent and are not carried over; cert-manager must issue the TLS secret.
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: hypervisord-gateway
+  namespace: transiva
+spec:
+  gatewayClassName: setura
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Same
+    - name: https
+      protocol: HTTPS
+      port: 443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: hypervisord-tls-prod
+      allowedRoutes:
+        namespaces:
+          from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: hypervisord-gateway
+  namespace: transiva
+spec:
+  parentRefs:
+    - name: hypervisord-gateway
+  hostnames:
+    - transiva.example.com
+    - api.transiva.example.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: hypervisord
+          port: 8080

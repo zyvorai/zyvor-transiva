@@ -631,3 +631,15 @@ affinity:
 - Docker deployment: ../docker/README.md
 - Kustomize documentation: https://kustomize.io
 - Kubernetes best practices: https://kubernetes.io/docs/concepts/configuration/overview/
+
+## Gateway API alternative (Setura)
+
+Each overlay has a `gateway.yaml` (Gateway + HTTPRoute mirroring `ingress.yaml`, gatewayClassName `setura`). It is not listed in the kustomization; apply it with `kubectl apply -f overlays/<env>/gateway.yaml`. nginx rate-limit, timeout, body-size and header annotations have no HTTPRoute equivalent and are not carried over.
+
+Install the controller once per cluster:
+
+```bash
+setura gateway install --image ghcr.io/zyvorai/zyvor-setura-gateway:0.7.0 --namespace setura-system | kubectl apply -f -
+```
+
+This is optional and off by default; the Ingress is unchanged. Use it instead of the Ingress, not as well.
