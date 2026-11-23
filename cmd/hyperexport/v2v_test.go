@@ -18,7 +18,7 @@ func TestNewV2VConverter(t *testing.T) {
 
 	// This will fail if virt-v2v is not installed, which is expected
 	converter, err := NewV2VConverter(log)
-	
+
 	// We expect this to fail in most test environments
 	if err != nil {
 		t.Logf("virt-v2v not available (expected): %v", err)
@@ -47,10 +47,10 @@ func TestBuildVirtV2VArgs(t *testing.T) {
 	}
 
 	tests := []struct {
-		name       string
-		config     *V2VConfig
-		wantLen    int
-		checkArgs  func([]string) bool
+		name      string
+		config    *V2VConfig
+		wantLen   int
+		checkArgs func([]string) bool
 	}{
 		{
 			name: "basic OVA conversion",
@@ -282,7 +282,7 @@ func TestConvertOVAToKVM(t *testing.T) {
 
 	// This will fail without virt-v2v installed, which is expected
 	err := ConvertOVAToKVM(ctx, "/nonexistent.ova", "/output", "TestVM", log)
-	
+
 	// We expect this to fail
 	if err == nil {
 		t.Error("expected error for nonexistent file or missing virt-v2v")

@@ -69,18 +69,18 @@ type Provider interface {
 
 // Zones for common data centers
 const (
-	ZoneUSEast      = "US-CAL-CISO"      // California
-	ZoneUSWest      = "US-NW-PACW"       // Pacific Northwest
-	ZoneUSCentral   = "US-MISO"          // Midwest
-	ZoneEUCentral   = "DE"               // Germany
-	ZoneEUWest      = "GB"               // UK
-	ZoneEUNorth     = "SE"               // Sweden (very clean)
-	ZoneAPACSing    = "SG"               // Singapore
-	ZoneAPACTokyo   = "JP-TK"            // Tokyo
-	ZoneAPACSydney  = "AUS-NSW"          // Sydney
-	ZoneAPACIndia   = "IN-NO"            // North India
-	ZoneChinaBeijing = "CN-BJ"           // Beijing
-	ZoneChinaShanghai = "CN-SH"          // Shanghai
+	ZoneUSEast        = "US-CAL-CISO" // California
+	ZoneUSWest        = "US-NW-PACW"  // Pacific Northwest
+	ZoneUSCentral     = "US-MISO"     // Midwest
+	ZoneEUCentral     = "DE"          // Germany
+	ZoneEUWest        = "GB"          // UK
+	ZoneEUNorth       = "SE"          // Sweden (very clean)
+	ZoneAPACSing      = "SG"          // Singapore
+	ZoneAPACTokyo     = "JP-TK"       // Tokyo
+	ZoneAPACSydney    = "AUS-NSW"     // Sydney
+	ZoneAPACIndia     = "IN-NO"       // North India
+	ZoneChinaBeijing  = "CN-BJ"       // Beijing
+	ZoneChinaShanghai = "CN-SH"       // Shanghai
 )
 
 // Thresholds for carbon intensity (gCO2/kWh)

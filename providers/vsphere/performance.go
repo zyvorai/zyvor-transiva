@@ -26,13 +26,13 @@ const (
 
 // Counter metric names for different entity types
 var (
-	cpuUsageCounter    = "cpu.usage.average"      // Percentage
-	cpuUsedCounter     = "cpu.usagemhz.average"   // MHz
-	memUsageCounter    = "mem.usage.average"      // Percentage
-	memConsumedCounter = "mem.consumed.average"   // KB
-	diskReadCounter    = "disk.read.average"      // KBps
-	diskWriteCounter   = "disk.write.average"     // KBps
-	netRxCounter       = "net.received.average"   // KBps
+	cpuUsageCounter    = "cpu.usage.average"       // Percentage
+	cpuUsedCounter     = "cpu.usagemhz.average"    // MHz
+	memUsageCounter    = "mem.usage.average"       // Percentage
+	memConsumedCounter = "mem.consumed.average"    // KB
+	diskReadCounter    = "disk.read.average"       // KBps
+	diskWriteCounter   = "disk.write.average"      // KBps
+	netRxCounter       = "net.received.average"    // KBps
 	netTxCounter       = "net.transmitted.average" // KBps
 )
 
@@ -85,7 +85,7 @@ func (c *VSphereClient) GetRealtimeMetrics(ctx context.Context, entityName, enti
 	spec := types.PerfQuerySpec{
 		Entity:     entity.Reference(),
 		MetricId:   metricIDs,
-		MaxSample:  1,        // Latest sample only
+		MaxSample:  1,                // Latest sample only
 		IntervalId: intervalRealtime, // 20 seconds
 	}
 

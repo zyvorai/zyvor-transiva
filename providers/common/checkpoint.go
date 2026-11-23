@@ -28,14 +28,14 @@ type Checkpoint struct {
 
 // FileCheckpoint tracks progress for a single file
 type FileCheckpoint struct {
-	Path           string    `json:"path"`             // Relative path in export
-	URL            string    `json:"url,omitempty"`    // Source URL (if applicable)
-	TotalSize      int64     `json:"total_size"`       // Total file size in bytes
-	DownloadedSize int64     `json:"downloaded_size"`  // Bytes downloaded so far
-	Checksum       string    `json:"checksum"`         // SHA-256 checksum (partial or complete)
-	Status         string    `json:"status"`           // pending, downloading, completed, failed
-	LastModified   time.Time `json:"last_modified"`    // Last update time
-	RetryCount     int       `json:"retry_count"`      // Number of retry attempts
+	Path           string    `json:"path"`            // Relative path in export
+	URL            string    `json:"url,omitempty"`   // Source URL (if applicable)
+	TotalSize      int64     `json:"total_size"`      // Total file size in bytes
+	DownloadedSize int64     `json:"downloaded_size"` // Bytes downloaded so far
+	Checksum       string    `json:"checksum"`        // SHA-256 checksum (partial or complete)
+	Status         string    `json:"status"`          // pending, downloading, completed, failed
+	LastModified   time.Time `json:"last_modified"`   // Last update time
+	RetryCount     int       `json:"retry_count"`     // Number of retry attempts
 }
 
 const CheckpointVersion = "1.0"

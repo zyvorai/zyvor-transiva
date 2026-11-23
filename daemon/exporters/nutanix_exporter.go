@@ -43,9 +43,9 @@ func (e *NutanixExporter) Export(ctx context.Context, job *models.JobDefinition,
 
 	if progressCallback != nil {
 		progressCallback(&models.JobProgress{
-			Phase:            "connecting",
-			PercentComplete:  5,
-			ExportMethod:     string(capabilities.ExportMethodNutanix),
+			Phase:           "connecting",
+			PercentComplete: 5,
+			ExportMethod:    string(capabilities.ExportMethodNutanix),
 		})
 	}
 

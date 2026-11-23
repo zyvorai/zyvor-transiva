@@ -170,6 +170,11 @@ func main() {
 	// Parse flags
 	flag.Parse()
 
+	// Offline artifact verification (no provider connection, nothing executed)
+	if handled, code := runArtifactCommands(os.Stdout, os.Stderr); handled {
+		os.Exit(code)
+	}
+
 	// Set global pterm theme to orange (vision-optimized colors)
 	pterm.ThemeDefault.PrimaryStyle = *styleOrange
 	pterm.ThemeDefault.SecondaryStyle = *styleTeal

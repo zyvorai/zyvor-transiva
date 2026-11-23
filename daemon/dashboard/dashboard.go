@@ -49,20 +49,20 @@ func DefaultConfig() *Config {
 
 // Dashboard provides real-time monitoring
 type Dashboard struct {
-	config         *Config
-	templates      *template.Template
-	upgrader websocket.Upgrader
+	config    *Config
+	templates *template.Template
+	upgrader  websocket.Upgrader
 	// clients maps each connection to a mutex serializing writes to it --
 	// gorilla/websocket requires a single writer per connection at a time,
 	// and both handleWebSocket (initial message) and handleBroadcast can
 	// write to the same connection concurrently.
-	clients        map[*websocket.Conn]*sync.Mutex
-	clientsMu      sync.RWMutex
-	broadcast      chan []byte
-	metrics        *Metrics
-	metricsMu      sync.RWMutex
-	k8sDash        *K8sDashboard
-	customDashMgr  *CustomDashboardManager
+	clients       map[*websocket.Conn]*sync.Mutex
+	clientsMu     sync.RWMutex
+	broadcast     chan []byte
+	metrics       *Metrics
+	metricsMu     sync.RWMutex
+	k8sDash       *K8sDashboard
+	customDashMgr *CustomDashboardManager
 }
 
 // Metrics holds dashboard metrics

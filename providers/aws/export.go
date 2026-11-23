@@ -104,10 +104,10 @@ func (c *Client) ExportSnapshotToS3(ctx context.Context, snapshotID, outputDir s
 
 	amiName := fmt.Sprintf("snapshot-export-%s-%d", snapshotID, time.Now().Unix())
 	registerImageInput := &ec2.RegisterImageInput{
-		Name:         aws.String(amiName),
-		Description:  aws.String(fmt.Sprintf("AMI created from snapshot %s for export", snapshotID)),
-		Architecture: architecture,
-		RootDeviceName: aws.String("/dev/sda1"),
+		Name:               aws.String(amiName),
+		Description:        aws.String(fmt.Sprintf("AMI created from snapshot %s for export", snapshotID)),
+		Architecture:       architecture,
+		RootDeviceName:     aws.String("/dev/sda1"),
 		VirtualizationType: aws.String("hvm"),
 		BlockDeviceMappings: []types.BlockDeviceMapping{
 			{

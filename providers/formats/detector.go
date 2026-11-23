@@ -18,11 +18,11 @@ import (
 type DiskFormat string
 
 const (
-	FormatRAW   DiskFormat = "raw"
-	FormatQCOW2 DiskFormat = "qcow2"
-	FormatVMDK  DiskFormat = "vmdk"
-	FormatVHD   DiskFormat = "vhd"
-	FormatVHDX  DiskFormat = "vhdx"
+	FormatRAW     DiskFormat = "raw"
+	FormatQCOW2   DiskFormat = "qcow2"
+	FormatVMDK    DiskFormat = "vmdk"
+	FormatVHD     DiskFormat = "vhd"
+	FormatVHDX    DiskFormat = "vhdx"
 	FormatUnknown DiskFormat = "unknown"
 )
 
@@ -30,8 +30,8 @@ const (
 var (
 	MagicQCOW2 = []byte{'Q', 'F', 'I', 0xfb} // QCOW2 magic: QFI\xfb
 	MagicVMDK  = []byte{0x4b, 0x44, 0x4d}    // VMDK magic: KDM
-	MagicVHD   = []byte("conectix")           // VHD footer signature
-	MagicVHDX  = []byte("vhdxfile")           // VHDX header signature
+	MagicVHD   = []byte("conectix")          // VHD footer signature
+	MagicVHDX  = []byte("vhdxfile")          // VHDX header signature
 )
 
 // FormatInfo contains information about a detected format

@@ -7,14 +7,15 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack"
-	"github.com/gophercloud/gophercloud/openstack/objectstorage/v1/objects"
-	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack"
+	"github.com/gophercloud/gophercloud/v2/openstack/objectstorage/v1/objects"
+	"github.com/gophercloud/gophercloud/v2/pagination"
 
 	"github.com/zyvorai/transiva/logger"
 	"github.com/zyvorai/transiva/retry"
@@ -59,7 +60,7 @@ func NewOpenStackSwiftStorage(cfg *CloudStorageConfig, log logger.Logger) (*Open
 	}
 
 	// Create provider client
-	provider, err := openstack.AuthenticatedClient(authOpts)
+	provider, err := openstack.AuthenticatedClient(context.Background(), authOpts)
 	if err != nil {
 		return nil, fmt.Errorf("authenticate to Swift: %w", err)
 	}
@@ -131,7 +132,7 @@ func (s *OpenStackSwiftStorage) Upload(ctx context.Context, localPath, remotePat
 			Content: reader,
 		}
 
-		result := objects.Create(s.client, s.container, objectName, createOpts)
+		result := objects.Create(ctx, s.client, s.container, objectName, createOpts)
 		if result.Err != nil {
 			return fmt.Errorf("upload to Swift: %w", result.Err)
 		}
@@ -166,7 +167,7 @@ func (s *OpenStackSwiftStorage) UploadStream(ctx context.Context, reader io.Read
 		Content: uploadReader,
 	}
 
-	result := objects.Create(s.client, s.container, objectName, createOpts)
+	result := objects.Create(ctx, s.client, s.container, objectName, createOpts)
 	if result.Err != nil {
 		return fmt.Errorf("upload stream to Swift: %w", result.Err)
 	}
@@ -191,10 +192,10 @@ func (s *OpenStackSwiftStorage) Download(ctx context.Context, remotePath, localP
 		}
 
 		// Download object
-		downloadResult := objects.Download(s.client, s.container, objectName, nil)
+		downloadResult := objects.Download(ctx, s.client, s.container, objectName, nil)
 		if downloadResult.Err != nil {
 			// Not found errors are not retryable
-			if _, ok := downloadResult.Err.(gophercloud.ErrDefault404); ok {
+			if gophercloud.ResponseCodeIs(downloadResult.Err, http.StatusNotFound) {
 				return retry.IsNonRetryable(fmt.Errorf("object not found: %w", downloadResult.Err))
 			}
 			return fmt.Errorf("download from Swift: %w", downloadResult.Err)
@@ -257,7 +258,7 @@ func (s *OpenStackSwiftStorage) List(ctx context.Context, prefix string) ([]Clou
 			Prefix: objectPrefix,
 		}
 
-		err := objects.List(s.client, s.container, listOpts).EachPage(func(page pagination.Page) (bool, error) {
+		err := objects.List(s.client, s.container, listOpts).EachPage(ctx, func(ctx context.Context, page pagination.Page) (bool, error) {
 			objectList, err := objects.ExtractInfo(page)
 			if err != nil {
 				return false, err
@@ -305,10 +306,10 @@ func (s *OpenStackSwiftStorage) Delete(ctx context.Context, remotePath string) e
 				"attempt", attempt)
 		}
 
-		result := objects.Delete(s.client, s.container, objectName, nil)
+		result := objects.Delete(ctx, s.client, s.container, objectName, nil)
 		if result.Err != nil {
 			// Ignore not found errors on delete
-			if _, ok := result.Err.(gophercloud.ErrDefault404); ok {
+			if gophercloud.ResponseCodeIs(result.Err, http.StatusNotFound) {
 				return nil
 			}
 			return fmt.Errorf("delete object: %w", result.Err)
@@ -323,10 +324,10 @@ func (s *OpenStackSwiftStorage) Exists(ctx context.Context, remotePath string) (
 	objectName := s.buildObjectName(remotePath)
 
 	result, err := s.retryer.DoWithResult(ctx, func(ctx context.Context, attempt int) (interface{}, error) {
-		getResult := objects.Get(s.client, s.container, objectName, nil)
+		getResult := objects.Get(ctx, s.client, s.container, objectName, nil)
 		if getResult.Err != nil {
 			// Check if it's a not found error
-			if _, ok := getResult.Err.(gophercloud.ErrDefault404); ok {
+			if gophercloud.ResponseCodeIs(getResult.Err, http.StatusNotFound) {
 				return false, nil
 			}
 			return false, fmt.Errorf("get object: %w", getResult.Err)

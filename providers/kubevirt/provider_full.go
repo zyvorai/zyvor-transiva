@@ -1,6 +1,7 @@
 // Copyright 2026 Zyvor AI Labs · https://zyvor.dev
 // SPDX-License-Identifier: LicenseRef-Zyvor-Production-2.0
 
+//go:build full
 // +build full
 
 // Full KubeVirt provider implementation - requires KubeVirt dependencies
@@ -248,11 +249,11 @@ func (p *KubeVirtProvider) convertVMToInfo(vm *kubevirtv1.VirtualMachine) *provi
 		IPAddresses: ipAddresses,
 		Tags:        tags,
 		Metadata: map[string]interface{}{
-			"namespace":     vm.Namespace,
-			"uid":           string(vm.UID),
-			"labels":        vm.Labels,
-			"annotations":   vm.Annotations,
-			"running":       vm.Spec.Running,
+			"namespace":   vm.Namespace,
+			"uid":         string(vm.UID),
+			"labels":      vm.Labels,
+			"annotations": vm.Annotations,
+			"running":     vm.Spec.Running,
 		},
 		CreatedAt: &vm.CreationTimestamp.Time,
 	}
@@ -394,8 +395,8 @@ func (p *KubeVirtProvider) ExportVM(ctx context.Context, identifier string, opts
 		Files:      []string{}, // Would be populated from actual export
 		Duration:   time.Since(startTime),
 		Metadata: map[string]interface{}{
-			"namespace":   namespace,
-			"exportName":  exportName,
+			"namespace":    namespace,
+			"exportName":   exportName,
 			"kubernetesVM": true,
 		},
 	}

@@ -25,9 +25,9 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
     ./cmd/hyper2kvm
 
 # Runtime stage
-FROM registry.fedoraproject.org/fedora-minimal:43
+FROM registry.fedoraproject.org/fedora-minimal:44
 
-LABEL org.opencontainers.image.base.name="registry.fedoraproject.org/fedora-minimal:43"
+LABEL org.opencontainers.image.base.name="registry.fedoraproject.org/fedora-minimal:44"
 
 # Install runtime dependencies
 RUN microdnf install -y \

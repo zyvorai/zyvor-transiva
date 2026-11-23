@@ -58,9 +58,9 @@ type MetricsRequest struct {
 }
 
 type MetricsResponse struct {
-	Realtime bool                         `json:"realtime"`
-	Current  *vsphere.PerformanceMetrics  `json:"current,omitempty"`
-	History  *vsphere.MetricsHistory      `json:"history,omitempty"`
+	Realtime bool                        `json:"realtime"`
+	Current  *vsphere.PerformanceMetrics `json:"current,omitempty"`
+	History  *vsphere.MetricsHistory     `json:"history,omitempty"`
 }
 
 // Resource Pool Request/Response Types
@@ -135,9 +135,9 @@ type CloneVMResponse struct {
 }
 
 type BulkCloneRequest struct {
-	Specs          []vsphere.CloneSpec `json:"specs"`
-	MaxConcurrent  int                 `json:"max_concurrent,omitempty"`  // Default: 5
-	StopOnError    bool                `json:"stop_on_error,omitempty"`   // Stop if any clone fails
+	Specs         []vsphere.CloneSpec `json:"specs"`
+	MaxConcurrent int                 `json:"max_concurrent,omitempty"` // Default: 5
+	StopOnError   bool                `json:"stop_on_error,omitempty"`  // Stop if any clone fails
 }
 
 type BulkCloneResponse struct {

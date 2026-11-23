@@ -19,7 +19,7 @@ type Metadata struct {
 	License     string `json:"license"`
 
 	// Provider information
-	ProviderType providers.ProviderType      `json:"provider_type"`
+	ProviderType providers.ProviderType       `json:"provider_type"`
 	Capabilities providers.ExportCapabilities `json:"capabilities"`
 
 	// Plugin requirements

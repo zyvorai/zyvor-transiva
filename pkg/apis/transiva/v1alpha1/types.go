@@ -21,13 +21,13 @@ type BackupJob struct {
 
 // BackupJobSpec is the spec for a BackupJob resource
 type BackupJobSpec struct {
-	Source       BackupSource       `json:"source"`
-	Destination  BackupDestination  `json:"destination"`
-	Format       *BackupFormat      `json:"format,omitempty"`
-	Incremental  *Incremental       `json:"incremental,omitempty"`
-	CarbonAware  *CarbonAware       `json:"carbonAware,omitempty"`
-	Retention    *RetentionPolicy   `json:"retention,omitempty"`
-	Metadata     map[string]string  `json:"metadata,omitempty"`
+	Source      BackupSource      `json:"source"`
+	Destination BackupDestination `json:"destination"`
+	Format      *BackupFormat     `json:"format,omitempty"`
+	Incremental *Incremental      `json:"incremental,omitempty"`
+	CarbonAware *CarbonAware      `json:"carbonAware,omitempty"`
+	Retention   *RetentionPolicy  `json:"retention,omitempty"`
+	Metadata    map[string]string `json:"metadata,omitempty"`
 }
 
 // BackupSource defines the source VM for backup
@@ -42,13 +42,13 @@ type BackupSource struct {
 
 // BackupDestination defines where to store the backup
 type BackupDestination struct {
-	Type         string            `json:"type"`
-	Bucket       string            `json:"bucket,omitempty"`
-	Prefix       string            `json:"prefix,omitempty"`
-	Region       string            `json:"region,omitempty"`
-	StorageClass string            `json:"storageClass,omitempty"`
-	Endpoint     string            `json:"endpoint,omitempty"`
-	Credentials  *CredentialsRef   `json:"credentials,omitempty"`
+	Type         string          `json:"type"`
+	Bucket       string          `json:"bucket,omitempty"`
+	Prefix       string          `json:"prefix,omitempty"`
+	Region       string          `json:"region,omitempty"`
+	StorageClass string          `json:"storageClass,omitempty"`
+	Endpoint     string          `json:"endpoint,omitempty"`
+	Credentials  *CredentialsRef `json:"credentials,omitempty"`
 }
 
 // CredentialsRef references a Kubernetes secret for credentials
@@ -93,16 +93,16 @@ type RetentionPolicy struct {
 
 // BackupJobStatus is the status for a BackupJob resource
 type BackupJobStatus struct {
-	Phase            BackupPhase           `json:"phase,omitempty"`
-	StartTime        *metav1.Time          `json:"startTime,omitempty"`
-	CompletionTime   *metav1.Time          `json:"completionTime,omitempty"`
-	Progress         *BackupProgress       `json:"progress,omitempty"`
-	Conditions       []BackupCondition     `json:"conditions,omitempty"`
-	OutputPath       string                `json:"outputPath,omitempty"`
-	Size             int64                 `json:"size,omitempty"`
-	CarbonIntensity  float64               `json:"carbonIntensity,omitempty"`
-	CarbonSavings    float64               `json:"carbonSavings,omitempty"`
-	Error            string                `json:"error,omitempty"`
+	Phase           BackupPhase       `json:"phase,omitempty"`
+	StartTime       *metav1.Time      `json:"startTime,omitempty"`
+	CompletionTime  *metav1.Time      `json:"completionTime,omitempty"`
+	Progress        *BackupProgress   `json:"progress,omitempty"`
+	Conditions      []BackupCondition `json:"conditions,omitempty"`
+	OutputPath      string            `json:"outputPath,omitempty"`
+	Size            int64             `json:"size,omitempty"`
+	CarbonIntensity float64           `json:"carbonIntensity,omitempty"`
+	CarbonSavings   float64           `json:"carbonSavings,omitempty"`
+	Error           string            `json:"error,omitempty"`
 }
 
 // BackupPhase represents the current phase of a backup job
@@ -127,11 +127,11 @@ type BackupProgress struct {
 
 // BackupCondition represents a condition of a backup job
 type BackupCondition struct {
-	Type               string       `json:"type"`
-	Status             string       `json:"status"`
-	LastTransitionTime metav1.Time  `json:"lastTransitionTime"`
-	Reason             string       `json:"reason,omitempty"`
-	Message            string       `json:"message,omitempty"`
+	Type               string      `json:"type"`
+	Status             string      `json:"status"`
+	LastTransitionTime metav1.Time `json:"lastTransitionTime"`
+	Reason             string      `json:"reason,omitempty"`
+	Message            string      `json:"message,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -158,14 +158,14 @@ type BackupSchedule struct {
 
 // BackupScheduleSpec is the spec for a BackupSchedule resource
 type BackupScheduleSpec struct {
-	Schedule                     string                  `json:"schedule"`
-	Timezone                     string                  `json:"timezone,omitempty"`
-	Suspend                      bool                    `json:"suspend,omitempty"`
-	ConcurrencyPolicy            string                  `json:"concurrencyPolicy,omitempty"`
-	StartingDeadlineSeconds      *int64                  `json:"startingDeadlineSeconds,omitempty"`
-	SuccessfulJobsHistoryLimit   *int32                  `json:"successfulJobsHistoryLimit,omitempty"`
-	FailedJobsHistoryLimit       *int32                  `json:"failedJobsHistoryLimit,omitempty"`
-	JobTemplate                  BackupJobTemplateSpec   `json:"jobTemplate"`
+	Schedule                   string                `json:"schedule"`
+	Timezone                   string                `json:"timezone,omitempty"`
+	Suspend                    bool                  `json:"suspend,omitempty"`
+	ConcurrencyPolicy          string                `json:"concurrencyPolicy,omitempty"`
+	StartingDeadlineSeconds    *int64                `json:"startingDeadlineSeconds,omitempty"`
+	SuccessfulJobsHistoryLimit *int32                `json:"successfulJobsHistoryLimit,omitempty"`
+	FailedJobsHistoryLimit     *int32                `json:"failedJobsHistoryLimit,omitempty"`
+	JobTemplate                BackupJobTemplateSpec `json:"jobTemplate"`
 }
 
 // BackupJobTemplateSpec defines the template for backup jobs
@@ -176,10 +176,10 @@ type BackupJobTemplateSpec struct {
 
 // BackupScheduleStatus is the status for a BackupSchedule resource
 type BackupScheduleStatus struct {
-	Active             []ActiveJob             `json:"active,omitempty"`
-	LastScheduleTime   *metav1.Time            `json:"lastScheduleTime,omitempty"`
-	LastSuccessfulTime *metav1.Time            `json:"lastSuccessfulTime,omitempty"`
-	Conditions         []BackupCondition       `json:"conditions,omitempty"`
+	Active             []ActiveJob       `json:"active,omitempty"`
+	LastScheduleTime   *metav1.Time      `json:"lastScheduleTime,omitempty"`
+	LastSuccessfulTime *metav1.Time      `json:"lastSuccessfulTime,omitempty"`
+	Conditions         []BackupCondition `json:"conditions,omitempty"`
 }
 
 // ActiveJob references an active backup job
@@ -221,13 +221,13 @@ type RestoreJobSpec struct {
 
 // RestoreSource defines the source backup for restore
 type RestoreSource struct {
-	Type          string            `json:"type"`
-	Bucket        string            `json:"bucket,omitempty"`
-	Path          string            `json:"path,omitempty"`
-	Region        string            `json:"region,omitempty"`
-	Endpoint      string            `json:"endpoint,omitempty"`
-	BackupJobRef  *BackupJobRef     `json:"backupJobRef,omitempty"`
-	Credentials   *CredentialsRef   `json:"credentials,omitempty"`
+	Type         string          `json:"type"`
+	Bucket       string          `json:"bucket,omitempty"`
+	Path         string          `json:"path,omitempty"`
+	Region       string          `json:"region,omitempty"`
+	Endpoint     string          `json:"endpoint,omitempty"`
+	BackupJobRef *BackupJobRef   `json:"backupJobRef,omitempty"`
+	Credentials  *CredentialsRef `json:"credentials,omitempty"`
 }
 
 // BackupJobRef references a BackupJob resource
@@ -251,18 +251,18 @@ type RestoreDestination struct {
 
 // RestoreOptions defines restore operation options
 type RestoreOptions struct {
-	PowerOnAfterRestore bool                   `json:"powerOnAfterRestore,omitempty"`
-	Overwrite           bool                   `json:"overwrite,omitempty"`
-	RenameVM            string                 `json:"renameVM,omitempty"`
-	ConvertFormat       string                 `json:"convertFormat,omitempty"`
-	Customization       *VMCustomization       `json:"customization,omitempty"`
+	PowerOnAfterRestore bool             `json:"powerOnAfterRestore,omitempty"`
+	Overwrite           bool             `json:"overwrite,omitempty"`
+	RenameVM            string           `json:"renameVM,omitempty"`
+	ConvertFormat       string           `json:"convertFormat,omitempty"`
+	Customization       *VMCustomization `json:"customization,omitempty"`
 }
 
 // VMCustomization defines VM customization options
 type VMCustomization struct {
-	Memory   string            `json:"memory,omitempty"`
-	CPU      int               `json:"cpu,omitempty"`
-	Networks []NetworkConfig   `json:"networks,omitempty"`
+	Memory   string          `json:"memory,omitempty"`
+	CPU      int             `json:"cpu,omitempty"`
+	Networks []NetworkConfig `json:"networks,omitempty"`
 }
 
 // NetworkConfig defines network configuration
@@ -273,14 +273,14 @@ type NetworkConfig struct {
 
 // RestoreJobStatus is the status for a RestoreJob resource
 type RestoreJobStatus struct {
-	Phase           RestorePhase      `json:"phase,omitempty"`
-	StartTime       *metav1.Time      `json:"startTime,omitempty"`
-	CompletionTime  *metav1.Time      `json:"completionTime,omitempty"`
-	Progress        *RestoreProgress  `json:"progress,omitempty"`
-	Conditions      []BackupCondition `json:"conditions,omitempty"`
-	RestoredVMName  string            `json:"restoredVMName,omitempty"`
-	RestoredVMID    string            `json:"restoredVMID,omitempty"`
-	Error           string            `json:"error,omitempty"`
+	Phase          RestorePhase      `json:"phase,omitempty"`
+	StartTime      *metav1.Time      `json:"startTime,omitempty"`
+	CompletionTime *metav1.Time      `json:"completionTime,omitempty"`
+	Progress       *RestoreProgress  `json:"progress,omitempty"`
+	Conditions     []BackupCondition `json:"conditions,omitempty"`
+	RestoredVMName string            `json:"restoredVMName,omitempty"`
+	RestoredVMID   string            `json:"restoredVMID,omitempty"`
+	Error          string            `json:"error,omitempty"`
 }
 
 // RestorePhase represents the current phase of a restore job

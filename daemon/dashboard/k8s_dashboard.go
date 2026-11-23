@@ -35,26 +35,26 @@ func safeInt32(v int64) int32 {
 
 // K8sMetrics holds Kubernetes-specific metrics
 type K8sMetrics struct {
-	Timestamp         time.Time            `json:"timestamp"`
-	OperatorStatus    string               `json:"operator_status"`
-	OperatorReplicas  int                  `json:"operator_replicas"`
-	BackupJobs        K8sResourceMetrics   `json:"backup_jobs"`
-	BackupSchedules   K8sResourceMetrics   `json:"backup_schedules"`
-	RestoreJobs       K8sResourceMetrics   `json:"restore_jobs"`
-	VirtualMachines   K8sVMMetrics         `json:"virtual_machines"`
-	VMTemplates       K8sResourceMetrics   `json:"vm_templates"`
-	VMSnapshots       K8sResourceMetrics   `json:"vm_snapshots"`
-	RecentBackups     []K8sBackupJobInfo   `json:"recent_backups"`
-	RecentRestores    []K8sRestoreJobInfo  `json:"recent_restores"`
-	ActiveSchedules   []K8sScheduleInfo    `json:"active_schedules"`
-	RunningVMs        []K8sVMInfo          `json:"running_vms"`
-	StoppedVMs        []K8sVMInfo          `json:"stopped_vms"`
-	Templates         []K8sTemplateInfo    `json:"templates"`
-	RecentSnapshots   []K8sSnapshotInfo    `json:"recent_snapshots"`
-	CarbonStats       K8sCarbonStats       `json:"carbon_stats"`
-	ClusterInfo       K8sClusterInfo       `json:"cluster_info"`
-	StorageStats      K8sStorageStats      `json:"storage_stats"`
-	VMResourceStats   K8sVMResourceStats   `json:"vm_resource_stats"`
+	Timestamp        time.Time           `json:"timestamp"`
+	OperatorStatus   string              `json:"operator_status"`
+	OperatorReplicas int                 `json:"operator_replicas"`
+	BackupJobs       K8sResourceMetrics  `json:"backup_jobs"`
+	BackupSchedules  K8sResourceMetrics  `json:"backup_schedules"`
+	RestoreJobs      K8sResourceMetrics  `json:"restore_jobs"`
+	VirtualMachines  K8sVMMetrics        `json:"virtual_machines"`
+	VMTemplates      K8sResourceMetrics  `json:"vm_templates"`
+	VMSnapshots      K8sResourceMetrics  `json:"vm_snapshots"`
+	RecentBackups    []K8sBackupJobInfo  `json:"recent_backups"`
+	RecentRestores   []K8sRestoreJobInfo `json:"recent_restores"`
+	ActiveSchedules  []K8sScheduleInfo   `json:"active_schedules"`
+	RunningVMs       []K8sVMInfo         `json:"running_vms"`
+	StoppedVMs       []K8sVMInfo         `json:"stopped_vms"`
+	Templates        []K8sTemplateInfo   `json:"templates"`
+	RecentSnapshots  []K8sSnapshotInfo   `json:"recent_snapshots"`
+	CarbonStats      K8sCarbonStats      `json:"carbon_stats"`
+	ClusterInfo      K8sClusterInfo      `json:"cluster_info"`
+	StorageStats     K8sStorageStats     `json:"storage_stats"`
+	VMResourceStats  K8sVMResourceStats  `json:"vm_resource_stats"`
 }
 
 // K8sResourceMetrics holds metrics for a specific resource type
@@ -103,30 +103,30 @@ type K8sRestoreJobInfo struct {
 
 // K8sScheduleInfo represents a backup schedule
 type K8sScheduleInfo struct {
-	Name              string    `json:"name"`
-	Namespace         string    `json:"namespace"`
-	Schedule          string    `json:"schedule"`
-	Timezone          string    `json:"timezone"`
-	Suspended         bool      `json:"suspended"`
-	VMName            string    `json:"vm_name"`
-	Provider          string    `json:"provider"`
-	Destination       string    `json:"destination"`
-	LastScheduleTime  time.Time `json:"last_schedule_time,omitempty"`
-	NextScheduleTime  time.Time `json:"next_schedule_time,omitempty"`
-	ActiveJobs        int       `json:"active_jobs"`
-	SuccessfulJobs    int       `json:"successful_jobs"`
-	FailedJobs        int       `json:"failed_jobs"`
+	Name             string    `json:"name"`
+	Namespace        string    `json:"namespace"`
+	Schedule         string    `json:"schedule"`
+	Timezone         string    `json:"timezone"`
+	Suspended        bool      `json:"suspended"`
+	VMName           string    `json:"vm_name"`
+	Provider         string    `json:"provider"`
+	Destination      string    `json:"destination"`
+	LastScheduleTime time.Time `json:"last_schedule_time,omitempty"`
+	NextScheduleTime time.Time `json:"next_schedule_time,omitempty"`
+	ActiveJobs       int       `json:"active_jobs"`
+	SuccessfulJobs   int       `json:"successful_jobs"`
+	FailedJobs       int       `json:"failed_jobs"`
 }
 
 // K8sCarbonStats holds carbon-aware statistics
 type K8sCarbonStats struct {
-	Enabled             bool    `json:"enabled"`
-	TotalBackups        int     `json:"total_backups"`
-	CarbonAwareBackups  int     `json:"carbon_aware_backups"`
-	AvgIntensity        float64 `json:"avg_intensity"`
-	EstimatedSavingsKg  float64 `json:"estimated_savings_kg"`
-	DelayedBackups      int     `json:"delayed_backups"`
-	AvgDelayHours       float64 `json:"avg_delay_hours"`
+	Enabled            bool    `json:"enabled"`
+	TotalBackups       int     `json:"total_backups"`
+	CarbonAwareBackups int     `json:"carbon_aware_backups"`
+	AvgIntensity       float64 `json:"avg_intensity"`
+	EstimatedSavingsKg float64 `json:"estimated_savings_kg"`
+	DelayedBackups     int     `json:"delayed_backups"`
+	AvgDelayHours      float64 `json:"avg_delay_hours"`
 }
 
 // K8sClusterInfo holds Kubernetes cluster information
@@ -142,43 +142,43 @@ type K8sClusterInfo struct {
 
 // K8sStorageStats holds storage statistics
 type K8sStorageStats struct {
-	TotalBackupSize  int64              `json:"total_backup_size"`
-	BackupsByDest    map[string]int     `json:"backups_by_dest"`
-	SizeByDest       map[string]int64   `json:"size_by_dest"`
-	AvgBackupSize    int64              `json:"avg_backup_size"`
-	LargestBackup    string             `json:"largest_backup"`
-	LargestBackupSize int64             `json:"largest_backup_size"`
+	TotalBackupSize   int64            `json:"total_backup_size"`
+	BackupsByDest     map[string]int   `json:"backups_by_dest"`
+	SizeByDest        map[string]int64 `json:"size_by_dest"`
+	AvgBackupSize     int64            `json:"avg_backup_size"`
+	LargestBackup     string           `json:"largest_backup"`
+	LargestBackupSize int64            `json:"largest_backup_size"`
 }
 
 // K8sVMMetrics holds VM-specific metrics
 type K8sVMMetrics struct {
-	Total      int            `json:"total"`
-	Running    int            `json:"running"`
-	Stopped    int            `json:"stopped"`
-	Creating   int            `json:"creating"`
-	Migrating  int            `json:"migrating"`
-	Failed     int            `json:"failed"`
-	ByNode     map[string]int `json:"by_node"`
+	Total     int            `json:"total"`
+	Running   int            `json:"running"`
+	Stopped   int            `json:"stopped"`
+	Creating  int            `json:"creating"`
+	Migrating int            `json:"migrating"`
+	Failed    int            `json:"failed"`
+	ByNode    map[string]int `json:"by_node"`
 }
 
 // K8sVMInfo represents a virtual machine
 type K8sVMInfo struct {
-	Name              string             `json:"name"`
-	Namespace         string             `json:"namespace"`
-	Phase             string             `json:"phase"`
-	CPUs              int32              `json:"cpus"`
-	Memory            string             `json:"memory"`
-	NodeName          string             `json:"node_name"`
-	IPAddresses       []string           `json:"ip_addresses"`
-	DiskCount         int                `json:"disk_count"`
-	NetworkCount      int                `json:"network_count"`
-	CreationTimestamp time.Time          `json:"creation_timestamp"`
-	StartTime         time.Time          `json:"start_time,omitempty"`
-	CarbonIntensity   float64            `json:"carbon_intensity,omitempty"`
-	GuestAgentConnected bool             `json:"guest_agent_connected"`
-	CPUUsage          string             `json:"cpu_usage,omitempty"`
-	MemoryUsage       string             `json:"memory_usage,omitempty"`
-	Conditions        []VMConditionInfo  `json:"conditions"`
+	Name                string            `json:"name"`
+	Namespace           string            `json:"namespace"`
+	Phase               string            `json:"phase"`
+	CPUs                int32             `json:"cpus"`
+	Memory              string            `json:"memory"`
+	NodeName            string            `json:"node_name"`
+	IPAddresses         []string          `json:"ip_addresses"`
+	DiskCount           int               `json:"disk_count"`
+	NetworkCount        int               `json:"network_count"`
+	CreationTimestamp   time.Time         `json:"creation_timestamp"`
+	StartTime           time.Time         `json:"start_time,omitempty"`
+	CarbonIntensity     float64           `json:"carbon_intensity,omitempty"`
+	GuestAgentConnected bool              `json:"guest_agent_connected"`
+	CPUUsage            string            `json:"cpu_usage,omitempty"`
+	MemoryUsage         string            `json:"memory_usage,omitempty"`
+	Conditions          []VMConditionInfo `json:"conditions"`
 }
 
 // VMConditionInfo represents a VM condition
@@ -192,44 +192,44 @@ type VMConditionInfo struct {
 
 // K8sTemplateInfo represents a VM template
 type K8sTemplateInfo struct {
-	Name        string    `json:"name"`
-	Namespace   string    `json:"namespace"`
-	DisplayName string    `json:"display_name"`
-	Description string    `json:"description"`
-	OSType      string    `json:"os_type"`
-	OSVersion   string    `json:"os_version"`
-	Version     string    `json:"version"`
-	DefaultCPUs int32     `json:"default_cpus"`
-	DefaultMemory string  `json:"default_memory"`
-	Tags        []string  `json:"tags"`
-	Ready       bool      `json:"ready"`
-	UsageCount  int32     `json:"usage_count"`
+	Name          string   `json:"name"`
+	Namespace     string   `json:"namespace"`
+	DisplayName   string   `json:"display_name"`
+	Description   string   `json:"description"`
+	OSType        string   `json:"os_type"`
+	OSVersion     string   `json:"os_version"`
+	Version       string   `json:"version"`
+	DefaultCPUs   int32    `json:"default_cpus"`
+	DefaultMemory string   `json:"default_memory"`
+	Tags          []string `json:"tags"`
+	Ready         bool     `json:"ready"`
+	UsageCount    int32    `json:"usage_count"`
 }
 
 // K8sSnapshotInfo represents a VM snapshot
 type K8sSnapshotInfo struct {
-	Name              string    `json:"name"`
-	Namespace         string    `json:"namespace"`
-	VMName            string    `json:"vm_name"`
-	Phase             string    `json:"phase"`
-	IncludeMemory     bool      `json:"include_memory"`
-	Size              string    `json:"size,omitempty"`
-	SizeBytes         int64     `json:"size_bytes,omitempty"`
-	CreationTime      time.Time `json:"creation_time,omitempty"`
-	ReadyToRestore    bool      `json:"ready_to_restore"`
-	Description       string    `json:"description,omitempty"`
+	Name           string    `json:"name"`
+	Namespace      string    `json:"namespace"`
+	VMName         string    `json:"vm_name"`
+	Phase          string    `json:"phase"`
+	IncludeMemory  bool      `json:"include_memory"`
+	Size           string    `json:"size,omitempty"`
+	SizeBytes      int64     `json:"size_bytes,omitempty"`
+	CreationTime   time.Time `json:"creation_time,omitempty"`
+	ReadyToRestore bool      `json:"ready_to_restore"`
+	Description    string    `json:"description,omitempty"`
 }
 
 // K8sVMResourceStats holds VM resource usage statistics
 type K8sVMResourceStats struct {
-	TotalCPUs          int32   `json:"total_cpus"`
-	TotalMemoryGi      float64 `json:"total_memory_gi"`
-	AvgCPUsPerVM       float64 `json:"avg_cpus_per_vm"`
-	AvgMemoryPerVMGi   float64 `json:"avg_memory_per_vm_gi"`
-	TotalDiskSize      int64   `json:"total_disk_size"`
+	TotalCPUs          int32          `json:"total_cpus"`
+	TotalMemoryGi      float64        `json:"total_memory_gi"`
+	AvgCPUsPerVM       float64        `json:"avg_cpus_per_vm"`
+	AvgMemoryPerVMGi   float64        `json:"avg_memory_per_vm_gi"`
+	TotalDiskSize      int64          `json:"total_disk_size"`
 	VMsBySize          map[string]int `json:"vms_by_size"` // small, medium, large
-	CarbonAwareVMs     int     `json:"carbon_aware_vms"`
-	AvgCarbonIntensity float64 `json:"avg_carbon_intensity"`
+	CarbonAwareVMs     int            `json:"carbon_aware_vms"`
+	AvgCarbonIntensity float64        `json:"avg_carbon_intensity"`
 }
 
 // K8sDashboard extends the main dashboard with Kubernetes-specific features
@@ -1171,7 +1171,7 @@ func (kd *K8sDashboard) handleVMDetail(w http.ResponseWriter, r *http.Request) {
 func (kd *K8sDashboard) handleVMMetrics(w http.ResponseWriter, r *http.Request) {
 	kd.k8sMetricsMu.RLock()
 	metrics := struct {
-		VMs K8sVMMetrics       `json:"vms"`
+		VMs       K8sVMMetrics       `json:"vms"`
 		Resources K8sVMResourceStats `json:"resources"`
 	}{
 		VMs:       kd.k8sMetrics.VirtualMachines,
@@ -1253,12 +1253,12 @@ func (kd *K8sDashboard) collectVMMetrics(ctx context.Context) error {
 
 		// Build VM info
 		vmInfo := K8sVMInfo{
-			Name:      GetStringField(obj, "metadata", "name"),
-			Namespace: GetStringField(obj, "metadata", "namespace"),
-			Phase:     phase,
-			CPUs:      safeInt32(GetInt64Field(obj, "spec", "cpus")),
-			Memory:    GetStringField(obj, "spec", "memory"),
-			NodeName:  nodeName,
+			Name:            GetStringField(obj, "metadata", "name"),
+			Namespace:       GetStringField(obj, "metadata", "namespace"),
+			Phase:           phase,
+			CPUs:            safeInt32(GetInt64Field(obj, "spec", "cpus")),
+			Memory:          GetStringField(obj, "spec", "memory"),
+			NodeName:        nodeName,
 			CarbonIntensity: GetFloat64Field(obj, "status", "carbonIntensity"),
 		}
 
@@ -1678,7 +1678,7 @@ func (kd *K8sDashboard) handleClusters(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		// List all clusters
 		clusters := kd.multiCluster.ListClusters()
-		
+
 		type ClusterInfo struct {
 			ID          string    `json:"id"`
 			Name        string    `json:"name"`
@@ -1690,7 +1690,7 @@ func (kd *K8sDashboard) handleClusters(w http.ResponseWriter, r *http.Request) {
 			Error       string    `json:"error,omitempty"`
 			IsPrimary   bool      `json:"is_primary"`
 		}
-		
+
 		infos := make([]ClusterInfo, 0, len(clusters))
 		for _, cluster := range clusters {
 			infos = append(infos, ClusterInfo{
@@ -1705,7 +1705,7 @@ func (kd *K8sDashboard) handleClusters(w http.ResponseWriter, r *http.Request) {
 				IsPrimary:   cluster.ID == kd.multiCluster.primary,
 			})
 		}
-		
+
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(infos); err != nil {
 			fmt.Printf("Error encoding clusters response: %v\n", err)
@@ -1719,26 +1719,25 @@ func (kd *K8sDashboard) handleClusters(w http.ResponseWriter, r *http.Request) {
 			Context   string `json:"context"`
 			Namespace string `json:"namespace"`
 		}
-		
+
 		var req AddClusterRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		
+
 		if err := kd.multiCluster.AddCluster(req.ID, req.Name, req.Context, req.Namespace); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		
+
 		// Enable multi-cluster mode
 		kd.multiClusterMode = true
-		
+
 		w.WriteHeader(http.StatusCreated)
 		if err := json.NewEncoder(w).Encode(map[string]string{"status": "cluster added"}); err != nil {
 			fmt.Printf("Error encoding cluster-added response: %v\n", err)
 		}
-
 
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -1750,12 +1749,12 @@ func (kd *K8sDashboard) handleClusterDetail(w http.ResponseWriter, r *http.Reque
 	// Extract cluster ID from path
 	path := r.URL.Path[len("/api/k8s/clusters/"):]
 	clusterID := strings.TrimSuffix(path, "/")
-	
+
 	if clusterID == "" {
 		http.Error(w, "Cluster ID required", http.StatusBadRequest)
 		return
 	}
-	
+
 	switch r.Method {
 	case http.MethodGet:
 		// Get cluster metrics
@@ -1764,12 +1763,11 @@ func (kd *K8sDashboard) handleClusterDetail(w http.ResponseWriter, r *http.Reque
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
-		
+
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(cluster.Metrics); err != nil {
 			fmt.Printf("Error encoding cluster metrics response: %v\n", err)
 		}
-
 
 	case http.MethodDelete:
 		// Remove cluster
@@ -1777,14 +1775,14 @@ func (kd *K8sDashboard) handleClusterDetail(w http.ResponseWriter, r *http.Reque
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		
+
 		// Disable multi-cluster mode if no clusters left
 		if kd.multiCluster.GetClusterCount() == 0 {
 			kd.multiClusterMode = false
 		}
-		
+
 		w.WriteHeader(http.StatusNoContent)
-		
+
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
@@ -1796,22 +1794,22 @@ func (kd *K8sDashboard) handleClusterSwitch(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	
+
 	type SwitchRequest struct {
 		ClusterID string `json:"cluster_id"`
 	}
-	
+
 	var req SwitchRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	
+
 	if err := kd.multiCluster.SetPrimaryCluster(req.ClusterID); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(map[string]string{"status": "primary cluster switched"}); err != nil {
 		fmt.Printf("Error encoding cluster-switch response: %v\n", err)
@@ -1825,9 +1823,9 @@ func (kd *K8sDashboard) handleAggregatedMetrics(w http.ResponseWriter, r *http.R
 		kd.handleK8sMetrics(w, r)
 		return
 	}
-	
+
 	aggregated := kd.multiCluster.GetAggregatedMetrics()
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(aggregated); err != nil {
 		fmt.Printf("Error encoding aggregated metrics response: %v\n", err)

@@ -46,22 +46,22 @@ type CustomDashboard struct {
 
 // DashboardLayout defines the dashboard grid layout
 type DashboardLayout struct {
-	Columns int             `json:"columns"` // Grid columns (default: 12)
-	Rows    int             `json:"rows"`    // Grid rows
-	Widgets []WidgetConfig  `json:"widgets"`
+	Columns int            `json:"columns"` // Grid columns (default: 12)
+	Rows    int            `json:"rows"`    // Grid rows
+	Widgets []WidgetConfig `json:"widgets"`
 }
 
 // WidgetConfig defines a widget position and configuration
 type WidgetConfig struct {
-	ID       string                 `json:"id"`
-	Type     string                 `json:"type"` // chart, table, metric, console, etc.
-	Title    string                 `json:"title"`
-	X        int                    `json:"x"`      // Column position
-	Y        int                    `json:"y"`      // Row position
-	Width    int                    `json:"width"`  // Widget width in columns
-	Height   int                    `json:"height"` // Widget height in rows
-	Config   map[string]interface{} `json:"config,omitempty"` // Widget-specific config
-	Refresh  int                    `json:"refresh,omitempty"` // Auto-refresh interval in seconds
+	ID      string                 `json:"id"`
+	Type    string                 `json:"type"` // chart, table, metric, console, etc.
+	Title   string                 `json:"title"`
+	X       int                    `json:"x"`                 // Column position
+	Y       int                    `json:"y"`                 // Row position
+	Width   int                    `json:"width"`             // Widget width in columns
+	Height  int                    `json:"height"`            // Widget height in rows
+	Config  map[string]interface{} `json:"config,omitempty"`  // Widget-specific config
+	Refresh int                    `json:"refresh,omitempty"` // Auto-refresh interval in seconds
 }
 
 // CustomDashboardManager manages custom dashboards

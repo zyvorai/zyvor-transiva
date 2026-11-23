@@ -448,7 +448,7 @@ func (c *VSphereClient) ExportOVF(ctx context.Context, vmPath string, opts Expor
 
 		pipelineConfig := &common.H2KVMConfig{
 			Enabled:            true,
-			H2KVMPath:      opts.H2KVMPath,
+			H2KVMPath:          opts.H2KVMPath,
 			ManifestPath:       result.ManifestPath,
 			LibvirtIntegration: opts.LibvirtIntegration,
 			LibvirtURI:         opts.LibvirtURI,

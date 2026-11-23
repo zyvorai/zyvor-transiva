@@ -106,13 +106,13 @@ func (sm *SystemMetrics) GetWSConnections() int64 {
 // GetSnapshot returns a snapshot of all metrics
 func (sm *SystemMetrics) GetSnapshot() Snapshot {
 	return Snapshot{
-		HTTPRequests:     sm.GetHTTPRequests(),
-		HTTPErrors:       sm.GetHTTPErrors(),
-		AvgResponseTime:  sm.GetAvgResponseTime(),
-		UptimeSeconds:    sm.GetUptime(),
-		MemoryUsage:      sm.GetMemoryUsage(),
-		GoroutineCount:   sm.GetGoroutineCount(),
-		WSConnections:    sm.GetWSConnections(),
+		HTTPRequests:    sm.GetHTTPRequests(),
+		HTTPErrors:      sm.GetHTTPErrors(),
+		AvgResponseTime: sm.GetAvgResponseTime(),
+		UptimeSeconds:   sm.GetUptime(),
+		MemoryUsage:     sm.GetMemoryUsage(),
+		GoroutineCount:  sm.GetGoroutineCount(),
+		WSConnections:   sm.GetWSConnections(),
 	}
 }
 

@@ -28,37 +28,37 @@ type ExportOptions struct {
 	ManifestTargetFormat    string // Target format for h2kvm conversion (e.g., "qcow2")
 
 	// Pipeline integration options
-	EnablePipeline         bool          // Enable h2kvm pipeline after export
-	H2KVMPath          string        // Path to h2kvm binary (auto-detect if empty)
-	PipelineTimeout        time.Duration // Timeout for pipeline process
-	StreamPipelineOutput   bool          // Stream h2kvm output to console
-	PipelineDryRun         bool          // Run h2kvm in dry-run mode
+	EnablePipeline       bool          // Enable h2kvm pipeline after export
+	H2KVMPath            string        // Path to h2kvm binary (auto-detect if empty)
+	PipelineTimeout      time.Duration // Timeout for pipeline process
+	StreamPipelineOutput bool          // Stream h2kvm output to console
+	PipelineDryRun       bool          // Run h2kvm in dry-run mode
 
 	// Pipeline stage configuration
-	PipelineInspect        bool          // Enable INSPECT stage (collect guest info)
-	PipelineFix            bool          // Enable FIX stage (fix fstab, grub, initramfs)
-	PipelineConvert        bool          // Enable CONVERT stage (convert to qcow2)
-	PipelineValidate       bool          // Enable VALIDATE stage (check image integrity)
-	PipelineCompress       bool          // Enable qcow2 compression
-	PipelineCompressLevel  int           // Compression level 1-9 (default 6)
+	PipelineInspect       bool // Enable INSPECT stage (collect guest info)
+	PipelineFix           bool // Enable FIX stage (fix fstab, grub, initramfs)
+	PipelineConvert       bool // Enable CONVERT stage (convert to qcow2)
+	PipelineValidate      bool // Enable VALIDATE stage (check image integrity)
+	PipelineCompress      bool // Enable qcow2 compression
+	PipelineCompressLevel int  // Compression level 1-9 (default 6)
 
 	// EnableRDP enables Windows RDP in h2kvm firstboot (nil = auto: true for Windows guests).
 	EnableRDP *bool
 
 	// Libvirt integration options
-	LibvirtIntegration     bool          // Enable libvirt VM definition after conversion
-	LibvirtURI             string        // Libvirt connection URI (default: qemu:///system)
-	LibvirtAutoStart       bool          // Enable VM auto-start in libvirt
-	LibvirtNetworkBridge   string        // Network bridge (default: virbr0)
-	LibvirtStoragePool     string        // Storage pool (default: default)
+	LibvirtIntegration   bool   // Enable libvirt VM definition after conversion
+	LibvirtURI           string // Libvirt connection URI (default: qemu:///system)
+	LibvirtAutoStart     bool   // Enable VM auto-start in libvirt
+	LibvirtNetworkBridge string // Network bridge (default: virbr0)
+	LibvirtStoragePool   string // Storage pool (default: default)
 
 	// h2kvm daemon options
-	H2KVMDaemon        bool          // Use systemd daemon instead of direct execution
-	H2KVMInstance      string        // Systemd instance name (e.g., "vsphere-prod")
-	H2KVMWatchDir      string        // Watch directory for daemon mode (default: /var/lib/h2kvm/queue)
-	H2KVMOutputDir     string        // Output directory for daemon mode (default: /var/lib/h2kvm/output)
-	H2KVMPollInterval  int           // Poll interval in seconds (default: 5)
-	H2KVMDaemonTimeout int           // Daemon timeout in minutes (default: 60)
+	H2KVMDaemon        bool   // Use systemd daemon instead of direct execution
+	H2KVMInstance      string // Systemd instance name (e.g., "vsphere-prod")
+	H2KVMWatchDir      string // Watch directory for daemon mode (default: /var/lib/h2kvm/queue)
+	H2KVMOutputDir     string // Output directory for daemon mode (default: /var/lib/h2kvm/output)
+	H2KVMPollInterval  int    // Poll interval in seconds (default: 5)
+	H2KVMDaemonTimeout int    // Daemon timeout in minutes (default: 60)
 
 	// Progress callback for TUI/API integration
 	ProgressCallback func(current, total int64, fileName string, fileIndex, totalFiles int)
@@ -92,11 +92,11 @@ func DefaultExportOptions() ExportOptions {
 		PipelineFix:           true,
 		PipelineConvert:       true,
 		PipelineValidate:      true,
-		PipelineCompress:       true,
-		PipelineCompressLevel:  6,
-		LibvirtURI:             "qemu:///system",
-		LibvirtNetworkBridge:   "virbr0",
-		LibvirtStoragePool:     "default",
+		PipelineCompress:      true,
+		PipelineCompressLevel: 6,
+		LibvirtURI:            "qemu:///system",
+		LibvirtNetworkBridge:  "virbr0",
+		LibvirtStoragePool:    "default",
 
 		// Daemon defaults
 		H2KVMDaemon:        false,

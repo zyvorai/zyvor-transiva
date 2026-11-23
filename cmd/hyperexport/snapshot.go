@@ -20,13 +20,13 @@ type SnapshotManager struct {
 
 // SnapshotConfig configures snapshot behavior
 type SnapshotConfig struct {
-	CreateSnapshot   bool   // Create snapshot before export
-	DeleteAfter      bool   // Delete snapshot after export
-	SnapshotName     string // Custom snapshot name
-	SnapshotMemory   bool   // Include memory in snapshot
-	SnapshotQuiesce  bool   // Quiesce filesystem before snapshot
-	KeepSnapshots    int    // Number of snapshots to keep (0 = unlimited)
-	SnapshotTimeout  time.Duration
+	CreateSnapshot  bool   // Create snapshot before export
+	DeleteAfter     bool   // Delete snapshot after export
+	SnapshotName    string // Custom snapshot name
+	SnapshotMemory  bool   // Include memory in snapshot
+	SnapshotQuiesce bool   // Quiesce filesystem before snapshot
+	KeepSnapshots   int    // Number of snapshots to keep (0 = unlimited)
+	SnapshotTimeout time.Duration
 }
 
 // SnapshotResult contains snapshot operation results

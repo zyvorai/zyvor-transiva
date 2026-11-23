@@ -4,12 +4,12 @@
 package api
 
 import (
-	"net/url"
 	"context"
 	"crypto/subtle"
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -37,13 +37,13 @@ type WSClient struct {
 
 // WSHub manages WebSocket clients and broadcasts
 type WSHub struct {
-	clients          map[*WSClient]bool
-	broadcast        chan WSMessage
-	register         chan *WSClient
-	unregister       chan *WSClient
-	mu               sync.RWMutex
-	onDisconnect     func() // Callback for client disconnect
-	logger           interface {
+	clients      map[*WSClient]bool
+	broadcast    chan WSMessage
+	register     chan *WSClient
+	unregister   chan *WSClient
+	mu           sync.RWMutex
+	onDisconnect func() // Callback for client disconnect
+	logger       interface {
 		Debug(msg string, keysAndValues ...interface{})
 		Info(msg string, keysAndValues ...interface{})
 		Warn(msg string, keysAndValues ...interface{})

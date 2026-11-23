@@ -30,28 +30,28 @@ type VCenterConfig struct {
 
 // JobDefinition represents a VM export job from YAML/JSON
 type JobDefinition struct {
-	ID           string         `json:"id" yaml:"id"`
-	Name         string         `json:"name" yaml:"name"`
-	VMPath       string         `json:"vm_path" yaml:"vm_path"`
-	OutputPath   string         `json:"output_path,omitempty" yaml:"output_path,omitempty"` // For CLI/YAML
-	OutputDir    string         `json:"output_dir,omitempty" yaml:"output_dir,omitempty"`   // For web API
-	Options      *ExportOptions `json:"options,omitempty" yaml:"options,omitempty"`
-	VCenterURL   string         `json:"vcenter_url,omitempty" yaml:"vcenter_url,omitempty"` // For CLI/YAML
-	VCenter      *VCenterConfig `json:"vcenter,omitempty" yaml:"vcenter,omitempty"`         // For web API
-	Username     string         `json:"username,omitempty" yaml:"username,omitempty"`
-	Password     string         `json:"-" yaml:"password,omitempty"` // Excluded from JSON to prevent exposure
-	Insecure     bool           `json:"insecure,omitempty" yaml:"insecure,omitempty"`
-	Datacenter   string         `json:"datacenter,omitempty" yaml:"datacenter,omitempty"`
-	Format       string         `json:"format,omitempty" yaml:"format,omitempty"`               // Export format: qcow2, raw, vmdk, ova
-	Provider     string         `json:"provider,omitempty" yaml:"provider,omitempty"`             // vsphere, nutanix, etc.
-	ExportMethod string         `json:"export_method,omitempty" yaml:"export_method,omitempty"` // ctl, govc, ovftool, web, nutanix, or "" for auto
-	Method       string         `json:"method,omitempty" yaml:"method,omitempty"`               // Alias for ExportMethod (web API compatibility)
-	Compress       bool   `json:"compress,omitempty" yaml:"compress,omitempty"`
-	Thin           bool   `json:"thin,omitempty" yaml:"thin,omitempty"`
-	EnablePipeline bool   `json:"enable_pipeline,omitempty" yaml:"enable_pipeline,omitempty"`
-	EnableRDP      *bool  `json:"enable_rdp,omitempty" yaml:"enable_rdp,omitempty"`
+	ID             string                 `json:"id" yaml:"id"`
+	Name           string                 `json:"name" yaml:"name"`
+	VMPath         string                 `json:"vm_path" yaml:"vm_path"`
+	OutputPath     string                 `json:"output_path,omitempty" yaml:"output_path,omitempty"` // For CLI/YAML
+	OutputDir      string                 `json:"output_dir,omitempty" yaml:"output_dir,omitempty"`   // For web API
+	Options        *ExportOptions         `json:"options,omitempty" yaml:"options,omitempty"`
+	VCenterURL     string                 `json:"vcenter_url,omitempty" yaml:"vcenter_url,omitempty"` // For CLI/YAML
+	VCenter        *VCenterConfig         `json:"vcenter,omitempty" yaml:"vcenter,omitempty"`         // For web API
+	Username       string                 `json:"username,omitempty" yaml:"username,omitempty"`
+	Password       string                 `json:"-" yaml:"password,omitempty"` // Excluded from JSON to prevent exposure
+	Insecure       bool                   `json:"insecure,omitempty" yaml:"insecure,omitempty"`
+	Datacenter     string                 `json:"datacenter,omitempty" yaml:"datacenter,omitempty"`
+	Format         string                 `json:"format,omitempty" yaml:"format,omitempty"`               // Export format: qcow2, raw, vmdk, ova
+	Provider       string                 `json:"provider,omitempty" yaml:"provider,omitempty"`           // vsphere, nutanix, etc.
+	ExportMethod   string                 `json:"export_method,omitempty" yaml:"export_method,omitempty"` // ctl, govc, ovftool, web, nutanix, or "" for auto
+	Method         string                 `json:"method,omitempty" yaml:"method,omitempty"`               // Alias for ExportMethod (web API compatibility)
+	Compress       bool                   `json:"compress,omitempty" yaml:"compress,omitempty"`
+	Thin           bool                   `json:"thin,omitempty" yaml:"thin,omitempty"`
+	EnablePipeline bool                   `json:"enable_pipeline,omitempty" yaml:"enable_pipeline,omitempty"`
+	EnableRDP      *bool                  `json:"enable_rdp,omitempty" yaml:"enable_rdp,omitempty"`
 	CreatedAt      time.Time              `json:"created_at" yaml:"created_at"`
-	Metadata     map[string]interface{} `json:"metadata,omitempty" yaml:"metadata,omitempty"` // Additional metadata (e.g., carbon-aware settings)
+	Metadata       map[string]interface{} `json:"metadata,omitempty" yaml:"metadata,omitempty"` // Additional metadata (e.g., carbon-aware settings)
 }
 
 // Redacted returns a copy of JobDefinition with sensitive fields redacted for logging
@@ -70,17 +70,17 @@ type ExportOptions struct {
 	ShowIndividualProgress bool `json:"show_individual_progress,omitempty" yaml:"show_individual_progress,omitempty"`
 
 	// Pipeline integration options
-	EnablePipeline      bool   `json:"enable_pipeline,omitempty" yaml:"enable_pipeline,omitempty"`
-	H2KVMPath           string `json:"h2kvm_path,omitempty" yaml:"h2kvm_path,omitempty"`
+	EnablePipeline bool   `json:"enable_pipeline,omitempty" yaml:"enable_pipeline,omitempty"`
+	H2KVMPath      string `json:"h2kvm_path,omitempty" yaml:"h2kvm_path,omitempty"`
 	// Deprecated: use H2KVMPath. Kept for configs written before the h2kvm rename.
-	Hyper2KVMPath       string `json:"hyper2kvm_path,omitempty" yaml:"hyper2kvm_path,omitempty"`
-	PipelineInspect     bool   `json:"pipeline_inspect,omitempty" yaml:"pipeline_inspect,omitempty"`
-	PipelineFix         bool   `json:"pipeline_fix,omitempty" yaml:"pipeline_fix,omitempty"`
-	PipelineConvert     bool   `json:"pipeline_convert,omitempty" yaml:"pipeline_convert,omitempty"`
-	PipelineValidate    bool   `json:"pipeline_validate,omitempty" yaml:"pipeline_validate,omitempty"`
-	PipelineCompress    bool   `json:"pipeline_compress,omitempty" yaml:"pipeline_compress,omitempty"`
-	CompressLevel       int    `json:"compress_level,omitempty" yaml:"compress_level,omitempty"`
-	EnableRDP           *bool  `json:"enable_rdp,omitempty" yaml:"enable_rdp,omitempty"`
+	Hyper2KVMPath    string `json:"hyper2kvm_path,omitempty" yaml:"hyper2kvm_path,omitempty"`
+	PipelineInspect  bool   `json:"pipeline_inspect,omitempty" yaml:"pipeline_inspect,omitempty"`
+	PipelineFix      bool   `json:"pipeline_fix,omitempty" yaml:"pipeline_fix,omitempty"`
+	PipelineConvert  bool   `json:"pipeline_convert,omitempty" yaml:"pipeline_convert,omitempty"`
+	PipelineValidate bool   `json:"pipeline_validate,omitempty" yaml:"pipeline_validate,omitempty"`
+	PipelineCompress bool   `json:"pipeline_compress,omitempty" yaml:"pipeline_compress,omitempty"`
+	CompressLevel    int    `json:"compress_level,omitempty" yaml:"compress_level,omitempty"`
+	EnableRDP        *bool  `json:"enable_rdp,omitempty" yaml:"enable_rdp,omitempty"`
 
 	// Libvirt integration options
 	LibvirtIntegration bool   `json:"libvirt_integration,omitempty" yaml:"libvirt_integration,omitempty"`
@@ -242,12 +242,12 @@ type CancelResponse struct {
 
 // DaemonStatus represents the overall status of the daemon
 type DaemonStatus struct {
-	Version        string    `json:"version"`
-	Uptime         string    `json:"uptime"`
-	TotalJobs      int       `json:"total_jobs"`
-	RunningJobs    int       `json:"running_jobs"`
-	CompletedJobs  int       `json:"completed_jobs"`
-	FailedJobs     int       `json:"failed_jobs"`
-	CancelledJobs  int       `json:"cancelled_jobs"`
-	Timestamp      time.Time `json:"timestamp"`
+	Version       string    `json:"version"`
+	Uptime        string    `json:"uptime"`
+	TotalJobs     int       `json:"total_jobs"`
+	RunningJobs   int       `json:"running_jobs"`
+	CompletedJobs int       `json:"completed_jobs"`
+	FailedJobs    int       `json:"failed_jobs"`
+	CancelledJobs int       `json:"cancelled_jobs"`
+	Timestamp     time.Time `json:"timestamp"`
 }

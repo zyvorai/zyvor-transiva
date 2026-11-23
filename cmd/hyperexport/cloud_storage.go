@@ -63,14 +63,14 @@ type CloudStorageConfig struct {
 	Endpoint    string             // Custom endpoint (for S3-compatible storage)
 	AccessKey   string             // AWS access key, Azure account name
 	SecretKey   string             // AWS secret key, Azure account key
-	Host         string             // SFTP host
-	Port         int                // SFTP port
-	Username     string             // SFTP username
-	Password     string             // SFTP password
-	PrivateKey   string             // SFTP private key path
-	HostKeyPath  string             // SFTP known_hosts file path (optional, defaults to ~/.ssh/known_hosts)
-	Prefix       string             // Path prefix in bucket/container
-	RetryConfig  *retry.RetryConfig // Retry configuration (nil = use defaults)
+	Host        string             // SFTP host
+	Port        int                // SFTP port
+	Username    string             // SFTP username
+	Password    string             // SFTP password
+	PrivateKey  string             // SFTP private key path
+	HostKeyPath string             // SFTP known_hosts file path (optional, defaults to ~/.ssh/known_hosts)
+	Prefix      string             // Path prefix in bucket/container
+	RetryConfig *retry.RetryConfig // Retry configuration (nil = use defaults)
 
 	// OCI-specific fields
 	OCINamespace   string // OCI Object Storage namespace

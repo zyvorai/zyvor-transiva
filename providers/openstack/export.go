@@ -11,8 +11,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/gophercloud/gophercloud/openstack/imageservice/v2/imagedata"
-	"github.com/gophercloud/gophercloud/openstack/imageservice/v2/images"
+	"github.com/gophercloud/gophercloud/v2/openstack/image/v2/imagedata"
+	"github.com/gophercloud/gophercloud/v2/openstack/image/v2/images"
 
 	"github.com/zyvorai/transiva/progress"
 	"github.com/zyvorai/transiva/retry"
@@ -119,7 +119,7 @@ func (c *Client) ExportInstance(ctx context.Context, instanceID string, opts *Ex
 // downloadImage downloads an image from Glance
 func (c *Client) downloadImage(ctx context.Context, imageID string, opts *ExportOptions) (string, int64, error) {
 	// Get image details
-	image, err := images.Get(c.imageClient, imageID).Extract()
+	image, err := images.Get(ctx, c.imageClient, imageID).Extract()
 	if err != nil {
 		return "", 0, fmt.Errorf("get image: %w", err)
 	}
@@ -159,7 +159,7 @@ func (c *Client) downloadFromGlance(ctx context.Context, imageID, localPath stri
 		}
 
 		// Download image data
-		reader, err := imagedata.Download(c.imageClient, imageID).Extract()
+		reader, err := imagedata.Download(ctx, c.imageClient, imageID).Extract()
 		if err != nil {
 			return nil, fmt.Errorf("download image: %w", err)
 		}
@@ -258,7 +258,7 @@ func (c *Client) UploadImage(ctx context.Context, localPath, imageName string, p
 			c.logger.Info("retrying create image", "image_name", imageName, "attempt", attempt)
 		}
 
-		image, err := images.Create(c.imageClient, createOpts).Extract()
+		image, err := images.Create(ctx, c.imageClient, createOpts).Extract()
 		if err != nil {
 			return nil, fmt.Errorf("create image: %w", err)
 		}
@@ -269,9 +269,9 @@ func (c *Client) UploadImage(ctx context.Context, localPath, imageName string, p
 			"size", fileInfo.Size())
 
 		// Upload image data
-		if err := imagedata.Upload(c.imageClient, image.ID, file).ExtractErr(); err != nil {
+		if err := imagedata.Upload(ctx, c.imageClient, image.ID, file).ExtractErr(); err != nil {
 			// Cleanup failed image
-			images.Delete(c.imageClient, image.ID)
+			images.Delete(ctx, c.imageClient, image.ID)
 			return nil, fmt.Errorf("upload image data: %w", err)
 		}
 

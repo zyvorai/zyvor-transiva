@@ -25,11 +25,11 @@ type Manager struct {
 
 // Config holds plugin manager configuration
 type Config struct {
-	Enabled     bool     `yaml:"enabled" json:"enabled"`
-	Directories []string `yaml:"directories" json:"directories"`
-	EnabledList []string `yaml:"enabled" json:"enabled_list"`   // Specific plugins to enable
+	Enabled      bool     `yaml:"enabled" json:"enabled"`
+	Directories  []string `yaml:"directories" json:"directories"`
+	EnabledList  []string `yaml:"enabled" json:"enabled_list"`   // Specific plugins to enable
 	DisabledList []string `yaml:"disabled" json:"disabled_list"` // Specific plugins to disable
-	HotReload   bool     `yaml:"hot_reload" json:"hot_reload"`
+	HotReload    bool     `yaml:"hot_reload" json:"hot_reload"`
 }
 
 // NewManager creates a new plugin manager

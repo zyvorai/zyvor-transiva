@@ -19,11 +19,11 @@ import (
 
 // VMListResponse represents the response for VM listing (vSphere legacy format).
 type VMListResponse struct {
-	Provider  string           `json:"provider,omitempty"`
-	VMs       []vsphere.VMInfo `json:"vms,omitempty"`
+	Provider  string              `json:"provider,omitempty"`
+	VMs       []vsphere.VMInfo    `json:"vms,omitempty"`
 	Unified   []*providers.VMInfo `json:"unified_vms,omitempty"`
-	Total     int              `json:"total"`
-	Timestamp time.Time        `json:"timestamp"`
+	Total     int                 `json:"total"`
+	Timestamp time.Time           `json:"timestamp"`
 }
 
 // UnifiedVMListResponse is the provider-neutral VM list response.

@@ -153,9 +153,9 @@ func TestFishCompletion(t *testing.T) {
 
 func TestInstallInstructions(t *testing.T) {
 	tests := []struct {
-		name       string
-		shell      Shell
-		want       []string
+		name        string
+		shell       Shell
+		want        []string
 		expectEmpty bool
 	}{
 		{

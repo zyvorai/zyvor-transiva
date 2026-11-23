@@ -136,6 +136,11 @@ func NewServer(manager *jobs.Manager, detector *capabilities.Detector, log logge
 
 	// Migration Validation & Testing
 	mux.HandleFunc("/migration/validate", s.handleValidateMigration)
+
+	// Offline artifact verification (confined to artifact_root; nothing executed)
+	mux.HandleFunc("/artifacts/verify-bundle", s.handleVerifyBundle)
+	mux.HandleFunc("/artifacts/inspect-ova", s.handleInspectOVA)
+	mux.HandleFunc("/artifacts/verify-signature", s.handleVerifySignature)
 	mux.HandleFunc("/migration/verify", s.handleVerifyMigration)
 	mux.HandleFunc("/migration/check-compatibility", s.handleCheckCompatibility)
 	mux.HandleFunc("/migration/test", s.handleTestMigration)

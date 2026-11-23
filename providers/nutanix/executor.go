@@ -17,12 +17,12 @@ import (
 
 // PickupResult summarizes pickup execution for one VM.
 type PickupResult struct {
-	VMName     string
-	VMUUID     string
-	Disks      []ConvertedDisk
-	Manifest   *manifest.ArtifactManifest
+	VMName       string
+	VMUUID       string
+	Disks        []ConvertedDisk
+	Manifest     *manifest.ArtifactManifest
 	ManifestPath string
-	Duration   time.Duration
+	Duration     time.Duration
 }
 
 // ExecutePickupVM converts disks for a single VM and builds an Artifact Manifest v1.0.

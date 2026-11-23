@@ -15,9 +15,9 @@ import (
 
 // VMInfoResponse returns VM details from a provider.
 type VMInfoResponse struct {
-	Provider  string              `json:"provider"`
-	VM        *providers.VMInfo   `json:"vm"`
-	Timestamp time.Time           `json:"timestamp"`
+	Provider  string            `json:"provider"`
+	VM        *providers.VMInfo `json:"vm"`
+	Timestamp time.Time         `json:"timestamp"`
 }
 
 func (s *Server) handleVMInfo(w http.ResponseWriter, r *http.Request) {

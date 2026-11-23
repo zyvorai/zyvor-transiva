@@ -38,17 +38,17 @@ func (c *Calculator) initializePricing() {
 		Provider: ProviderS3,
 		Region:   "us-east-1",
 		StoragePricing: map[StorageClass]float64{
-			StorageS3Standard:    0.023,  // per GB/month
-			StorageS3IA:          0.0125, // per GB/month
-			StorageS3OneZoneIA:   0.01,   // per GB/month
-			StorageS3Glacier:     0.004,  // per GB/month
+			StorageS3Standard:    0.023,   // per GB/month
+			StorageS3IA:          0.0125,  // per GB/month
+			StorageS3OneZoneIA:   0.01,    // per GB/month
+			StorageS3Glacier:     0.004,   // per GB/month
 			StorageS3DeepArchive: 0.00099, // per GB/month
 		},
 		TransferPricing: map[string]float64{
-			"first_10tb":  0.09,  // per GB
-			"next_40tb":   0.085, // per GB
-			"next_100tb":  0.07,  // per GB
-			"over_150tb":  0.05,  // per GB
+			"first_10tb": 0.09,  // per GB
+			"next_40tb":  0.085, // per GB
+			"next_100tb": 0.07,  // per GB
+			"over_150tb": 0.05,  // per GB
 		},
 		RequestPricing: &RequestPricing{
 			PutCost:    0.005,  // per 1000 requests
@@ -57,12 +57,12 @@ func (c *Calculator) initializePricing() {
 			DeleteCost: 0,      // free
 		},
 		RetrievalPricing: map[StorageClass]float64{
-			StorageS3Glacier:     0.01,   // per GB
-			StorageS3DeepArchive: 0.02,   // per GB
+			StorageS3Glacier:     0.01, // per GB
+			StorageS3DeepArchive: 0.02, // per GB
 		},
 		MinimumStorage: map[StorageClass]int{
-			StorageS3IA:        30,  // days
-			StorageS3Glacier:   90,  // days
+			StorageS3IA:          30,  // days
+			StorageS3Glacier:     90,  // days
 			StorageS3DeepArchive: 180, // days
 		},
 		UpdatedAt: time.Now(),
@@ -78,10 +78,10 @@ func (c *Calculator) initializePricing() {
 			StorageAzureArchive: 0.002,  // per GB/month
 		},
 		TransferPricing: map[string]float64{
-			"first_100gb":  0,     // free
-			"first_10tb":   0.087, // per GB
-			"next_40tb":    0.083, // per GB
-			"over_50tb":    0.07,  // per GB
+			"first_100gb": 0,     // free
+			"first_10tb":  0.087, // per GB
+			"next_40tb":   0.083, // per GB
+			"over_50tb":   0.07,  // per GB
 		},
 		RequestPricing: &RequestPricing{
 			PutCost:    0.005,  // per 10000 requests
@@ -90,8 +90,8 @@ func (c *Calculator) initializePricing() {
 			DeleteCost: 0,
 		},
 		RetrievalPricing: map[StorageClass]float64{
-			StorageAzureCool:    0.01,  // per GB
-			StorageAzureArchive: 0.02,  // per GB
+			StorageAzureCool:    0.01, // per GB
+			StorageAzureArchive: 0.02, // per GB
 		},
 		MinimumStorage: map[StorageClass]int{
 			StorageAzureCool:    30,  // days
@@ -111,9 +111,9 @@ func (c *Calculator) initializePricing() {
 			StorageGCSArchive:  0.0012, // per GB/month
 		},
 		TransferPricing: map[string]float64{
-			"first_1tb":   0.12,  // per GB
-			"next_9tb":    0.11,  // per GB
-			"over_10tb":   0.08,  // per GB
+			"first_1tb": 0.12, // per GB
+			"next_9tb":  0.11, // per GB
+			"over_10tb": 0.08, // per GB
 		},
 		RequestPricing: &RequestPricing{
 			PutCost:    0.05,  // per 10000 requests
@@ -122,9 +122,9 @@ func (c *Calculator) initializePricing() {
 			DeleteCost: 0,
 		},
 		RetrievalPricing: map[StorageClass]float64{
-			StorageGCSNearline: 0.01,  // per GB
-			StorageGCSColdline: 0.02,  // per GB
-			StorageGCSArchive:  0.05,  // per GB
+			StorageGCSNearline: 0.01, // per GB
+			StorageGCSColdline: 0.02, // per GB
+			StorageGCSArchive:  0.05, // per GB
 		},
 		MinimumStorage: map[StorageClass]int{
 			StorageGCSNearline: 30,  // days

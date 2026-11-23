@@ -559,10 +559,10 @@ func TestParseNetworkInfo(t *testing.T) {
 	server := setupTestBasicServer(t)
 
 	tests := []struct {
-		name         string
-		networkName  string
-		output       string
-		checkFunc    func(*testing.T, LibvirtNetwork)
+		name        string
+		networkName string
+		output      string
+		checkFunc   func(*testing.T, LibvirtNetwork)
 	}{
 		{
 			name:        "complete info",

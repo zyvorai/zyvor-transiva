@@ -174,10 +174,10 @@ func TestHandleVerifyMigrationWithTests(t *testing.T) {
 	server := setupTestBasicServer(t)
 
 	reqBody := map[string]interface{}{
-		"vm_name":       "test-vm",
-		"boot_test":     true,
-		"checksum_test": true,
-		"source_path":   "/tmp/source.vmdk",
+		"vm_name":        "test-vm",
+		"boot_test":      true,
+		"checksum_test":  true,
+		"source_path":    "/tmp/source.vmdk",
 		"converted_path": "/tmp/converted.qcow2",
 	}
 
@@ -301,7 +301,7 @@ func TestHandleCheckCompatibilityWithFeatures(t *testing.T) {
 	server := setupTestBasicServer(t)
 
 	reqBody := map[string]interface{}{
-		"vm_name": "test-vm",
+		"vm_name":  "test-vm",
 		"features": []string{"nested-virtualization", "tpm", "secureboot"},
 	}
 

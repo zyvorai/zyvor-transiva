@@ -23,6 +23,10 @@ refresh_rate: 100ms
 # ===== Daemon API Server =====
 daemon_addr: "0.0.0.0:8080"
 
+# Directory the /artifacts/* verification endpoints may read (offline integrity
+# checks of exports; nothing is executed). Empty disables them. Env: ARTIFACT_ROOT
+# artifact_root: "/var/lib/transiva/exports"
+
 # ===== Phase 1.1: Connection Pooling =====
 # Reuse vSphere connections to reduce overhead for concurrent exports
 connection_pool:

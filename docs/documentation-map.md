@@ -20,6 +20,8 @@ Every page in this repository's `docs/` folder. Back to the [README](../README.m
 
 | Page | What it covers |
 |---|---|
+| [artifact-verification.md](artifact-verification.md) | Offline verification of exported bundles, OVAs and manifest signatures |
+| [RESEARCH.md](RESEARCH.md) | Migration-tooling research and ranked ideas |
 | [support-and-related.md](support-and-related.md) | Development, support and related repositories |
 | [social/README.md](social/README.md) | How the social images are built |
 | [LICENSE_HEADERS.md](LICENSE_HEADERS.md) | Licence header convention |

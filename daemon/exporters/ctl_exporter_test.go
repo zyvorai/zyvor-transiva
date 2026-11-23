@@ -160,11 +160,11 @@ func TestCTLExporter_monitorProgress(t *testing.T) {
 	exporter := NewCTLExporter("/usr/bin/hyperctl", log)
 
 	tests := []struct {
-		name             string
-		input            string
-		expectCallback   bool
-		expectedPercent  float64
-		expectedStep     string
+		name            string
+		input           string
+		expectCallback  bool
+		expectedPercent float64
+		expectedStep    string
 	}{
 		{
 			name:            "valid progress line",
@@ -177,7 +177,7 @@ func TestCTLExporter_monitorProgress(t *testing.T) {
 			name:            "multiple progress lines",
 			input:           "Starting export\nProgress: 25.0%\nProgress: 50.0%\nDone\n",
 			expectCallback:  true,
-			expectedPercent: 50.0,  // Last progress update
+			expectedPercent: 50.0, // Last progress update
 			expectedStep:    "Progress: 50.0%",
 		},
 		{

@@ -27,6 +27,9 @@ type Config struct {
 	ShowETA         bool
 	RefreshRate     time.Duration
 	DaemonAddr      string // Daemon API server address
+	// ArtifactRoot confines the /artifacts/* verification endpoints to one
+	// directory tree (env ARTIFACT_ROOT). Empty disables them.
+	ArtifactRoot string `yaml:"artifact_root"`
 
 	// Connection pool configuration (Phase 1.1)
 	ConnectionPool *ConnectionPoolConfig
@@ -228,6 +231,7 @@ func FromEnvironment() *Config {
 		ShowETA:         getEnv("SHOW_ETA", "1") == "1",
 		RefreshRate:     time.Duration(refreshRate) * time.Millisecond,
 		DaemonAddr:      getEnv("DAEMON_ADDR", "localhost:8080"),
+		ArtifactRoot:    os.Getenv("ARTIFACT_ROOT"),
 		Nutanix: &NutanixConfig{
 			Host:      os.Getenv("NUTANIX_HOST"),
 			Port:      nutanixPortFromEnv(),
@@ -514,6 +518,9 @@ func (c *Config) MergeWithEnv() *Config {
 	}
 	if os.Getenv("DAEMON_ADDR") != "" {
 		c.DaemonAddr = envCfg.DaemonAddr
+	}
+	if os.Getenv("ARTIFACT_ROOT") != "" {
+		c.ArtifactRoot = envCfg.ArtifactRoot
 	}
 
 	return c

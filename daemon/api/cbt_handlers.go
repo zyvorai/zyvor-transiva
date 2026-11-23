@@ -34,12 +34,12 @@ type CBTStatusRequest struct {
 
 // CBTStatusResponse represents the CBT status for a VM
 type CBTStatusResponse struct {
-	VMPath         string                       `json:"vm_path"`
-	CBTEnabled     bool                         `json:"cbt_enabled"`
-	Disks          []incremental.DiskMetadata   `json:"disks"`
-	LastExport     *incremental.ExportMetadata  `json:"last_export,omitempty"`
-	CanIncremental bool                         `json:"can_incremental"`
-	Reason         string                       `json:"reason,omitempty"`
+	VMPath         string                      `json:"vm_path"`
+	CBTEnabled     bool                        `json:"cbt_enabled"`
+	Disks          []incremental.DiskMetadata  `json:"disks"`
+	LastExport     *incremental.ExportMetadata `json:"last_export,omitempty"`
+	CanIncremental bool                        `json:"can_incremental"`
+	Reason         string                      `json:"reason,omitempty"`
 }
 
 // IncrementalAnalysisRequest represents a request to analyze incremental export potential

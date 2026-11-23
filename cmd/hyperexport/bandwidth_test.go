@@ -168,8 +168,8 @@ func TestAdaptiveBandwidthLimiter_RecordError(t *testing.T) {
 }
 
 func TestAdaptiveBandwidthLimiter_MinMaxBounds(t *testing.T) {
-	minRate := int64(1 * 1024 * 1024)   // 1 MB/s
-	maxRate := int64(10 * 1024 * 1024)  // 10 MB/s
+	minRate := int64(1 * 1024 * 1024)  // 1 MB/s
+	maxRate := int64(10 * 1024 * 1024) // 10 MB/s
 	adaptive := NewAdaptiveBandwidthLimiter(minRate, maxRate, logger.NewTestLogger(t))
 
 	// Current speed should be within bounds

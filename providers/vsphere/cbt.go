@@ -162,41 +162,41 @@ func (c *VSphereClient) QueryChangedDiskAreas(ctx context.Context, vmPath string
 	return []incremental.ChangedBlock{}, nil
 
 	/*
-	vm, err := c.finder.VirtualMachine(ctx, vmPath)
-	if err != nil {
-		return nil, fmt.Errorf("find VM: %w", err)
-	}
+		vm, err := c.finder.VirtualMachine(ctx, vmPath)
+		if err != nil {
+			return nil, fmt.Errorf("find VM: %w", err)
+		}
 
-	// Create DiskChangeInfo request
-	req := types.QueryChangedDiskAreas{
-		This:      vm.Reference(),
-		Snapshot:  snapshot,
-		DeviceKey: diskKey,
-		StartOffset: startOffset,
-		ChangeId:  prevChangeID,
-	}
+		// Create DiskChangeInfo request
+		req := types.QueryChangedDiskAreas{
+			This:      vm.Reference(),
+			Snapshot:  snapshot,
+			DeviceKey: diskKey,
+			StartOffset: startOffset,
+			ChangeId:  prevChangeID,
+		}
 
-	// Call QueryChangedDiskAreas API - needs proper VM method
-	res, err := vm.QueryChangedDiskAreas(ctx, &req)
-	if err != nil {
-		return nil, fmt.Errorf("query changed disk areas: %w", err)
-	}
+		// Call QueryChangedDiskAreas API - needs proper VM method
+		res, err := vm.QueryChangedDiskAreas(ctx, &req)
+		if err != nil {
+			return nil, fmt.Errorf("query changed disk areas: %w", err)
+		}
 
-	// Convert response to our format
-	var changedBlocks []incremental.ChangedBlock
+		// Convert response to our format
+		var changedBlocks []incremental.ChangedBlock
 
-	for _, change := range res.Returnval.ChangedArea {
-		changedBlocks = append(changedBlocks, incremental.ChangedBlock{
-			Offset: change.Start,
-			Length: change.Length,
-		})
-	}
+		for _, change := range res.Returnval.ChangedArea {
+			changedBlocks = append(changedBlocks, incremental.ChangedBlock{
+				Offset: change.Start,
+				Length: change.Length,
+			})
+		}
 
-	c.logger.Debug("found changed blocks",
-		"count", len(changedBlocks),
-		"total_changed_mb", calculateTotalSize(changedBlocks)/(1024*1024))
+		c.logger.Debug("found changed blocks",
+			"count", len(changedBlocks),
+			"total_changed_mb", calculateTotalSize(changedBlocks)/(1024*1024))
 
-	return changedBlocks, nil
+		return changedBlocks, nil
 	*/
 }
 
@@ -321,4 +321,3 @@ func findSnapshotByID(tree []types.VirtualMachineSnapshotTree, id string) *types
 	}
 	return nil
 }
-

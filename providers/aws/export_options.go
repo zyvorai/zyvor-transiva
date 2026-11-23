@@ -9,14 +9,14 @@ import (
 )
 
 type ExportOptions struct {
-	Format                 string        // "vmdk" (AWS default)
-	OutputPath             string        // Local download path
-	S3Bucket               string        // S3 bucket for export task
-	S3Prefix               string        // S3 prefix for exported files
-	ExportTimeout          time.Duration // Timeout for export task
-	DownloadFromS3         bool          // Download to local after export
-	DeleteFromS3AfterDownload bool       // Clean up S3 after download
-	ShowProgress           bool          // Show progress bars
+	Format                    string        // "vmdk" (AWS default)
+	OutputPath                string        // Local download path
+	S3Bucket                  string        // S3 bucket for export task
+	S3Prefix                  string        // S3 prefix for exported files
+	ExportTimeout             time.Duration // Timeout for export task
+	DownloadFromS3            bool          // Download to local after export
+	DeleteFromS3AfterDownload bool          // Clean up S3 after download
+	ShowProgress              bool          // Show progress bars
 
 	// Progress callback for TUI/API integration
 	ProgressCallback func(current, total int64, fileName string, fileIndex, totalFiles int)

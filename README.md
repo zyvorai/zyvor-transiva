@@ -183,6 +183,7 @@ Transiva is source-available, maintained by **Susant Sahani** at [Zyvor AI Labs]
 | Quick start, binaries, Nutanix | [docs/quick-start.md](docs/quick-start.md) · [docs/nutanix.md](docs/nutanix.md) |
 | The renewal trap and why teams start here | [docs/renewal-trap.md](docs/renewal-trap.md) |
 | Where Transiva fits in the Zyvor suite | [docs/suite-fit.md](docs/suite-fit.md) |
+| Verify exports offline (bundle, OVA, signatures) | [docs/artifact-verification.md](docs/artifact-verification.md) |
 | REST API | [openapi.yaml](openapi.yaml) |
 
 ---

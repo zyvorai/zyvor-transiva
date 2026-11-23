@@ -7,10 +7,23 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
-// Validate validates an Artifact Manifest against the v1.0 schema
+// Validate validates an Artifact Manifest against the v1.0 schema and checks
+// that every disk file exists.
 func Validate(m *ArtifactManifest) error {
+	return validate(m, true)
+}
+
+// ValidateSchema validates an Artifact Manifest against the v1.0 schema
+// without touching the filesystem. Use it for manifests received from
+// untrusted callers, where probing local_path would leak file existence.
+func ValidateSchema(m *ArtifactManifest) error {
+	return validate(m, false)
+}
+
+func validate(m *ArtifactManifest, checkFiles bool) error {
 	if m == nil {
 		return fmt.Errorf("manifest is nil")
 	}
@@ -29,7 +42,7 @@ func Validate(m *ArtifactManifest) error {
 	diskIDs := make(map[string]bool)
 
 	for i, disk := range m.Disks {
-		if err := validateDisk(disk, i, diskIDs); err != nil {
+		if err := validateDiskOpt(disk, i, diskIDs, checkFiles); err != nil {
 			return err
 		}
 	}
@@ -53,6 +66,10 @@ func Validate(m *ArtifactManifest) error {
 
 // validateDisk validates a single disk artifact
 func validateDisk(disk DiskArtifact, index int, diskIDs map[string]bool) error {
+	return validateDiskOpt(disk, index, diskIDs, true)
+}
+
+func validateDiskOpt(disk DiskArtifact, index int, diskIDs map[string]bool, checkFiles bool) error {
 	// Validate ID (REQUIRED)
 	if disk.ID == "" {
 		return fmt.Errorf("disks[%d].id is required", index)
@@ -87,14 +104,20 @@ func validateDisk(disk DiskArtifact, index int, diskIDs map[string]bool) error {
 		return fmt.Errorf("disks[%d].local_path is required", index)
 	}
 
-	// Check if file exists
-	absPath, err := filepath.Abs(disk.LocalPath)
-	if err != nil {
-		return fmt.Errorf("disks[%d].local_path %q is invalid: %w", index, disk.LocalPath, err)
+	if strings.ContainsRune(disk.LocalPath, 0) {
+		return fmt.Errorf("disks[%d].local_path contains a NUL byte", index)
 	}
 
-	if _, err := os.Stat(absPath); err != nil {
-		return fmt.Errorf("disks[%d].local_path not found: %q: %w", index, absPath, err)
+	// Check if file exists
+	if checkFiles {
+		absPath, err := filepath.Abs(disk.LocalPath)
+		if err != nil {
+			return fmt.Errorf("disks[%d].local_path %q is invalid: %w", index, disk.LocalPath, err)
+		}
+
+		if _, err := os.Stat(absPath); err != nil {
+			return fmt.Errorf("disks[%d].local_path not found: %q: %w", index, absPath, err)
+		}
 	}
 
 	// Validate checksum format if present (OPTIONAL)
@@ -162,32 +185,40 @@ func validateNIC(nic NICInfo, index int) error {
 	return nil
 }
 
-// VerifyChecksums verifies checksums for all disks that have them
+// VerifyChecksums verifies checksums for all disks that have them. Every disk
+// is checked even after a mismatch; results holds one entry per checksummed
+// disk and the returned error lists every mismatch. A malformed checksum value
+// is reported as an error for that disk rather than panicking.
 func VerifyChecksums(m *ArtifactManifest) (map[string]bool, error) {
 	results := make(map[string]bool)
+	var problems []string
 
 	for _, disk := range m.Disks {
 		if disk.Checksum == "" {
 			continue // Skip disks without checksums
 		}
 
-		// Extract expected checksum (strip "sha256:" prefix)
-		expectedChecksum := disk.Checksum[7:] // Remove "sha256:"
+		if !ValidChecksumPattern.MatchString(disk.Checksum) {
+			results[disk.ID] = false
+			problems = append(problems, fmt.Sprintf("disk %q has a malformed checksum %q (want sha256:<64 lowercase hex>)", disk.ID, disk.Checksum))
+			continue
+		}
+		expectedChecksum := strings.TrimPrefix(disk.Checksum, "sha256:")
 
-		// Compute actual checksum
 		actualChecksum, err := ComputeSHA256(disk.LocalPath)
 		if err != nil {
 			return results, fmt.Errorf("compute checksum for disk %q: %w", disk.ID, err)
 		}
 
-		// Compare
 		match := actualChecksum == expectedChecksum
 		results[disk.ID] = match
-
 		if !match {
-			return results, fmt.Errorf("checksum mismatch for disk %q: expected %s, got %s", disk.ID, expectedChecksum, actualChecksum)
+			problems = append(problems, fmt.Sprintf("checksum mismatch for disk %q: expected %s, got %s", disk.ID, expectedChecksum, actualChecksum))
 		}
 	}
 
+	if len(problems) > 0 {
+		return results, fmt.Errorf("%s", strings.Join(problems, "; "))
+	}
 	return results, nil
 }
