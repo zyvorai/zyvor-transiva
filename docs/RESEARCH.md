@@ -89,3 +89,24 @@ artifacts, and testability without a hypervisor.
 * https://www.veeam.com/blog/instant-vm-recovery.html (partial relevance only)
 
 Not read (404/403): Azure Migrate tutorial, DMTF OVF page.
+
+## Round 3: pre-flight and bundle hygiene
+
+Read this round: https://github.com/konveyor/forklift-validation (fetched).
+Taken from web-search result summaries, not full pages, so re-check before
+quoting externally: Forklift/MTV validation docs (Critical / Warning /
+Information concerns; MTV-3715 notes users cannot tell which concerns block a
+plan), Azure Migrate assessment docs (Ready / Conditionally ready / Not ready;
+UEFI, disk size and OS as readiness inputs), virt-v2v-inspector man page
+(`<virtual-size>` vs estimated `<allocated>` per disk; `--print-estimate`),
+Proxmox import wizard and Veeam migration guides (snapshots do not carry
+over; VirtIO drivers for Windows; remove VMware Tools).
+
+| Finding | Idea | Decision |
+|---|---|---|
+| Forklift and Azure Migrate give a graded verdict before any data moves | `-assess-manifest`: readiness from manifest metadata with three severities and an explicit "does not predict boot" disclaimer | **Built** |
+| virt-v2v-inspector estimates space before converting | `-estimate-space`: bounds (not a measurement) from declared virtual size and file size; fit verdict against free space | **Built** |
+| Receivers copy whole directories; leftovers inflate the bundle or hide forgotten disks | `-report-strays` on verify-bundle | **Built** |
+| Exports from other tools often arrive with a manifest lacking checksums | `-fill-checksums` (records current bytes, warns it is not provenance, never replaces) | **Built** |
+| Snapshot detection (Forklift, Proxmox) | needs live provider inventory; manifests do not record snapshots | Deferred |
+| Plan-level "blocking vs ignorable" taxonomy (MTV-3715) | Severities here are fixed: error blocks, warning needs a look, info is a note | Partial |

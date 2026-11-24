@@ -5,6 +5,19 @@ All notable changes to Transiva are recorded here. The format follows
 
 ## [Unreleased]
 
+### Added (round 3: pre-flight and bundle hygiene, see docs/RESEARCH.md)
+
+- `-assess-manifest` / `POST /artifacts/assess`: metadata-only readiness
+  verdict (ready / conditionally_ready / not_ready) with Forklift-style
+  concerns; no disk is read. `-assess-fail-on warning` gates CI on warnings.
+- `-estimate-space` / `POST /artifacts/estimate-space`: lower and upper bounds
+  of the destination space a conversion needs (qcow2 or raw), with a fit verdict
+  against `-estimate-free-dir`, `-estimate-free-bytes` or `free_bytes`.
+- `-report-strays` / `report_strays` on verify-bundle: lists files next to the
+  manifest that no disk references (disk-like files warn; never fails the run).
+- `-fill-checksums`: adds SHA-256 to disks that lack one, atomically, never
+  replacing a recorded value; warns that any detached signature becomes stale.
+
 ### Added
 
 - Offline artifact verification (package `artifact`, docs/artifact-verification.md):
