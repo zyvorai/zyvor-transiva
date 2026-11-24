@@ -21,6 +21,8 @@ func resetArtifactFlags() {
 	*genSigningKeyFlag, *signKeyFlag, *pubKeyFlag, *sigFileFlag, *bundleRootFlag = "", "", "", "", ""
 	*requireChecksums, *allowBacking, *skipChecksumsFlag, *jsonOutFlag = false, false, false, false
 	*maxDiskBytesFlag = 0
+	*buildManifestFlag, *manifestOutFlag, *vmNameFlag, *diffManifestsFlag, *diffAgainstFlag, *writeSumsFlag = "", "", "", "", "", ""
+	*diffPathsFlag = false
 }
 
 func TestRunArtifactCommands(t *testing.T) {
@@ -105,5 +107,54 @@ func TestRunArtifactCommands(t *testing.T) {
 	}
 	if code, _, _ := run(func() { *inspectOVAFlag = filepath.Join(dir, "missing.ova") }); code != 2 {
 		t.Fatalf("missing ova: %d", code)
+	}
+}
+
+func TestBuildDiffSumsCommands(t *testing.T) {
+	defer resetArtifactFlags()
+	dir := t.TempDir()
+	disk := []byte("tool disk")
+	if err := os.WriteFile(filepath.Join(dir, "a.img"), disk, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	run := func(setup func()) (int, string, string) {
+		resetArtifactFlags()
+		setup()
+		var out, errb bytes.Buffer
+		handled, code := runArtifactCommands(&out, &errb)
+		if !handled {
+			t.Fatal("expected handled")
+		}
+		return code, out.String(), errb.String()
+	}
+	mp := filepath.Join(dir, "artifact-manifest.json")
+	if code, _, e := run(func() { *buildManifestFlag = dir }); code != 0 {
+		t.Fatalf("build: %d %s", code, e)
+	}
+	if code, _, _ := run(func() { *buildManifestFlag = dir }); code != 2 {
+		t.Fatalf("build must refuse to overwrite, got %d", code)
+	}
+	if code, out, e := run(func() { *verifyBundleFlag = mp }); code != 0 {
+		t.Fatalf("generated manifest must verify: %d %s %s", code, out, e)
+	}
+	sum := sha256.Sum256(disk)
+	if code, out, _ := run(func() { *writeSumsFlag = mp }); code != 0 || out != hex.EncodeToString(sum[:])+"  a.img\n" {
+		t.Fatalf("sums: %d %q", code, out)
+	}
+	if code, out, _ := run(func() { *diffManifestsFlag, *diffAgainstFlag = mp, mp }); code != 0 || !strings.Contains(out, "equivalent") {
+		t.Fatalf("self diff: %d %s", code, out)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "a.img"), []byte("changed!!"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	mp2 := filepath.Join(dir, "m2.json")
+	if code, _, e := run(func() { *buildManifestFlag, *manifestOutFlag = dir, mp2 }); code != 0 {
+		t.Fatalf("build2: %d %s", code, e)
+	}
+	if code, out, _ := run(func() { *diffManifestsFlag, *diffAgainstFlag = mp, mp2 }); code != 1 || !strings.Contains(out, "checksum") {
+		t.Fatalf("diff: %d %s", code, out)
+	}
+	if code, _, _ := run(func() { *diffManifestsFlag = mp }); code != 2 {
+		t.Fatalf("missing -diff-against must be 2, got %d", code)
 	}
 }
