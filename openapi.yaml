@@ -1235,6 +1235,111 @@ paths:
           description: Manifest unreadable or oversized
         '503':
           description: artifact_root is not configured
+  /artifacts/assess:
+    post:
+      summary: Metadata-only readiness assessment of an Artifact Manifest
+      description: |
+        Applies readiness rules to the manifest (firmware, Secure Boot, Windows
+        guests, disk formats and sizes, missing checksums, NIC MAC problems,
+        export warnings) in the style of Forklift validation concerns. Returns
+        `ready`, `conditionally_ready` (warnings only) or `not_ready` (at least
+        one error). No disk is opened. Disabled (503) unless `artifact_root` is set.
+      tags: [Artifacts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [manifest_path]
+              additionalProperties: false
+              properties:
+                manifest_path: {type: string, description: "Manifest path, absolute or relative to artifact_root"}
+      responses:
+        '200':
+          description: Assessment (failed rules are findings, not HTTP errors)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  readiness: {type: string, enum: [ready, conditionally_ready, not_ready]}
+                  errors: {type: integer}
+                  warnings: {type: integer}
+                  infos: {type: integer}
+                  findings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Finding'
+                  disclaimer: {type: string}
+        '400':
+          description: Invalid body or a path outside the artifact root
+        '422':
+          description: Manifest unreadable, oversized or structurally invalid
+        '429':
+          description: Too many artifact operations in progress
+        '503':
+          description: artifact_root is not configured
+  /artifacts/estimate-space:
+    post:
+      summary: Bound the destination space needed to convert a manifest's disks
+      description: |
+        For a raw target the need is the declared virtual size; for qcow2 the
+        lower bound is the source file size (capped at the virtual size) and the
+        upper bound is the virtual size plus about 1.6% metadata. Files are only
+        stat-ed. Pass `free_bytes` to get a fit verdict. These are bounds, not
+        measurements; `qemu-img measure` on the receiving side is authoritative.
+      tags: [Artifacts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [manifest_path]
+              additionalProperties: false
+              properties:
+                manifest_path: {type: string}
+                target_format: {type: string, enum: [qcow2, raw], default: qcow2}
+                free_bytes: {type: integer, format: int64, minimum: 0, description: Space available at the destination}
+      responses:
+        '200':
+          description: Estimate
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  target_format: {type: string}
+                  disks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: {type: string}
+                        source_format: {type: string}
+                        virtual_bytes: {type: integer, format: int64}
+                        file_bytes: {type: integer, format: int64, description: "-1 when the file is missing"}
+                        min_target_bytes: {type: integer, format: int64}
+                        max_target_bytes: {type: integer, format: int64}
+                        note: {type: string}
+                  min_total_bytes: {type: integer, format: int64}
+                  max_total_bytes: {type: integer, format: int64}
+                  free_bytes: {type: integer, format: int64, description: "-1 when not supplied"}
+                  fit: {type: string, enum: [unknown, fits, may_not_fit, does_not_fit]}
+                  findings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Finding'
+                  disclaimer: {type: string}
+        '400':
+          description: Invalid body, unsupported target_format, negative free_bytes, or a path outside the root
+        '422':
+          description: Manifest unreadable, oversized or structurally invalid
+        '429':
+          description: Too many artifact operations in progress
+        '503':
+          description: artifact_root is not configured
   /ws:
     get:
       summary: WebSocket connection
@@ -1268,6 +1373,7 @@ components:
         skip_checksums: {type: boolean, description: Check structure and headers only}
         require_checksums: {type: boolean, description: Treat a disk without a checksum as an error}
         allow_backing_files: {type: boolean, description: Downgrade backing-file findings to warnings}
+        report_strays: {type: boolean, description: Also report files next to the manifest that no disk references (disk-like files are warnings)}
         public_key_path: {type: string, description: Ed25519 public key (PEM); requires signature_path}
         signature_path: {type: string, description: Detached signature; requires public_key_path}
     Finding:

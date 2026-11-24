@@ -141,6 +141,8 @@ func NewServer(manager *jobs.Manager, detector *capabilities.Detector, log logge
 	mux.HandleFunc("/artifacts/verify-bundle", s.handleVerifyBundle)
 	mux.HandleFunc("/artifacts/inspect-ova", s.handleInspectOVA)
 	mux.HandleFunc("/artifacts/verify-signature", s.handleVerifySignature)
+	mux.HandleFunc("/artifacts/assess", s.handleAssessManifest)
+	mux.HandleFunc("/artifacts/estimate-space", s.handleEstimateSpace)
 	mux.HandleFunc("/migration/verify", s.handleVerifyMigration)
 	mux.HandleFunc("/migration/check-compatibility", s.handleCheckCompatibility)
 	mux.HandleFunc("/migration/test", s.handleTestMigration)

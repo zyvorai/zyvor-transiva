@@ -276,6 +276,8 @@ func (es *EnhancedServer) registerEnhancedRoutes() {
 	mux.HandleFunc("/artifacts/verify-bundle", es.handleVerifyBundle)
 	mux.HandleFunc("/artifacts/inspect-ova", es.handleInspectOVA)
 	mux.HandleFunc("/artifacts/verify-signature", es.handleVerifySignature)
+	mux.HandleFunc("/artifacts/assess", es.handleAssessManifest)
+	mux.HandleFunc("/artifacts/estimate-space", es.handleEstimateSpace)
 
 	// Console & display
 	mux.HandleFunc("/console/info", es.handleGetConsoleInfo)

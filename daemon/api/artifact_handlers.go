@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/zyvorai/transiva/artifact"
 )
@@ -77,6 +78,7 @@ type verifyBundleRequest struct {
 	SkipChecksums     bool   `json:"skip_checksums,omitempty"`
 	RequireChecksums  bool   `json:"require_checksums,omitempty"`
 	AllowBackingFiles bool   `json:"allow_backing_files,omitempty"`
+	ReportStrays      bool   `json:"report_strays,omitempty"`
 	PublicKeyPath     string `json:"public_key_path,omitempty"`
 	SignaturePath     string `json:"signature_path,omitempty"`
 }
@@ -99,6 +101,7 @@ func (s *Server) handleVerifyBundle(w http.ResponseWriter, r *http.Request) {
 		SkipChecksums:     req.SkipChecksums,
 		RequireChecksums:  req.RequireChecksums,
 		AllowBackingFiles: req.AllowBackingFiles,
+		ReportStrays:      req.ReportStrays,
 	}
 	if req.PublicKeyPath != "" || req.SignaturePath != "" {
 		kp, ok := s.confine(w, root, "public_key_path", req.PublicKeyPath)
@@ -199,4 +202,75 @@ func (s *Server) handleVerifySignature(w http.ResponseWriter, r *http.Request) {
 		resp["error"] = err.Error()
 	}
 	s.jsonResponse(w, http.StatusOK, resp)
+}
+
+type assessRequest struct {
+	ManifestPath string `json:"manifest_path"`
+}
+
+// handleAssessManifest runs the metadata-only readiness rules over a manifest.
+// No disk is opened.
+func (s *Server) handleAssessManifest(w http.ResponseWriter, r *http.Request) {
+	var req assessRequest
+	root, release, ok := s.artifactPrologue(w, r, &req)
+	if !ok {
+		return
+	}
+	defer release()
+
+	mp, ok := s.confine(w, root, "manifest_path", req.ManifestPath)
+	if !ok {
+		return
+	}
+	m, err := artifact.LoadManifest(mp, artifact.Limits{})
+	if err != nil {
+		s.errorResponse(w, http.StatusUnprocessableEntity, "manifest could not be assessed: %v", err)
+		return
+	}
+	s.jsonResponse(w, http.StatusOK, artifact.AssessManifest(m))
+}
+
+type estimateSpaceRequest struct {
+	ManifestPath string `json:"manifest_path"`
+	TargetFormat string `json:"target_format,omitempty"`
+	FreeBytes    *int64 `json:"free_bytes,omitempty"`
+}
+
+// handleEstimateSpace bounds the destination space a conversion of the
+// manifest's disks will need. Files are only stat-ed.
+func (s *Server) handleEstimateSpace(w http.ResponseWriter, r *http.Request) {
+	var req estimateSpaceRequest
+	root, release, ok := s.artifactPrologue(w, r, &req)
+	if !ok {
+		return
+	}
+	defer release()
+
+	mp, ok := s.confine(w, root, "manifest_path", req.ManifestPath)
+	if !ok {
+		return
+	}
+	if req.TargetFormat != "" && req.TargetFormat != "qcow2" && req.TargetFormat != "raw" {
+		s.errorResponse(w, http.StatusBadRequest, "target_format must be qcow2 or raw")
+		return
+	}
+	if req.FreeBytes != nil && *req.FreeBytes < 0 {
+		s.errorResponse(w, http.StatusBadRequest, "free_bytes must not be negative")
+		return
+	}
+	m, err := artifact.LoadManifest(mp, artifact.Limits{})
+	if err != nil {
+		s.errorResponse(w, http.StatusUnprocessableEntity, "manifest could not be read: %v", err)
+		return
+	}
+	opt := artifact.EstimateOptions{TargetFormat: req.TargetFormat, FreeBytes: -1, Root: root, ManifestDir: filepath.Dir(mp)}
+	if req.FreeBytes != nil {
+		opt.FreeBytes = *req.FreeBytes
+	}
+	est, err := artifact.EstimateSpace(m, opt)
+	if err != nil {
+		s.errorResponse(w, http.StatusBadRequest, "%v", err)
+		return
+	}
+	s.jsonResponse(w, http.StatusOK, est)
 }

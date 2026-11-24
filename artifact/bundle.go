@@ -33,6 +33,9 @@ type BundleOptions struct {
 	PublicKey     ed25519.PublicKey
 	SignatureFile string
 	Limits        Limits
+	// ReportStrays also walks the manifest directory and reports files that no
+	// disk references: disk-looking ones as warnings, others as info.
+	ReportStrays bool
 }
 
 // DiskReport is the per-disk result of VerifyBundle.
@@ -190,6 +193,21 @@ func VerifyBundle(ctx context.Context, manifestPath string, opt BundleOptions) (
 		rep.Disks = append(rep.Disks, dr)
 	}
 
+	if opt.ReportStrays {
+		referenced := map[string]string{}
+		for _, dr := range rep.Disks {
+			if dr.Path != "" {
+				referenced[resolveForCompare(dr.Path)] = dr.ID
+			}
+		}
+		skip := map[string]bool{resolveForCompare(manifestPath): true}
+		if opt.SignatureFile != "" {
+			skip[resolveForCompare(opt.SignatureFile)] = true
+		}
+		skip[resolveForCompare(manifestPath+".sig")] = true
+		findStrays(baseDir, referenced, skip, add)
+	}
+
 	rep.OK = !hasErrors(rep.Findings)
 	return rep, nil
 }
@@ -223,4 +241,16 @@ func checkSniff(add func(sev, code, subj, format string, args ...any), d manifes
 	case d.SourceFormat != "raw" && d.Bytes > 0 && fileBytes != d.Bytes && sn.VirtualBytes > 0 && sn.VirtualBytes != d.Bytes:
 		add(SeverityWarning, "size_mismatch", d.ID, "manifest declares %d bytes; file is %d bytes and header virtual size is %d", d.Bytes, fileBytes, sn.VirtualBytes)
 	}
+}
+
+// resolveForCompare returns the absolute, symlink-free form of p when it can
+// be computed, else the cleaned absolute path.
+func resolveForCompare(p string) string {
+	if abs, err := filepath.Abs(p); err == nil {
+		p = abs
+	}
+	if real, err := filepath.EvalSymlinks(p); err == nil {
+		return real
+	}
+	return p
 }

@@ -39,7 +39,19 @@ func TestRepoSpecDocumentsArtifactRoutes(t *testing.T) {
 			}
 		}
 	}
-	if len(seen) != 3 {
-		t.Fatalf("expected 3 artifact routes registered, found %d", len(seen))
+	want := []string{
+		"/artifacts/verify-bundle", "/artifacts/inspect-ova", "/artifacts/verify-signature",
+		"/artifacts/assess", "/artifacts/estimate-space",
+	}
+	for _, r := range want {
+		if !seen[r] {
+			t.Errorf("expected route %s to be registered in daemon/api", r)
+		}
+		if item := doc.Paths.Find(r); item == nil || item.Post == nil {
+			t.Errorf("openapi.yaml must document POST %s", r)
+		}
+	}
+	if len(seen) != len(want) {
+		t.Fatalf("expected %d artifact routes registered, found %d: update this list and openapi.yaml together", len(want), len(seen))
 	}
 }

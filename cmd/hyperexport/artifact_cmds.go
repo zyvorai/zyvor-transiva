@@ -42,6 +42,14 @@ var (
 	diffAgainstFlag   = flag.String("diff-against", "", "Second manifest for -diff-manifests")
 	diffPathsFlag     = flag.Bool("diff-paths", false, "-diff-manifests: also compare local_path")
 	writeSumsFlag     = flag.String("write-sha256sums", "", "Print a manifest's disk checksums in sha256sum -c format")
+	reportStraysFlag  = flag.Bool("report-strays", false, "-verify-bundle: also report files in the manifest directory that no disk references")
+	assessFlag        = flag.String("assess-manifest", "", "Metadata-only readiness assessment of a manifest (ready / conditionally_ready / not_ready; no disk is read)")
+	assessFailOnFlag  = flag.String("assess-fail-on", "error", "-assess-manifest: exit 1 on 'error' (default) or on 'warning' too")
+	estimateFlag      = flag.String("estimate-space", "", "Estimate the destination space needed to convert a manifest's disks (bounds only; nothing is converted)")
+	estimateTarget    = flag.String("estimate-target", "qcow2", "-estimate-space: target format qcow2 or raw")
+	estimateFreeDir   = flag.String("estimate-free-dir", "", "-estimate-space: compare against the free space of this directory")
+	estimateFreeBytes = flag.Int64("estimate-free-bytes", -1, "-estimate-space: compare against this many free bytes (overrides -estimate-free-dir)")
+	fillChecksumsFlag = flag.String("fill-checksums", "", "Compute SHA-256 for manifest disks that have none and rewrite the manifest (atomically; -manifest-out writes a new file instead)")
 	jsonOutFlag       = flag.Bool("json", false, "Print artifact verification results as JSON")
 )
 
@@ -124,6 +132,7 @@ func runArtifactCommands(stdout, stderr io.Writer) (handled bool, code int) {
 			SkipChecksums:     *skipChecksumsFlag,
 			RequireChecksums:  *requireChecksums,
 			AllowBackingFiles: *allowBacking,
+			ReportStrays:      *reportStraysFlag,
 			Limits:            lim,
 		}
 		if *pubKeyFlag != "" {
@@ -221,6 +230,77 @@ func runArtifactCommands(stdout, stderr io.Writer) (handled bool, code int) {
 		}
 		return true, 0
 
+	case *assessFlag != "":
+		if *assessFailOnFlag != "error" && *assessFailOnFlag != "warning" {
+			outln(stderr, "Error: -assess-fail-on must be 'error' or 'warning'")
+			return true, 2
+		}
+		m, err := artifact.LoadManifest(*assessFlag, lim)
+		if err != nil {
+			outf(stderr, "Error: %v\n", err)
+			return true, 2
+		}
+		rep := artifact.AssessManifest(m)
+		if *jsonOutFlag {
+			printJSON(stdout, rep)
+		} else {
+			printFindings(stdout, rep.Findings)
+			outf(stdout, "readiness: %s (%d errors, %d warnings, %d notes)\n%s\n", rep.Readiness, rep.Errors, rep.Warnings, rep.Infos, rep.Disclaimer)
+		}
+		fail := rep.Readiness == artifact.ReadinessNotReady ||
+			(*assessFailOnFlag == "warning" && rep.Readiness == artifact.ReadinessConditional)
+		return true, boolCode(!fail)
+
+	case *estimateFlag != "":
+		m, err := artifact.LoadManifest(*estimateFlag, lim)
+		if err != nil {
+			outf(stderr, "Error: %v\n", err)
+			return true, 2
+		}
+		free := *estimateFreeBytes
+		if free < 0 && *estimateFreeDir != "" {
+			avail, _, derr := getDiskSpace(*estimateFreeDir)
+			if derr != nil {
+				outf(stderr, "Error: free space of %s: %v\n", *estimateFreeDir, derr)
+				return true, 2
+			}
+			free = avail
+		}
+		est, err := artifact.EstimateSpace(m, artifact.EstimateOptions{
+			TargetFormat: *estimateTarget, FreeBytes: free, ManifestDir: filepath.Dir(*estimateFlag),
+		})
+		if err != nil {
+			outf(stderr, "Error: %v\n", err)
+			return true, 2
+		}
+		if *jsonOutFlag {
+			printJSON(stdout, est)
+		} else {
+			for _, d := range est.Disks {
+				outf(stdout, "  disk %-12s virtual %14d  target %s %14d .. %14d bytes\n", d.ID, d.VirtualBytes, est.TargetFormat, d.MinTargetBytes, d.MaxTargetBytes)
+			}
+			outf(stdout, "total %d .. %d bytes; free %d (-1 = unknown); fit: %s\n", est.MinTotalBytes, est.MaxTotalBytes, est.FreeBytes, est.Fit)
+			printFindings(stdout, est.Findings)
+			outln(stdout, est.Disclaimer)
+		}
+		return true, boolCode(est.Fit != artifact.FitNo)
+
+	case *fillChecksumsFlag != "":
+		res, err := artifact.FillChecksums(ctx, *fillChecksumsFlag, artifact.FillOptions{OutPath: *manifestOutFlag, Limits: lim})
+		if err != nil {
+			outf(stderr, "Error: %v\n", err)
+			return true, 2
+		}
+		if *jsonOutFlag {
+			printJSON(stdout, res)
+		} else {
+			if res.Written {
+				outf(stdout, "wrote %s; checksums added for: %s\n", res.OutPath, strings.Join(res.Filled, ", "))
+			}
+			printFindings(stdout, res.Findings)
+		}
+		return true, boolCode(!hasErrorFinding(res.Findings))
+
 	case *inspectOVAFlag != "":
 		rep, err := artifact.InspectOVA(ctx, *inspectOVAFlag, lim)
 		if err != nil {
@@ -316,6 +396,15 @@ func printJSON(w io.Writer, v any) {
 	enc := json.NewEncoder(w)
 	enc.SetIndent("", "  ")
 	_ = enc.Encode(v)
+}
+
+func hasErrorFinding(fs []artifact.Finding) bool {
+	for _, f := range fs {
+		if f.Severity == artifact.SeverityError {
+			return true
+		}
+	}
+	return false
 }
 
 func boolCode(ok bool) int {
