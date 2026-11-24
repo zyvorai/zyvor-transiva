@@ -18,12 +18,20 @@ All notable changes to Transiva are recorded here. The format follows
     `-verify-signature`, `POST /artifacts/verify-signature` (signing is CLI-only).
   - New config `artifact_root` / env `ARTIFACT_ROOT` confines the endpoints;
     unset disables them.
+- Manifest tooling (CLI, package `artifact`): `-build-manifest DIR` creates an
+  Artifact Manifest for disks produced by other tools (header-sniffed formats,
+  SHA-256, relative paths, no overwrite); `-diff-manifests A -diff-against B`
+  compares two manifests by disk ID (exit 1 on differences); `-write-sha256sums
+  M` prints checksums in `sha256sum -c` format.
 - docs/RESEARCH.md: migration-tooling research with ranked ideas.
 - openapi.yaml documents the `/artifacts/*` routes; `daemon/openapi` has a test
   that fails if a registered route is not in the spec.
 
 ### Fixed
 
+- CI: golangci-lint v2.15 (errcheck on unchecked writes in the artifact CLI, staticcheck
+  QF1002 in artifact/ova.go) failed the Lint job; fixed and verified with
+  golangci-lint (0 issues).
 - `manifest.VerifyChecksums` panicked on a short checksum value and stopped at
   the first mismatch; it now rejects malformed values and reports every mismatch.
 - `manifest.ReadFromFile` read files of any size and type; it now caps at 8 MiB

@@ -31,6 +31,29 @@ hyperexport -verify-signature m.json -pub-key export-signing.pub
 hyperexport -verify-bundle m.json -pub-key export-signing.pub   # signature + disks
 ```
 
+### Build, compare and export checksums
+
+For exports made by other tools (ovftool, govc, a copied bundle) and for
+comparing two exports:
+
+```bash
+# Create a manifest for disk files in a directory (formats from headers, not
+# extensions; size = header virtual size when known; SHA-256 computed;
+# relative paths; refuses to overwrite). -provider / -manifest-vm-name are optional.
+hyperexport -build-manifest /exports/vm1 -manifest-out /exports/vm1/artifact-manifest.json
+
+# Compare two manifests by disk ID (format, bytes, checksum, boot order, type).
+# Exit 0 equivalent, 1 different. -diff-paths also compares local_path.
+hyperexport -diff-manifests a.json -diff-against b.json
+
+# Emit checksums in `sha256sum -c` format so any tool can re-verify
+cd /exports/vm1 && hyperexport -write-sha256sums artifact-manifest.json | sha256sum -c
+```
+
+`-build-manifest` skips files whose extension has no matching header (for
+example `-flat.vmdk` extents) and says so; it does not know which disk boots,
+so `boot_order_hint` follows file-name order. These three are CLI-only.
+
 Other flags: `-sig-file`, `-skip-checksums`, `-allow-backing-files`,
 `-max-disk-bytes`.
 

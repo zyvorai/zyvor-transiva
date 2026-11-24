@@ -11,9 +11,11 @@ import (
 	"io"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
 
 	"github.com/zyvorai/transiva/artifact"
+	"github.com/zyvorai/transiva/manifest"
 )
 
 // Offline artifact verification commands. They read exported files and compare
@@ -33,6 +35,13 @@ var (
 	allowBacking      = flag.Bool("allow-backing-files", false, "-verify-bundle: downgrade 'disk has a backing file' to a warning")
 	skipChecksumsFlag = flag.Bool("skip-checksums", false, "-verify-bundle: check structure and headers only, do not hash disks")
 	maxDiskBytesFlag  = flag.Int64("max-disk-bytes", 0, "Per-disk / per-OVA-entry size cap in bytes (default 16 TiB)")
+	buildManifestFlag = flag.String("build-manifest", "", "Create an Artifact Manifest for disk files in this directory (formats from headers, SHA-256 computed; writes to -manifest-out)")
+	manifestOutFlag   = flag.String("manifest-out", "", "Output file for -build-manifest (default <dir>/artifact-manifest.json; never overwrites)")
+	vmNameFlag        = flag.String("manifest-vm-name", "", "VM name recorded by -build-manifest")
+	diffManifestsFlag = flag.String("diff-manifests", "", "Compare this manifest with the one given by -diff-against (exit 1 when they differ)")
+	diffAgainstFlag   = flag.String("diff-against", "", "Second manifest for -diff-manifests")
+	diffPathsFlag     = flag.Bool("diff-paths", false, "-diff-manifests: also compare local_path")
+	writeSumsFlag     = flag.String("write-sha256sums", "", "Print a manifest's disk checksums in sha256sum -c format")
 	jsonOutFlag       = flag.Bool("json", false, "Print artifact verification results as JSON")
 )
 
@@ -48,65 +57,65 @@ func runArtifactCommands(stdout, stderr io.Writer) (handled bool, code int) {
 	case *genSigningKeyFlag != "":
 		priv, pub, err := artifact.GenerateKeyPair(*genSigningKeyFlag)
 		if err != nil {
-			fmt.Fprintf(stderr, "Error: %v\n", err)
+			outf(stderr, "Error: %v\n", err)
 			return true, 2
 		}
-		fmt.Fprintf(stdout, "private key: %s (keep secret)\npublic key:  %s\n", priv, pub)
+		outf(stdout, "private key: %s (keep secret)\npublic key:  %s\n", priv, pub)
 		return true, 0
 
 	case *signManifestFlag != "":
 		if *signKeyFlag == "" {
-			fmt.Fprintln(stderr, "Error: -sign-manifest needs -sign-key")
+			outln(stderr, "Error: -sign-manifest needs -sign-key")
 			return true, 2
 		}
 		priv, err := artifact.LoadPrivateKey(*signKeyFlag)
 		if err != nil {
-			fmt.Fprintf(stderr, "Error: %v\n", err)
+			outf(stderr, "Error: %v\n", err)
 			return true, 2
 		}
 		data, err := readManifestBytes(*signManifestFlag, lim)
 		if err != nil {
-			fmt.Fprintf(stderr, "Error: %v\n", err)
+			outf(stderr, "Error: %v\n", err)
 			return true, 2
 		}
 		sig, err := artifact.SignManifest(data, priv)
 		if err != nil {
-			fmt.Fprintf(stderr, "Error: %v\n", err)
+			outf(stderr, "Error: %v\n", err)
 			return true, 2
 		}
 		out := sigPath(*signManifestFlag)
 		if err := artifact.WriteSignature(out, sig); err != nil {
-			fmt.Fprintf(stderr, "Error: %v\n", err)
+			outf(stderr, "Error: %v\n", err)
 			return true, 2
 		}
-		fmt.Fprintf(stdout, "signed %s with key %s\nsignature: %s\n", *signManifestFlag, sig.KeyID, out)
+		outf(stdout, "signed %s with key %s\nsignature: %s\n", *signManifestFlag, sig.KeyID, out)
 		return true, 0
 
 	case *verifySigFlag != "":
 		if *pubKeyFlag == "" {
-			fmt.Fprintln(stderr, "Error: -verify-signature needs -pub-key")
+			outln(stderr, "Error: -verify-signature needs -pub-key")
 			return true, 2
 		}
 		pub, err := artifact.LoadPublicKey(*pubKeyFlag)
 		if err != nil {
-			fmt.Fprintf(stderr, "Error: %v\n", err)
+			outf(stderr, "Error: %v\n", err)
 			return true, 2
 		}
 		data, err := readManifestBytes(*verifySigFlag, lim)
 		if err != nil {
-			fmt.Fprintf(stderr, "Error: %v\n", err)
+			outf(stderr, "Error: %v\n", err)
 			return true, 2
 		}
 		sig, err := artifact.LoadSignature(sigPath(*verifySigFlag))
 		if err != nil {
-			fmt.Fprintf(stderr, "Error: %v\n", err)
+			outf(stderr, "Error: %v\n", err)
 			return true, 2
 		}
 		if err := artifact.VerifyManifestSignature(data, sig, pub); err != nil {
-			fmt.Fprintf(stdout, "FAIL: %v\n", err)
+			outf(stdout, "FAIL: %v\n", err)
 			return true, 1
 		}
-		fmt.Fprintf(stdout, "OK: signature valid for key %s. This attests the manifest bytes only; run -verify-bundle to check the disks.\n", artifact.KeyID(pub))
+		outf(stdout, "OK: signature valid for key %s. This attests the manifest bytes only; run -verify-bundle to check the disks.\n", artifact.KeyID(pub))
 		return true, 0
 
 	case *verifyBundleFlag != "":
@@ -120,48 +129,114 @@ func runArtifactCommands(stdout, stderr io.Writer) (handled bool, code int) {
 		if *pubKeyFlag != "" {
 			pub, err := artifact.LoadPublicKey(*pubKeyFlag)
 			if err != nil {
-				fmt.Fprintf(stderr, "Error: %v\n", err)
+				outf(stderr, "Error: %v\n", err)
 				return true, 2
 			}
 			opt.PublicKey, opt.SignatureFile = pub, sigPath(*verifyBundleFlag)
 		}
 		rep, err := artifact.VerifyBundle(ctx, *verifyBundleFlag, opt)
 		if err != nil {
-			fmt.Fprintf(stderr, "Error: %v\n", err)
+			outf(stderr, "Error: %v\n", err)
 			return true, 2
 		}
 		if *jsonOutFlag {
 			printJSON(stdout, rep)
 		} else {
-			fmt.Fprintf(stdout, "manifest sha256: %s\n", rep.ManifestSHA256)
+			outf(stdout, "manifest sha256: %s\n", rep.ManifestSHA256)
 			for _, d := range rep.Disks {
 				state := "not hashed"
 				if d.ChecksumChecked {
 					state = map[bool]string{true: "checksum OK", false: "CHECKSUM MISMATCH"}[d.ChecksumMatch]
 				}
-				fmt.Fprintf(stdout, "  disk %-12s %-6s %12d bytes  %s\n", d.ID, d.DeclaredFormat, d.FileBytes, state)
+				outf(stdout, "  disk %-12s %-6s %12d bytes  %s\n", d.ID, d.DeclaredFormat, d.FileBytes, state)
 			}
 			printFindings(stdout, rep.Findings)
 			printVerdict(stdout, rep.OK, artifact.Disclaimer)
 		}
 		return true, boolCode(rep.OK)
 
+	case *buildManifestFlag != "":
+		m, fs, err := artifact.BuildManifest(ctx, *buildManifestFlag, artifact.BuildOptions{
+			Provider: *providerType, VMName: *vmNameFlag, ExportMethod: "external", SkipChecksums: *skipChecksumsFlag, Limits: lim,
+		})
+		if err != nil {
+			printFindings(stderr, fs)
+			outf(stderr, "Error: %v\n", err)
+			return true, 2
+		}
+		out := *manifestOutFlag
+		if out == "" {
+			out = filepath.Join(*buildManifestFlag, "artifact-manifest.json")
+		}
+		data, err := manifest.ToJSON(m)
+		if err == nil {
+			err = writeNewFile(out, data)
+		}
+		if err != nil {
+			outf(stderr, "Error: %v\n", err)
+			return true, 2
+		}
+		outf(stdout, "wrote %s (%d disks)\n", out, len(m.Disks))
+		printFindings(stdout, fs)
+		return true, 0
+
+	case *diffManifestsFlag != "":
+		if *diffAgainstFlag == "" {
+			outln(stderr, "Error: -diff-manifests needs -diff-against")
+			return true, 2
+		}
+		a, err := loadManifestFile(*diffManifestsFlag, lim)
+		if err == nil {
+			var b *manifest.ArtifactManifest
+			if b, err = loadManifestFile(*diffAgainstFlag, lim); err == nil {
+				d := artifact.DiffManifests(a, b, *diffPathsFlag)
+				if *jsonOutFlag {
+					printJSON(stdout, d)
+				} else if d.Identical {
+					outln(stdout, "manifests are equivalent")
+				} else {
+					for _, c := range d.Changes {
+						outf(stdout, "  %-8s %s %s %s -> %s\n", c.Kind, c.Subject, c.Field, c.Old, c.New)
+					}
+				}
+				return true, boolCode(d.Identical)
+			}
+		}
+		outf(stderr, "Error: %v\n", err)
+		return true, 2
+
+	case *writeSumsFlag != "":
+		m, err := loadManifestFile(*writeSumsFlag, lim)
+		if err != nil {
+			outf(stderr, "Error: %v\n", err)
+			return true, 2
+		}
+		skipped, err := artifact.WriteSHA256Sums(stdout, m, filepath.Dir(*writeSumsFlag))
+		if err != nil {
+			outf(stderr, "Error: %v\n", err)
+			return true, 2
+		}
+		if len(skipped) > 0 {
+			outf(stderr, "note: no checksum recorded for disks: %s\n", strings.Join(skipped, ", "))
+		}
+		return true, 0
+
 	case *inspectOVAFlag != "":
 		rep, err := artifact.InspectOVA(ctx, *inspectOVAFlag, lim)
 		if err != nil {
-			fmt.Fprintf(stderr, "Error: %v\n", err)
+			outf(stderr, "Error: %v\n", err)
 			return true, 2
 		}
 		if *jsonOutFlag {
 			printJSON(stdout, rep)
 		} else {
 			if rep.VirtualSystem != "" {
-				fmt.Fprintf(stdout, "virtual system: %s\n", rep.VirtualSystem)
+				outf(stdout, "virtual system: %s\n", rep.VirtualSystem)
 			}
 			for _, e := range rep.Entries {
-				fmt.Fprintf(stdout, "  %-40s %14d bytes\n", e.Name, e.Bytes)
+				outf(stdout, "  %-40s %14d bytes\n", e.Name, e.Bytes)
 			}
-			fmt.Fprintf(stdout, "manifest (.mf) found: %v, all listed digests verified: %v, certificate present (not verified): %v\n",
+			outf(stdout, "manifest (.mf) found: %v, all listed digests verified: %v, certificate present (not verified): %v\n",
 				rep.ManifestFound, rep.ManifestOK, rep.CertPresent)
 			printFindings(stdout, rep.Findings)
 			printVerdict(stdout, rep.OK, artifact.Disclaimer)
@@ -179,6 +254,39 @@ func readManifestBytes(path string, lim artifact.Limits) ([]byte, error) {
 	return artifact.ReadSmallFile(path, max)
 }
 
+func loadManifestFile(path string, lim artifact.Limits) (*manifest.ArtifactManifest, error) {
+	data, err := readManifestBytes(path, lim)
+	if err != nil {
+		return nil, err
+	}
+	var m *manifest.ArtifactManifest
+	if l := strings.ToLower(path); strings.HasSuffix(l, ".yaml") || strings.HasSuffix(l, ".yml") {
+		m, err = manifest.FromYAML(data)
+	} else {
+		m, err = manifest.FromJSON(data)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("parse %s: %w", path, err)
+	}
+	if err := manifest.ValidateSchema(m); err != nil {
+		return nil, fmt.Errorf("invalid manifest %s: %w", path, err)
+	}
+	return m, nil
+}
+
+// writeNewFile writes data to path, refusing to overwrite an existing file.
+func writeNewFile(path string, data []byte) error {
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644) // #nosec G302,G304 -- operator-chosen output path
+	if err != nil {
+		return err
+	}
+	if _, err := f.Write(data); err != nil {
+		_ = f.Close()
+		return err
+	}
+	return f.Close()
+}
+
 func sigPath(manifestPath string) string {
 	if *sigFileFlag != "" {
 		return *sigFileFlag
@@ -192,7 +300,7 @@ func printFindings(w io.Writer, fs []artifact.Finding) {
 		if f.Subject != "" {
 			subj = " [" + f.Subject + "]"
 		}
-		fmt.Fprintf(w, "  %-7s %s%s: %s\n", strings.ToUpper(f.Severity), f.Code, subj, f.Message)
+		outf(w, "  %-7s %s%s: %s\n", strings.ToUpper(f.Severity), f.Code, subj, f.Message)
 	}
 }
 
@@ -201,7 +309,7 @@ func printVerdict(w io.Writer, ok bool, disclaimer string) {
 	if ok {
 		v = "PASS"
 	}
-	fmt.Fprintf(w, "%s\n%s\n", v, disclaimer)
+	outf(w, "%s\n%s\n", v, disclaimer)
 }
 
 func printJSON(w io.Writer, v any) {
@@ -216,3 +324,8 @@ func boolCode(ok bool) int {
 	}
 	return 1
 }
+
+// outf and outln write to a CLI stream; a failed write to stdout or stderr has
+// no useful recovery, so the error is dropped deliberately.
+func outf(w io.Writer, format string, a ...any) { _, _ = fmt.Fprintf(w, format, a...) }
+func outln(w io.Writer, a ...any)               { _, _ = fmt.Fprintln(w, a...) }

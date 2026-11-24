@@ -145,8 +145,8 @@ func InspectOVA(ctx context.Context, path string, lim Limits) (*OVAReport, error
 		}
 
 		ext := strings.ToLower(name[strings.LastIndex(name, ".")+1:])
-		switch {
-		case ext == "ovf" || ext == "mf":
+		switch ext {
+		case "ovf", "mf":
 			if hdr.Size > lim.MaxManifestBytes || (ext == "mf" && hdr.Size > maxMFBytes) {
 				add(SeverityError, "descriptor_too_large", name, "%d bytes is over the descriptor cap", hdr.Size)
 				continue
